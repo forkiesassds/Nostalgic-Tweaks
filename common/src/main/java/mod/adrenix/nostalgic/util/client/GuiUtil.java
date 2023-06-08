@@ -355,17 +355,17 @@ public abstract class GuiUtil
                 if (isHungerDisabled && !isXChanged)
                     GuiUtil.renderInverseArmor(graphics, x, y, 25, 9, 9, 9);
                 else
-                    graphics.blit(null, x, y, 25, 9, 9, 9);
+                    graphics.blit(Gui.GUI_ICONS_LOCATION, x, y, 25, 9, 9, 9);
             }
             else if (i < level)
             {
                 // Full armor
-                graphics.blit(null, x, y, 34, 9, 9, 9);
+                graphics.blit(Gui.GUI_ICONS_LOCATION, x, y, 34, 9, 9, 9);
             }
             else
             {
                 // No armor
-                graphics.blit(null, x, y, 16, 9, 9, 9);
+                graphics.blit(Gui.GUI_ICONS_LOCATION, x, y, 16, 9, 9, 9);
             }
 
             left += 8;
@@ -421,12 +421,12 @@ public abstract class GuiUtil
             x = event.getX();
             y = event.getY();
 
-            graphics.blit(null, x, y, 16 + background * 9, 27, 9, 9);
+            graphics.blit(Gui.GUI_ICONS_LOCATION, x, y, 16 + background * 9, 27, 9, 9);
 
             if (iconX < level)
-                graphics.blit(null, x, y, icon + 36, 27, 9, 9);
+                graphics.blit(Gui.GUI_ICONS_LOCATION, x, y, icon + 36, 27, 9, 9);
             else if (iconX == level)
-                graphics.blit(null, x, y, icon + 45, 27, 9, 9);
+                graphics.blit(Gui.GUI_ICONS_LOCATION, x, y, icon + 45, 27, 9, 9);
         }
     }
 
@@ -473,7 +473,7 @@ public abstract class GuiUtil
                 x = event.getX();
                 y = event.getY();
 
-                graphics.blit(null, x, y, (i < full ? 16 : 25), 18, 9, 9);
+                graphics.blit(Gui.GUI_ICONS_LOCATION, x, y, (i < full ? 16 : 25), 18, 9, 9);
             }
         }
     }
