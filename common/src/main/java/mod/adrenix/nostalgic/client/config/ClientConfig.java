@@ -1224,12 +1224,6 @@ public class ClientConfig implements ConfigData
         public boolean oldAlphaLogo = DefaultConfig.Candy.OLD_ALPHA_LOGO;
         static { CandyTweak.ALPHA_LOGO.setKey("oldAlphaLogo"); }
 
-        @TweakData.Client
-        @TweakData.EntryStatus(status = TweakStatus.LOADED)
-        @TweakGui.Embed(container = TweakEmbed.TITLE_LOGO_CANDY)
-        public boolean oldLogoOutline = DefaultConfig.Candy.OLD_LOGO_OUTLINE;
-        static { CandyTweak.LOGO_OUTLINE.setKey("oldLogoOutline"); }
-
         // Title Screen - Buttons
 
         @TweakData.Client

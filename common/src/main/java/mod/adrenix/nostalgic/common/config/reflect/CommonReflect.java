@@ -3,8 +3,8 @@ package mod.adrenix.nostalgic.common.config.reflect;
 import com.mojang.datafixers.util.Pair;
 import mod.adrenix.nostalgic.client.config.ClientConfig;
 import mod.adrenix.nostalgic.common.config.annotation.TweakData;
+import org.jetbrains.annotations.CheckReturnValue;
 
-import javax.annotation.CheckForNull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -111,7 +111,7 @@ public abstract class CommonReflect
      * @param <T> A class that extends the Annotation interface.
      * @return The annotation if it was found.
      */
-    @CheckForNull
+    @CheckReturnValue
     public static <T extends Annotation> T getAnnotation(TweakGroup group, String key, Class<T> annotation)
     {
         return getFieldAnnotation(group, key, annotation);
@@ -124,7 +124,7 @@ public abstract class CommonReflect
      * @param <T> The class type of annotation.
      * @return An annotation instance if it was found.
      */
-    @CheckForNull
+    @CheckReturnValue
     public static <T extends Annotation> T getAnnotation(TweakCommonCache cache, Class<T> annotation)
     {
         return getAnnotation(cache.getGroup(), cache.getKey(), annotation);
@@ -138,7 +138,7 @@ public abstract class CommonReflect
      * @param <T> A class that extends the Annotation interface.
      * @return The annotation if it was found.
      */
-    @CheckForNull
+    @CheckReturnValue
     private static <T extends Annotation> T getFieldAnnotation(TweakGroup group, String key, Class<T> annotation)
     {
         Pair<Class<?>, Object> groupClass = getGroupClass(group, DEFAULT_CONFIG);

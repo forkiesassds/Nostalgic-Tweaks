@@ -1,6 +1,6 @@
 package mod.adrenix.nostalgic.client.config.gui.overlay.template;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 
 import java.util.Set;
@@ -26,14 +26,14 @@ public abstract class AbstractWidgetProvider
 
     /**
      * Render all the children of this widget provider.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         for (Renderable widget : this.children)
-            widget.render(poseStack, mouseX, mouseY, partialTick);
+            widget.render(graphics, mouseX, mouseY, partialTick);
     }
 }

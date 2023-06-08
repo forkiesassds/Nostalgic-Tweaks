@@ -1,11 +1,15 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListScreen;
 import mod.adrenix.nostalgic.util.client.ItemClientUtil;
-import mod.adrenix.nostalgic.util.common.*;
+import mod.adrenix.nostalgic.util.common.ClassUtil;
+import mod.adrenix.nostalgic.util.common.LangUtil;
+import mod.adrenix.nostalgic.util.common.TextUtil;
+import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -97,7 +101,7 @@ public class StateButton extends OverlapButton
      * Get a list of tooltip components that is dependent on whether the shift key is held down.
      * @return A list of components that should be used in a tooltip.
      */
-    private List<Component> getTooltip()
+    private List<Component> getTooltipComponents()
     {
         List<Component> tooltip = new ArrayList<>();
 
@@ -143,28 +147,28 @@ public class StateButton extends OverlapButton
 
     /**
      * Render a tooltip component.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      */
-    private void showTooltip(PoseStack poseStack, int mouseX, int mouseY)
+    private void showTooltip(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        this.screen.renderComponentTooltip(poseStack, this.getTooltip(), mouseX, mouseY);
+        graphics.renderComponentTooltip(Minecraft.getInstance().font, this.getTooltipComponents(), mouseX, mouseY);
     }
 
     /* Overrides */
 
     /**
      * Handler method for adding extra rendering instructions when the button is rendered.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        super.renderWidget(poseStack, mouseX, mouseY, partialTick);
+        super.renderWidget(graphics, mouseX, mouseY, partialTick);
 
         RenderSystem.setShaderTexture(0, TextureLocation.WIDGETS);
 
@@ -175,23 +179,23 @@ public class StateButton extends OverlapButton
         switch (this.widget)
         {
             case NUKE -> ItemClientUtil.renderGuiItem(new ItemStack(Items.TNT), blockX, blockY, 0.85F, -0.5F);
-            case BUBBLE -> Screen.blit(poseStack, this.getX(), this.getY(), uOffset, 123, this.width, this.height);
-            case FUZZY, FILTER -> Screen.blit(poseStack, this.getX(), this.getY(), uOffset, 143, this.width, this.height);
+            case BUBBLE -> graphics.blit(TextureLocation.WIDGETS, this.getX(), this.getY(), uOffset, 123, this.width, this.height);
+            case FUZZY, FILTER -> graphics.blit(TextureLocation.WIDGETS, this.getX(), this.getY(), uOffset, 143, this.width, this.height);
         }
 
-        this.renderToolTip(poseStack, mouseX, mouseY);
+        this.renderToolTip(graphics, mouseX, mouseY);
     }
 
     /**
      * Handler method for when a tooltip is rendered.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      */
-    public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY)
+    public void renderToolTip(GuiGraphics graphics, int mouseX, int mouseY)
     {
         if (this.shouldRenderToolTip(mouseX, mouseY) && this.isMouseOver(mouseX, mouseY) && !Screen.hasControlDown())
-            this.screen.renderLast.add(() -> this.showTooltip(poseStack, mouseX, mouseY));
+            this.screen.renderLast.add(() -> this.showTooltip(graphics, mouseX, mouseY));
     }
 
     /**

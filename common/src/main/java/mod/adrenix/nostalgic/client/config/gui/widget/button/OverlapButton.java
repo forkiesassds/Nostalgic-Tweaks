@@ -1,13 +1,12 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.button;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigScreen;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigWidgets;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListScreen;
 import mod.adrenix.nostalgic.util.common.MathUtil;
 import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
@@ -145,13 +144,13 @@ public class OverlapButton extends Button
 
     /**
      * Handler method for rendering the button widget.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         for (Renderable child : this.widgets)
         {
@@ -162,25 +161,24 @@ public class OverlapButton extends Button
             }
         }
 
-        super.renderWidget(poseStack, mouseX, mouseY, partialTick);
+        super.renderWidget(graphics, mouseX, mouseY, partialTick);
     }
 
     /**
      * Handler method for rendering list button textures.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        super.render(poseStack, mouseX, mouseY, partialTick);
+        super.render(graphics, mouseX, mouseY, partialTick);
 
         if (this.isListButton)
         {
-            RenderSystem.setShaderTexture(0, TextureLocation.WIDGETS);
-            blit(poseStack, this.getX(), this.getY(), this.isHovered && this.active ? 20 : 0, 163, 20, 20);
+            graphics.blit(TextureLocation.WIDGETS, this.getX(), this.getY(), this.isHovered && this.active ? 20 : 0, 163, 20, 20);
         }
     }
 }

@@ -18,7 +18,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.server.IntegratedServer;
@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @Mixin(DebugScreenOverlay.class)
-public abstract class DebugScreenOverlayMixin extends GuiComponent
+public abstract class DebugScreenOverlayMixin
 {
     /* Shadows */
 
@@ -60,13 +60,13 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
     @Shadow private HitResult liquid;
 
     @Shadow
-    protected abstract void drawChart(PoseStack poseStack, FrameTimer frameTimer, int startX, int width, boolean drawForFps);
-
-    @Shadow
     protected abstract int getSampleColor(int height, int heightMin, int heightMid, int heightMax);
 
     @Shadow
     protected abstract String getPropertyValueString(Map.Entry<Property<?>, Comparable<?>> entry);
+
+    @Shadow
+    protected abstract void drawChart(GuiGraphics guiGraphics, FrameTimer frameTimer, int i, int j, boolean bl);
 
     @Shadow
     private static String printBiome(Holder<Biome> biomeHolder)
@@ -80,7 +80,7 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
      * Draws a background color behind a debug line. Controlled by the show debug background tweak.
      */
     @Unique
-    private void NT$drawLineBackground(PoseStack poseStack, String info, int index, boolean isLeft)
+    private void NT$drawLineBackground(GuiGraphics graphics, String info, int index, boolean isLeft)
     {
         if (!ModConfig.Candy.showDebugBackground())
             return;
@@ -95,19 +95,19 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
         int minY = (2 + fontHeight * index) - 1;
         int maxY = (2 + fontHeight * index) + fontHeight - 1;
 
-        DebugScreenOverlay.fill(poseStack, minX, minY, maxX, maxY, color);
+        graphics.fill(minX, minY, maxX, maxY, color);
     }
 
     /**
      * Draws debug information to the screen. Controlled by the show debug text shadow tweak.
      */
     @Unique
-    private void NT$drawInformation(PoseStack poseStack, String text, float x, float y, int color)
+    private void NT$drawInformation(GuiGraphics graphics, String text, int x, int y, int color)
     {
         if (ModConfig.Candy.showDebugTextShadow())
-            this.font.drawShadow(poseStack, text, x, y, color);
+            graphics.drawString(this.font, text, x, y, color, true);
         else
-            this.font.draw(poseStack, text, x, y, color);
+            graphics.drawString(this.font, text, x, y, color, false);
     }
 
     /* Injections */
@@ -117,15 +117,15 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
      * shadow tweak.
      */
     @Redirect(
-        method = "drawGameInformation",
+        method = "renderLines",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/Font;draw(Lcom/mojang/blaze3d/vertex/PoseStack;Ljava/lang/String;FFI)I"
+            target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Ljava/lang/String;IIIZ)I"
         )
     )
-    private int NT$onDrawGameInformation(Font font, PoseStack poseStack, String text, float x, float y, int color)
+    private int NT$onDrawString(GuiGraphics graphics, Font font, String text, int x, int y, int color, boolean shadow)
     {
-        return ModConfig.Candy.showDebugTextShadow() ? font.drawShadow(poseStack, text, x, y, color) : font.draw(poseStack, text, x, y, color);
+        return ModConfig.Candy.showDebugTextShadow() ? graphics.drawString(font, text, x, y, color, true) : graphics.drawString(font, text, x, y, color, false);
     }
 
     /**
@@ -133,49 +133,16 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
      * background tweak and debug background color tweak.
      */
     @Redirect(
-        method = "drawGameInformation",
+        method = "renderLines",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/components/DebugScreenOverlay;fill(Lcom/mojang/blaze3d/vertex/PoseStack;IIIII)V"
+            target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V"
         )
     )
-    private void NT$onDrawGameInformationColor(PoseStack poseStack, int minX, int minY, int maxX, int maxY, int color)
+    private void NT$onDrawGameInformationColor(GuiGraphics graphics, int minX, int minY, int maxX, int maxY, int color)
     {
         if (ModConfig.Candy.showDebugBackground())
-            DebugScreenOverlay.fill(poseStack, minX, minY, maxX, maxY, ColorUtil.toHexInt(ModConfig.Candy.debugBackgroundColor()));
-    }
-
-    /**
-     * Changes the text rendering to have a shadow when displaying system information. Controlled by the show debug text
-     * shadow tweak.
-     */
-    @Redirect(
-        method = "drawSystemInformation",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/Font;draw(Lcom/mojang/blaze3d/vertex/PoseStack;Ljava/lang/String;FFI)I"
-        )
-    )
-    private int NT$onDrawSystemInformation(Font font, PoseStack poseStack, String text, float x, float y, int color)
-    {
-        return ModConfig.Candy.showDebugTextShadow() ? font.drawShadow(poseStack, text, x, y, color) : font.draw(poseStack, text, x, y, color);
-    }
-
-    /**
-     * Changes the color of the modern debug background when displaying system information. Controlled by the show debug
-     * background tweak.
-     */
-    @Redirect(
-        method = "drawSystemInformation",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/components/DebugScreenOverlay;fill(Lcom/mojang/blaze3d/vertex/PoseStack;IIIII)V"
-        )
-    )
-    private void NT$onDrawSystemInformationColor(PoseStack poseStack, int minX, int minY, int maxX, int maxY, int color)
-    {
-        if (ModConfig.Candy.showDebugBackground())
-            DebugScreenOverlay.fill(poseStack, minX, minY, maxX, maxY, ColorUtil.toHexInt(ModConfig.Candy.debugBackgroundColor()));
+            graphics.fill(minX, minY, maxX, maxY, ColorUtil.toHexInt(ModConfig.Candy.debugBackgroundColor()));
     }
 
     /**
@@ -184,7 +151,7 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
      */
     // @formatter:off
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void NT$onRender(PoseStack poseStack, CallbackInfo callback)
+    private void NT$onRender(GuiGraphics graphics, CallbackInfo callback)
     {
         Entity entity = this.minecraft.getCameraEntity();
         TweakVersion.Generic debug = ModConfig.Candy.getDebugScreen();
@@ -328,8 +295,8 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
             if (Strings.isNullOrEmpty(text))
                 continue;
 
-            this.NT$drawLineBackground(poseStack, text, i, true);
-            this.NT$drawInformation(poseStack, text, 2.0F, 2.0F + this.font.lineHeight * i, 0xFFFFFF);
+            this.NT$drawLineBackground(graphics, text, i, true);
+            this.NT$drawInformation(graphics, text, 2, 2 + this.font.lineHeight * i, 0xFFFFFF);
         }
 
         for (int i = 0; i < right.size(); i++)
@@ -342,16 +309,16 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
             int x = width - 2 - this.font.width(text);
             int y = 2 + this.font.lineHeight * i;
 
-            this.NT$drawLineBackground(poseStack, text, i, false);
-            this.NT$drawInformation(poseStack, text, (float) x, (float) y, 0xE0E0E0);
+            this.NT$drawLineBackground(graphics, text, i, false);
+            this.NT$drawInformation(graphics, text, x, y, 0xE0E0E0);
         }
 
-        this.drawChart(poseStack, this.minecraft.getFrameTimer(), 0, width / 2, true);
+        this.drawChart(graphics, this.minecraft.getFrameTimer(), 0, width / 2, true);
 
         IntegratedServer server = this.minecraft.getSingleplayerServer();
 
         if (ModConfig.Candy.displayTpsChart() && server != null)
-            this.drawChart(poseStack, server.getFrameTimer(), width - Math.min(width / 2, 240), width / 2, false);
+            this.drawChart(graphics, server.getFrameTimer(), width - Math.min(width / 2, 240), width / 2, false);
 
         callback.cancel();
     }
@@ -365,7 +332,7 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
      */
     // @formatter:off
     @Inject(method = "drawChart", at = @At("HEAD"), cancellable = true)
-    private void NT$onDrawChart(PoseStack poseStack, FrameTimer frameTimer, int startX, int width, boolean drawForFps, CallbackInfo callback)
+    private void NT$onDrawChart(GuiGraphics graphics, FrameTimer frameTimer, int startX, int width, boolean drawForFps, CallbackInfo callback)
     {
         TweakVersion.Generic debug = ModConfig.Candy.getDebugScreen();
         TweakType.DebugChart chart = ModConfig.Candy.getDebugChart();
@@ -402,10 +369,10 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
         int height = this.minecraft.getWindow().getGuiScaledHeight();
         int color = isOld ? -1876951040 : -1873784752;
 
-        GuiComponent.fill(poseStack, startX, height - 60, startX + endX, height, color);
+        graphics.fill(startX, height - 60, startX + endX, height, color);
 
         if (isOld)
-            GuiComponent.fill(poseStack, startX, height - 32, startX + endX, height - 15, -1879048192);
+            graphics.fill(startX, height - 32, startX + endX, height - 15, -1879048192);
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         RenderSystem.enableBlend();
@@ -440,17 +407,17 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
 
         if (isModern)
         {
-            GuiComponent.fill(poseStack, startX + 1, height - 30 + 1, startX + 14, height - 30 + 10, -1873784752);
-            this.font.draw(poseStack, "60 FPS", (float) (startX + 2), (float) (height - 30 + 2), 0xE0E0E0);
-            GuiComponent.hLine(poseStack, startX, startX + endX - 1, height - 30, -1);
+            graphics.fill(startX + 1, height - 30 + 1, startX + 14, height - 30 + 10, -1873784752);
+            graphics.drawString(this.font, "60 FPS", startX + 2, height - 30 + 2, 0xE0E0E0, false);
+            graphics.hLine(startX, startX + endX - 1, height - 30, -1);
 
-            GuiComponent.fill(poseStack, startX + 1, height - 60 + 1, startX + 14, height - 60 + 10, -1873784752);
-            this.font.draw(poseStack, "30 FPS", (float) (startX + 2), (float) (height - 60 + 2), 0xE0E0E0);
+            graphics.fill(startX + 1, height - 60 + 1, startX + 14, height - 60 + 10, -1873784752);
+            graphics.drawString(this.font, "30 FPS", startX + 2, height - 60 + 2, 0xE0E0E0, false);
 
-            GuiComponent.hLine(poseStack, startX, startX + endX - 1, height - 60, -1);
-            GuiComponent.hLine(poseStack, startX, startX + endX - 1, height - 1, -1);
-            GuiComponent.vLine(poseStack, startX, height - 60, height, -1);
-            GuiComponent.vLine(poseStack, startX + endX - 1, height - 60, height, -1);
+            graphics.hLine(startX, startX + endX - 1, height - 60, -1);
+            graphics.hLine(startX, startX + endX - 1, height - 1, -1);
+            graphics.vLine(startX, height - 60, height, -1);
+            graphics.vLine(startX + endX - 1, height - 60, height, -1);
         }
 
         int limit = this.minecraft.options.framerateLimit().get();
@@ -459,9 +426,9 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
             int fpsLine = height - 1 - (int) (1800.0 / (double) limit);
 
             if (isOld)
-                GuiComponent.hLine(poseStack, startX, startX + endX - 1, fpsLine, -65536);
+                graphics.hLine(startX, startX + endX - 1, fpsLine, -65536);
             else
-                GuiComponent.hLine(poseStack, startX + 1, startX + endX - 2, fpsLine, -65536);
+                graphics.hLine(startX + 1, startX + endX - 2, fpsLine, -65536);
         }
 
         if (isModern)
@@ -470,9 +437,9 @@ public abstract class DebugScreenOverlayMixin extends GuiComponent
             String average = avg / (long) endX + " ms avg";
             String minimum = min + " ms max";
 
-            this.font.drawShadow(poseStack, maxed, (float) (startX + 2), (float) (height - 70 - this.font.lineHeight), 0xFFFFFF);
-            this.font.drawShadow(poseStack, average, (float) (startX + 2), (float) (height - 60 - this.font.lineHeight), 0xFFFFFF);
-            this.font.drawShadow(poseStack, minimum, (float) (startX + 2), (float) (height - 80 - this.font.lineHeight), 0xFFFFFF);
+            graphics.drawString(this.font, maxed, startX + 2, height - 70 - this.font.lineHeight, 0xFFFFFF, true);
+            graphics.drawString(this.font, average, startX + 2, height - 60 - this.font.lineHeight, 0xFFFFFF, true);
+            graphics.drawString(this.font, minimum, startX + 2, height - 80 - this.font.lineHeight, 0xFFFFFF, true);
         }
 
         RenderSystem.enableDepthTest();

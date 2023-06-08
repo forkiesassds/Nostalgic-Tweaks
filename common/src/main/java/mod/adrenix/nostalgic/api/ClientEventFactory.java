@@ -1,9 +1,9 @@
 package mod.adrenix.nostalgic.api;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.api.event.HudEvent;
 import mod.adrenix.nostalgic.util.common.function.QuadFunction;
 import mod.adrenix.nostalgic.util.common.function.QuintFunction;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * An abstract client API class that houses event classes which keep track of event factories defined in each mod
@@ -36,13 +36,13 @@ public abstract class ClientEventFactory
         /**
          * An event class constructor pointer. This is defined by the mod loader implementation.
          */
-        private QuintFunction<Integer, Integer, Integer, Integer, PoseStack, HudEvent> factory;
+        private QuintFunction<Integer, Integer, Integer, Integer, GuiGraphics, HudEvent> factory;
 
         /**
          * Register the event class constructor pointer.
          * @param factory The constructor for the event.
          */
-        public void register(QuintFunction<Integer, Integer, Integer, Integer, PoseStack, HudEvent> factory)
+        public void register(QuintFunction<Integer, Integer, Integer, Integer, GuiGraphics, HudEvent> factory)
         {
             this.factory = factory;
         }
@@ -53,12 +53,12 @@ public abstract class ClientEventFactory
          * @param y Where the icons start on the y-axis.
          * @param index The current icon index (zero based) for the row.
          * @param rowIndex The current row index (zero based) for hearts.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          * @return A new hud event instance.
          */
-        public HudEvent create(int x, int y, int index, int rowIndex, PoseStack poseStack)
+        public HudEvent create(int x, int y, int index, int rowIndex, GuiGraphics graphics)
         {
-            return this.factory.apply(x, y, index, rowIndex, poseStack);
+            return this.factory.apply(x, y, index, rowIndex, graphics);
         }
     }
 
@@ -70,13 +70,13 @@ public abstract class ClientEventFactory
         /**
          * An event class constructor pointer. This is defined by the mod loader implementation.
          */
-        private QuadFunction<Integer, Integer, Integer, PoseStack, HudEvent> factory;
+        private QuadFunction<Integer, Integer, Integer, GuiGraphics, HudEvent> factory;
 
         /**
          * Register the event class constructor pointer.
          * @param factory The constructor for the event.
          */
-        public void register(QuadFunction<Integer, Integer, Integer, PoseStack, HudEvent> factory)
+        public void register(QuadFunction<Integer, Integer, Integer, GuiGraphics, HudEvent> factory)
         {
             this.factory = factory;
         }
@@ -86,12 +86,12 @@ public abstract class ClientEventFactory
          * @param x Where the icons start on the x-axis.
          * @param y Where the icons start on the y-axis.
          * @param index The current icon index (zero based) for the row.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          * @return A new hud event instance.
          */
-        public HudEvent create(int x, int y, int index, PoseStack poseStack)
+        public HudEvent create(int x, int y, int index, GuiGraphics graphics)
         {
-            return this.factory.apply(x, y, index, poseStack);
+            return this.factory.apply(x, y, index, graphics);
         }
     }
 

@@ -81,8 +81,9 @@ public class NostalgicLogoRenderer
         Window window = this.minecraft.getWindow();
         int scaleHeight = (int) (120 * window.getGuiScale());
         Matrix4f projectionMatrixCopy = new Matrix4f(RenderSystem.getProjectionMatrix());
+        VertexSorting vertexSortingCopy = RenderSystem.getVertexSorting();
 
-        RenderSystem.setProjectionMatrix(new Matrix4f().perspective(70.341F, window.getWidth() / (float) scaleHeight, 0.05F, 100.0F));
+        RenderSystem.setProjectionMatrix(new Matrix4f().perspective(70.341F, window.getWidth() / (float) scaleHeight, 0.05F, 100.0F), VertexSorting.DISTANCE_TO_ORIGIN);
         RenderSystem.viewport(0, window.getHeight() - scaleHeight, window.getWidth(), scaleHeight);
 
         PoseStack model = RenderSystem.getModelViewStack();
@@ -133,7 +134,7 @@ public class NostalgicLogoRenderer
             }
             else
             {
-                RenderSystem.setShader(GameRenderer::getBlockShader);
+                RenderSystem.setShader(GameRenderer::getRendertypeSolidShader);
                 RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
             }
 
@@ -168,7 +169,7 @@ public class NostalgicLogoRenderer
         }
 
         RenderSystem.disableBlend();
-        RenderSystem.setProjectionMatrix(projectionMatrixCopy);
+        RenderSystem.setProjectionMatrix(projectionMatrixCopy, vertexSortingCopy);
         RenderSystem.viewport(0, 0, window.getWidth(), window.getHeight());
         model.setIdentity();
         model.translate(0, 0, -2000);

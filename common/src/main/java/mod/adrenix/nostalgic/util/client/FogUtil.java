@@ -41,7 +41,7 @@ public abstract class FogUtil
      */
     public static boolean isOverworld(Camera camera)
     {
-        return camera.getEntity().getLevel().dimension() == Level.OVERWORLD;
+        return camera.getEntity().level().dimension() == Level.OVERWORLD;
     }
 
     /**
@@ -49,7 +49,7 @@ public abstract class FogUtil
      * @param camera The game's camera.
      * @return Whether the camera entity is in the nether dimension.
      */
-    public static boolean isNether(Camera camera) { return camera.getEntity().getLevel().dimension() == Level.NETHER; }
+    public static boolean isNether(Camera camera) { return camera.getEntity().level().dimension() == Level.NETHER; }
 
     /**
      * Checks if the camera is in some type of fluid.
@@ -614,7 +614,7 @@ public abstract class FogUtil
          * @param entity The entity to get a y-level from.
          * @return The entity's current y-level as a <code>double</code>.
          */
-        public static double getYLevel(Entity entity) { return entity.getY() - entity.level.getMinBuildHeight(); }
+        public static double getYLevel(Entity entity) { return entity.getY() - entity.level().getMinBuildHeight(); }
 
         /**
          * Checks if cave/void fog should be rendered. This is controlled by tweaks and other level environmental factors.
@@ -647,7 +647,7 @@ public abstract class FogUtil
          */
         public static int getSkylight(Entity entity)
         {
-            return WorldCommonUtil.getBrightness(entity.level, LightLayer.SKY, entity.blockPosition());
+            return WorldCommonUtil.getBrightness(entity.level(), LightLayer.SKY, entity.blockPosition());
         }
 
         /**
@@ -657,7 +657,7 @@ public abstract class FogUtil
          */
         public static boolean canSeeSky(Camera camera)
         {
-            return camera.getEntity().level.canSeeSky(camera.getBlockPosition());
+            return camera.getEntity().level().canSeeSky(camera.getBlockPosition());
         }
 
         /**
@@ -670,7 +670,7 @@ public abstract class FogUtil
         {
             int encroachment = (int) ((1 - (ModConfig.Candy.getVoidFogEncroach() / 100.0F)) * 15);
             int brightness = ModConfig.Candy.shouldLightRemoveVoidFog() ?
-                entity.level.getMaxLocalRawBrightness(entity.blockPosition()) :
+                entity.level().getMaxLocalRawBrightness(entity.blockPosition()) :
                 getSkylight(entity)
             ;
 

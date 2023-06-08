@@ -1,10 +1,10 @@
 package mod.adrenix.nostalgic.mixin.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.mixin.widen.AbstractContainerScreenAccessor;
-import mod.adrenix.nostalgic.util.common.LangUtil;
 import mod.adrenix.nostalgic.util.client.GuiUtil;
+import mod.adrenix.nostalgic.util.common.LangUtil;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CraftingScreen;
 import net.minecraft.network.chat.Component;
@@ -32,15 +32,15 @@ public abstract class CraftingScreenMixin extends AbstractContainerScreen<Crafti
      * Controlled by the old crafting table screen tweak.
      */
     @Override
-    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY)
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
         if (ModConfig.Candy.oldCraftingScreen())
         {
-            this.font.draw(poseStack, this.title, 28.0F, 6.0F, 0x404040);
-            this.font.draw(poseStack, Component.translatable(LangUtil.Vanilla.INVENTORY), 8.0F, 72.0F, 0x404040);
+            graphics.drawString(this.font, this.title, 28, 6, 0x404040, false);
+            graphics.drawString(this.font, Component.translatable(LangUtil.Vanilla.INVENTORY), 8, 72, 0x404040, false);
         }
         else
-            super.renderLabels(poseStack, mouseX, mouseY);
+            super.renderLabels(graphics, mouseX, mouseY);
     }
 
     /* Injections */

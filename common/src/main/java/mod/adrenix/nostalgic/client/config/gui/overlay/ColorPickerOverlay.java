@@ -5,9 +5,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import mod.adrenix.nostalgic.client.config.gui.widget.slider.ColorSlider;
 import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
-import mod.adrenix.nostalgic.util.common.*;
 import mod.adrenix.nostalgic.util.client.RenderUtil;
+import mod.adrenix.nostalgic.util.common.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -162,13 +163,13 @@ public class ColorPickerOverlay extends Overlay
 
     /**
      * Handler method for overlay rendering.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick A change in game frame time.
      */
     @Override
-    public void onRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void onRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         Minecraft minecraft = Minecraft.getInstance();
         Screen screen = minecraft.screen;
@@ -190,7 +191,7 @@ public class ColorPickerOverlay extends Overlay
 
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder buffer = tesselator.getBuilder();
-        Matrix4f matrix = poseStack.last().pose();
+        Matrix4f matrix = graphics.pose().last().pose();
 
         RenderSystem.depthFunc(515);
         RenderSystem.disableDepthTest();
@@ -198,9 +199,9 @@ public class ColorPickerOverlay extends Overlay
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
         RenderSystem.setShaderTexture(0, TextureLocation.COLOR_PICKER);
 
-        blit(poseStack, startX, startY, 0, 0, this.width, this.height);
-        blit(poseStack, closeX, closeY, this.isOverClose ? U_CLOSE_ON : U_CLOSE_OFF, this.isOverClose ? V_CLOSE_ON : V_CLOSE_OFF, CLOSE_WIDTH, CLOSE_HEIGHT);
-        blit(poseStack, hintX, hintY, isOverHint ? U_HINT_ON : U_HINT_OFF, isOverHint ? V_HINT_ON : V_HINT_OFF, HINT_SQUARE, HINT_SQUARE);
+        graphics.blit(TextureLocation.COLOR_PICKER, startX, startY, 0, 0, this.width, this.height);
+        graphics.blit(TextureLocation.COLOR_PICKER, closeX, closeY, this.isOverClose ? U_CLOSE_ON : U_CLOSE_OFF, this.isOverClose ? V_CLOSE_ON : V_CLOSE_OFF, CLOSE_WIDTH, CLOSE_HEIGHT);
+        graphics.blit(TextureLocation.COLOR_PICKER, hintX, hintY, isOverHint ? U_HINT_ON : U_HINT_OFF, isOverHint ? V_HINT_ON : V_HINT_OFF, HINT_SQUARE, HINT_SQUARE);
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
@@ -225,7 +226,7 @@ public class ColorPickerOverlay extends Overlay
         sliders.last().pose().translate(new Vector3f(0.0F, 0.0F, 1.0F));
 
         for (AbstractWidget widget : this.widgets)
-            widget.render(sliders, mouseX, mouseY, partialTick);
+            widget.render(graphics, mouseX, mouseY, partialTick);
 
         // Render borders around color sliders
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -242,10 +243,12 @@ public class ColorPickerOverlay extends Overlay
 
         // Text needs to be rendered last since it will interfere with alpha rendering
         int color = this.isMouseOverTitle(mouseX, mouseY) && !this.isOverClose && !isOverHint ? 0xFFF65B : 0xFFFFFF;
-        drawString(Component.translatable(LangUtil.Gui.OVERLAY_COLOR), startX + 19, startY + 5, color);
+        graphics.drawString(minecraft.font, Component.translatable(LangUtil.Gui.OVERLAY_COLOR), startX + 19, startY + 5, color);
 
         // Render dragging and tooltip hints
         boolean isOverIcon = MathUtil.isWithinBox(mouseX, mouseY, this.x + 7, this.y + 3, 8, 9);
+
+        PoseStack poseStack = graphics.pose();
 
         poseStack.pushPose();
         poseStack.translate(0.0D, 0.0D, 500.0D);
@@ -253,13 +256,13 @@ public class ColorPickerOverlay extends Overlay
         if (isOverIcon)
         {
             List<Component> tooltip = TextUtil.Wrap.tooltip(Component.translatable(LangUtil.Gui.OVERLAY_DRAG_TIP), 36);
-            screen.renderComponentTooltip(poseStack, tooltip, mouseX, mouseY);
+            graphics.renderComponentTooltip(minecraft.font, tooltip, mouseX, mouseY);
         }
 
         if (isOverHint && this.hint)
         {
             List<Component> tooltip = TextUtil.Wrap.tooltip(Component.translatable(LangUtil.Gui.OVERLAY_COLOR_HINT), 36);
-            screen.renderComponentTooltip(poseStack, tooltip, mouseX, mouseY);
+            graphics.renderComponentTooltip(minecraft.font, tooltip, mouseX, mouseY);
         }
 
         poseStack.popPose();

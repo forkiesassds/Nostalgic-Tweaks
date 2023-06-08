@@ -3,17 +3,17 @@ package mod.adrenix.nostalgic.client.config.gui.overlay;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.util.common.MathUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * All overlay instances will be instances of GUI components and will implement overlay event methods.
  */
 
-public abstract class Overlay extends GuiComponent implements OverlayEvents
+public abstract class Overlay implements OverlayEvents
 {
     /* Static Fields */
 
@@ -37,7 +37,7 @@ public abstract class Overlay extends GuiComponent implements OverlayEvents
      *
      * @return An overlay instance.
      */
-    @CheckForNull
+    @CheckReturnValue
     public static Overlay getVisible() { return Overlay.visible; }
 
     /*
@@ -163,15 +163,15 @@ public abstract class Overlay extends GuiComponent implements OverlayEvents
 
     /**
      * Sends a render event to the current overlay session.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick A change in game frame time.
      */
-    public static void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public static void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (Overlay.visible != null)
-            Overlay.visible.onRender(poseStack, mouseX, mouseY, partialTick);
+            Overlay.visible.onRender(graphics, mouseX, mouseY, partialTick);
     }
 
     /*
@@ -199,25 +199,25 @@ public abstract class Overlay extends GuiComponent implements OverlayEvents
      * @param y The starting y-position of text rendering.
      * @param color The default base color for text rendering.
      */
-    protected static void drawString(Component component, int x, int y, int color)
+    protected void drawString(GuiGraphics graphics, Component component, int x, int y, int color)
     {
         PoseStack poseStack = new PoseStack();
 
         poseStack.pushPose();
         poseStack.last().pose().translate(new Vector3f(0.0F, 0.0F, Z_OFFSET + 1.0F));
 
-        drawString(poseStack, Minecraft.getInstance().font, component, x, y, color);
+        graphics.drawString(Minecraft.getInstance().font, component, x, y, color, true);
 
         poseStack.popPose();
     }
 
     /**
-     * Override method {@link Overlay#drawString(Component, int, int, int)} that uses white (0xFFFFFF) as the base color.
+     * Override method {@link Overlay#drawString(GuiGraphics, Component, int, int, int)} that uses white (0xFFFFFF) as the base color.
      * @param component A component that will be drawn to the screen.
      * @param x The starting x-position of text rendering.
      * @param y The starting y-position of text rendering.
      */
-    protected static void drawString(Component component, int x, int y) { drawString(component, x, y, 0xFFFFFF); }
+    protected void drawString(GuiGraphics graphics, Component component, int x, int y) { drawString(graphics, component, x, y, 0xFFFFFF); }
 
     /*
        Overlay Extension & Interface Overrides

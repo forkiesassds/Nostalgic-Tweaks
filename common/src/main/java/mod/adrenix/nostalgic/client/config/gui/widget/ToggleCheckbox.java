@@ -1,13 +1,12 @@
 package mod.adrenix.nostalgic.client.config.gui.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListScreen;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.util.common.TextUtil;
 import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -131,27 +130,25 @@ public class ToggleCheckbox extends Checkbox
 
     /**
      * Handler method for rendering a tooltip for this toggle checkbox.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      */
-    public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY)
+    public void renderToolTip(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        this.screen.renderComponentTooltip(poseStack, TextUtil.Wrap.tooltip(this.tooltip, this.tooltipWidth), mouseX, mouseY);
+        graphics.renderComponentTooltip(Minecraft.getInstance().font, TextUtil.Wrap.tooltip(this.tooltip, this.tooltipWidth), mouseX, mouseY);
     }
 
     /**
      * Handler method for when the checkbox widget is rendered.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        RenderSystem.setShaderTexture(0, TextureLocation.WIDGETS);
-
         Font font = Minecraft.getInstance().font;
         int uOffset = 0;
         int vOffset = 103;
@@ -166,15 +163,15 @@ public class ToggleCheckbox extends Checkbox
         else if (this.selected())
             vOffset = 83;
 
-        Screen.blit(poseStack, this.getX(), this.getY(), uOffset, vOffset, uWidth, vHeight);
-        ToggleCheckbox.drawString(poseStack, font, this.getMessage(), this.getX() + 24, this.getY() + (this.height - 8) / 2, 0xFFFFFF);
+        graphics.blit(TextureLocation.WIDGETS, this.getX(), this.getY(), uOffset, vOffset, uWidth, vHeight);
+        graphics.drawString(font, this.getMessage(), this.getX() + 24, this.getY() + (this.height - 8) / 2, 0xFFFFFF);
 
         if (this.isMouseOver(mouseX, mouseY) && this.tooltip != null)
         {
             if (this.screen instanceof ListScreen listScreen)
                 listScreen.renderOverlayTooltips.add(this::renderToolTip);
             else
-                this.renderToolTip(poseStack, mouseX, mouseY);
+                this.renderToolTip(graphics, mouseX, mouseY);
         }
     }
 }

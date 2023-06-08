@@ -6,7 +6,6 @@
   "priority": 1001,
   "client": [
     "client.BlockRenderDispatcherForgeMixin",
-    "client.ClientPacketListenerForgeMixin",
     "client.ForgeGuiMixin",
     "client.HumanoidArmorLayerForgeMixin",
     "client.ItemColorsForgeMixin",

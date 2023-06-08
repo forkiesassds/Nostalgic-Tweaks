@@ -1,17 +1,18 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.button;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigScreen;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigWidgets;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
 import mod.adrenix.nostalgic.util.client.RunUtil;
-import mod.adrenix.nostalgic.util.common.*;
+import mod.adrenix.nostalgic.util.common.ClassUtil;
+import mod.adrenix.nostalgic.util.common.MathUtil;
+import mod.adrenix.nostalgic.util.common.TextUtil;
+import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
@@ -56,16 +57,14 @@ public class TooltipButton extends Button
 
     /**
      * Handler method for tooltip button rendering.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        RenderSystem.setShaderTexture(0, TextureLocation.WIDGETS);
-
         List<Component> tooltip = TextUtil.Wrap.tooltip(Component.translatable(this.tweak.getTooltipKey()), 38);
         Minecraft minecraft = Minecraft.getInstance();
 
@@ -79,12 +78,12 @@ public class TooltipButton extends Button
         int uWidth = 12;
         int vHeight = 14;
 
-        Screen.blit(poseStack, startX, startY, 0, 0, uWidth, vHeight);
+        graphics.blit(TextureLocation.WIDGETS, startX, startY, 0, 0, uWidth, vHeight);
 
         boolean isOverBubble = MathUtil.isWithinBox(mouseX, mouseY, startX, startY, uWidth, vHeight);
         boolean isWithinList = ConfigWidgets.isInsideRowList(mouseY);
 
         if (isOverBubble && isWithinList)
-            screen.renderLast.add(() -> screen.renderComponentTooltip(poseStack, tooltip, mouseX, mouseY));
+            screen.renderLast.add(() -> graphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY));
     }
 }

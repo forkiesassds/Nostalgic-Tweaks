@@ -1,6 +1,6 @@
 package mod.adrenix.nostalgic.client.config.gui.overlay;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * Each overlay may choose to handle these events and perform extra logic on top of the abstract overlay class.
@@ -84,10 +84,10 @@ public interface OverlayEvents
 
     /**
      * Handler method for when the overlay is rendered.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
-    void onRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick);
+    void onRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick);
 }

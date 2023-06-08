@@ -1,7 +1,7 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.slider;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -108,15 +108,15 @@ public class ColorSlider extends AbstractSliderButton
 
     /**
      * Handler method for rendering a color slider widget.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The x-position of the mouse.
      * @param mouseY The y-position of the mouse.
      * @param partialTick The change in frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         this.updateMessage();
-        super.render(poseStack, mouseX, mouseY, partialTick);
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 }

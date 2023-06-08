@@ -1,13 +1,10 @@
 package mod.adrenix.nostalgic.mixin.client.renderer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.util.client.ItemClientUtil;
 import mod.adrenix.nostalgic.util.common.ClassUtil;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -23,11 +20,7 @@ import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.awt.*;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererFirstMixin
@@ -79,41 +72,5 @@ public abstract class ItemRendererFirstMixin
         }
 
         this.renderModelLists(model, itemStack, combinedLight, combinedOverlay, poseStack, vertexConsumer);
-    }
-
-    /**
-     * Simulates the old durability bar colors. Controlled by the old damage colors tweak.
-     */
-    @Inject(
-        method = "renderGuiItemDecorations(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V",
-        at = @At(value = "RETURN")
-    )
-    private void NT$onRenderGuiItemDecorations(PoseStack poseStack, Font font, ItemStack itemStack, int x, int y, String text, CallbackInfo callback)
-    {
-        if (itemStack.isEmpty())
-            return;
-
-        if (ModConfig.Candy.oldDurabilityColors() && itemStack.isBarVisible())
-        {
-            RenderSystem.disableDepthTest();
-
-            double health = (double) itemStack.getDamageValue() / (double) itemStack.getMaxDamage();
-            double healthRemaining = ((double) itemStack.getDamageValue() * 255.0D) / (double) itemStack.getMaxDamage();
-
-            int width = Math.round(13.0F - (float) health * 13.0F);
-            int damage = (int) Math.round(255.0D - healthRemaining);
-
-            Color damageForegroundColor = new Color(255 - damage << 16 | damage << 8);
-            Color damageBackgroundColor = new Color((255 - damage) / 4 << 16 | 0x3F00);
-
-            int startX = x + 2;
-            int startY = y + 13;
-
-            GuiComponent.fill(poseStack, startX, startY, startX + 13, startY + 2, 0xFF000000);
-            GuiComponent.fill(poseStack, startX, startY, startX + 12, startY + 1, damageBackgroundColor.getRGB());
-            GuiComponent.fill(poseStack, startX, startY, startX + width, startY + 1, damageForegroundColor.getRGB());
-
-            RenderSystem.enableDepthTest();
-        }
     }
 }

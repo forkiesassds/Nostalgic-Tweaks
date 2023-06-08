@@ -1,12 +1,11 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.group;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.row.ConfigRowBuild;
 import mod.adrenix.nostalgic.util.common.LangUtil;
 import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
@@ -108,13 +107,13 @@ public class RadioGroup<E extends Enum<E>> extends AbstractWidget
 
     /**
      * Handler method for rendering a radio group.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         ArrayList<ConfigRowList.Row> rows = this.getRows();
         ArrayList<Integer> found = new ArrayList<>();
@@ -135,7 +134,7 @@ public class RadioGroup<E extends Enum<E>> extends AbstractWidget
     /* Required Widget Overrides */
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) { }
@@ -209,16 +208,14 @@ public class RadioGroup<E extends Enum<E>> extends AbstractWidget
 
         /**
          * Handler method for individual radio rendering.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          * @param mouseX The current x-position of the mouse.
          * @param mouseY The current y-position of the mouse.
          * @param partialTick The change in game frame time.
          */
         @Override
-        public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+        public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
         {
-            RenderSystem.setShaderTexture(0, TextureLocation.WIDGETS);
-
             Minecraft minecraft = Minecraft.getInstance();
             Screen screen = minecraft.screen;
 
@@ -238,18 +235,18 @@ public class RadioGroup<E extends Enum<E>> extends AbstractWidget
             else if (this.isSelected())
                 vOffset = 63;
 
-            Screen.blit(poseStack, this.getX(), this.getY(), uOffset, vOffset, uWidth, vHeight);
+            graphics.blit(TextureLocation.WIDGETS, this.getX(), this.getY(), uOffset, vOffset, uWidth, vHeight);
 
             Component defaultText = Component.literal(this.isDefault() ? String.format(" (%s)", Component.translatable(LangUtil.Gui.DEFAULT).getString()) : "");
             Component optionText = Component.literal(this.label.apply(this.value).getString() + defaultText.getString());
 
-            RadioGroup.drawString(poseStack, Minecraft.getInstance().font, optionText, this.getX() + 24, this.getY() + (this.height - 8) / 2, 0xFFFFFF);
+            graphics.drawString(Minecraft.getInstance().font, optionText, this.getX() + 24, this.getY() + (this.height - 8) / 2, 0xFFFFFF);
         }
 
         /* Required Widget Overrides */
 
         @Override
-        public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+        public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
         @Override
         protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}

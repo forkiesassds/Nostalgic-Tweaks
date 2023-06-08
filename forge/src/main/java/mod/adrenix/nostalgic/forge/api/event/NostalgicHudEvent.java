@@ -1,8 +1,8 @@
 package mod.adrenix.nostalgic.forge.api.event;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.api.ClientEventFactory;
 import mod.adrenix.nostalgic.api.event.HudEvent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -20,7 +20,7 @@ public class NostalgicHudEvent extends Event implements HudEvent
     /* Implementation */
 
     @Override
-    public PoseStack getPoseStack() { return this.poseStack; }
+    public GuiGraphics getGraphics() { return this.graphics; }
 
     @Override
     public void setX(int x) { this.x = x; }
@@ -74,11 +74,11 @@ public class NostalgicHudEvent extends Event implements HudEvent
          * @param y Where the hearts start on the y-axis.
          * @param index The current icon index (zero based) for the row.
          * @param rowIndex The current row index (zero based) for hearts.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          */
-        public RenderHeart(int x, int y, int index, int rowIndex, PoseStack poseStack)
+        public RenderHeart(int x, int y, int index, int rowIndex, GuiGraphics graphics)
         {
-            super(x, y, index, poseStack);
+            super(x, y, index, graphics);
 
             this.rowIndex = rowIndex;
         }
@@ -101,9 +101,9 @@ public class NostalgicHudEvent extends Event implements HudEvent
          * @param x Where the food icons start on the x-axis.
          * @param y Where the food icons start on the y-axis.
          * @param index The current icon index (zero based) for the row.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          */
-        public RenderFood(int x, int y, int index, PoseStack poseStack) { super(x, y, index, poseStack); }
+        public RenderFood(int x, int y, int index, GuiGraphics graphics) { super(x, y, index, graphics); }
     }
 
     /**
@@ -117,9 +117,9 @@ public class NostalgicHudEvent extends Event implements HudEvent
          * @param x Where the armor icons start on the x-axis.
          * @param y Where the armor icons start on the y-axis.
          * @param index The current icon index (zero based) for the row.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          */
-        public RenderArmor(int x, int y, int index, PoseStack poseStack) { super(x, y, index, poseStack); }
+        public RenderArmor(int x, int y, int index, GuiGraphics graphics) { super(x, y, index, graphics); }
     }
 
     /**
@@ -133,24 +133,24 @@ public class NostalgicHudEvent extends Event implements HudEvent
          * @param x Where the air bubble icons start on the x-axis.
          * @param y Where the air bubble icons start on the y-axis.
          * @param index The current icon index (zero based) for the row.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          */
-        public RenderBubble(int x, int y, int index, PoseStack poseStack) { super(x, y, index, poseStack); }
+        public RenderBubble(int x, int y, int index, GuiGraphics graphics) { super(x, y, index, graphics); }
     }
 
     /* Common Event Structure */
 
-    private final PoseStack poseStack;
+    private final GuiGraphics graphics;
     private final int index;
     private boolean isCanceled;
     private int x;
     private int y;
 
-    private NostalgicHudEvent(int x, int y, int index, PoseStack poseStack)
+    private NostalgicHudEvent(int x, int y, int index, GuiGraphics graphics)
     {
         this.x = x;
         this.y = y;
         this.index = index;
-        this.poseStack = poseStack;
+        this.graphics = graphics;
     }
 }

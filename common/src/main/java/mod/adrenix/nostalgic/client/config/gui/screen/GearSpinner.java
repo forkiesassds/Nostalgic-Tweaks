@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.NostalgicTweaks;
 import mod.adrenix.nostalgic.util.common.TimeWatcher;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
@@ -54,27 +54,28 @@ public class GearSpinner
 
     /**
      * Render the spinning gear logo.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param scale The scale of the gear.
      * @param x The starting x-position of where to render the gear logo.
      * @param y The starting y-position of where to render the gear logo.
      */
-    public void render(PoseStack poseStack, float scale, int x, int y)
+    public void render(GuiGraphics graphics, float scale, int x, int y)
     {
         if (this.frame > 15)
             this.frame = 0;
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, GEAR_RESOURCE.get(this.frame));
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         float gearScale = scale / 512.0F;
+
+        PoseStack poseStack = graphics.pose();
 
         poseStack.pushPose();
         poseStack.translate(x, y, 1.0D);
         poseStack.scale(gearScale, gearScale, gearScale);
 
-        GuiComponent.blit(poseStack, 0, 0, 0, 0, 512, 512, 512, 512);
+        graphics.blit(GEAR_RESOURCE.get(this.frame), 0, 0, 0, 0, 512, 512, 512, 512);
 
         poseStack.popPose();
 

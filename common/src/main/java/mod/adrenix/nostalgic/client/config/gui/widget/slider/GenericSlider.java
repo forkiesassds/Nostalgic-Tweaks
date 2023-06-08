@@ -1,7 +1,6 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.slider;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.annotation.TweakGui;
 import mod.adrenix.nostalgic.client.config.gui.overlay.Overlay;
 import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
@@ -11,12 +10,11 @@ import mod.adrenix.nostalgic.common.config.tweak.Tweak;
 import mod.adrenix.nostalgic.util.common.LangUtil;
 import mod.adrenix.nostalgic.util.common.MathUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
-import javax.annotation.CheckForNull;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -35,7 +33,6 @@ public class GenericSlider extends AbstractSliderButton
     private final Consumer<Integer> setCurrent;
     private final Supplier<Integer> current;
 
-    @CheckForNull
     private final TweakGui.Slider sliderData;
 
     /* Constructors */
@@ -238,14 +235,14 @@ public class GenericSlider extends AbstractSliderButton
 
     /**
      * Handler method for rendering the background of this widget.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      */
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        super.renderWidget(poseStack, mouseX, mouseY, partialTick);
+        super.renderWidget(graphics, mouseX, mouseY, partialTick);
 
         // Render Hearts
 
@@ -254,15 +251,13 @@ public class GenericSlider extends AbstractSliderButton
             if (!this.active)
                 RenderSystem.setShaderColor(0.3F, 0.3F, 0.3F, 1.0F);
 
-            RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
-
             int x = this.getX() + (this.width / 2) - 45;
             int y = this.getY() + 6;
             int dx = x;
 
             for (int i = 0; i < 10; i++)
             {
-                GuiComponent.blit(poseStack, dx, y, 16, 0, 9, 9);
+                graphics.blit(SLIDER_LOCATION, dx, y, 16, 0, 9, 9);
                 dx += 9;
             }
 
@@ -272,11 +267,11 @@ public class GenericSlider extends AbstractSliderButton
             {
                 if (MathUtil.isOdd(i))
                 {
-                    GuiComponent.blit(poseStack, dx, y, 52, 0, 9, 9);
+                    graphics.blit(SLIDER_LOCATION, dx, y, 52, 0, 9, 9);
                     dx += 9;
                 }
                 else
-                    GuiComponent.blit(poseStack, dx, y, 61, 0, 9, 9);
+                    graphics.blit(SLIDER_LOCATION, dx, y, 61, 0, 9, 9);
             }
         }
     }

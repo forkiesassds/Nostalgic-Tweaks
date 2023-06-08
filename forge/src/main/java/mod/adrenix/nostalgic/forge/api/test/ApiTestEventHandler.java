@@ -103,6 +103,6 @@ public class ApiTestEventHandler
         event.setY(this.bubbleY);
 
         if (event.isExperienceBarOff())
-            RenderUtil.fill(event.getPoseStack(), 2.0F, 4.0F, 2.0F, 4.0F, 0xFFFF00FF);
+            RenderUtil.fill(event.getGraphics(), 2.0F, 4.0F, 2.0F, 4.0F, 0xFFFF00FF);
     }
 }

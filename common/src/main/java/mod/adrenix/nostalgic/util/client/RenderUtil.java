@@ -3,6 +3,7 @@ package mod.adrenix.nostalgic.util.client;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
@@ -58,20 +59,20 @@ public abstract class RenderUtil
      * Overload method for {@link RenderUtil#fill(BufferBuilder, Matrix4f, float, float, float, float, int)}. This
      * method does not require a buffer builder or a 4D matrix, but instead uses the current pose stack.
      *
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param leftX     Left starting position of the rectangle.
      * @param rightX    Right starting position of the rectangle.
      * @param topY      Top starting position of the rectangle.
      * @param bottomY   Bottom starting position of the rectangle.
      * @param argb      The ARGB color of the rectangle.
      */
-    public static void fill(PoseStack poseStack, float leftX, float rightX, float topY, float bottomY, int argb)
+    public static void fill(GuiGraphics graphics, float leftX, float rightX, float topY, float bottomY, int argb)
     {
         float z = 0.0F;
 
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder builder = tesselator.getBuilder();
-        Matrix4f matrix = poseStack.last().pose();
+        Matrix4f matrix = graphics.pose().last().pose();
 
         RenderSystem.enableBlend();
         RenderSystem.depthFunc(515);
@@ -92,7 +93,7 @@ public abstract class RenderUtil
      * Render a texture from a texture sheet (256x256).
      *
      * @param resource  A resource location that points to the texture sheet.
-     * @param poseStack The current pose stack.
+     * @param graphics  The current GuiGraphics object.
      * @param x         The x-position on the screen to place the texture.
      * @param y         The y-position on the screen to place the texture.
      * @param uOffset   The x-position of the texture on the texture sheet.
@@ -100,13 +101,13 @@ public abstract class RenderUtil
      * @param uWidth    The width of the texture on the texture sheet.
      * @param vHeight   The height of the texture on the texture sheet.
      */
-    public static void blit256(ResourceLocation resource, PoseStack poseStack, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight)
+    public static void blit256(ResourceLocation resource, GuiGraphics graphics, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight)
     {
         RenderSystem.setShaderTexture(0, resource);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
 
         BufferBuilder builder = Tesselator.getInstance().getBuilder();
-        Matrix4f matrix = poseStack.last().pose();
+        Matrix4f matrix = graphics.pose().last().pose();
 
         float x2 = x + uWidth;
         float y2 = y + vHeight;

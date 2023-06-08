@@ -5,10 +5,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import mod.adrenix.nostalgic.NostalgicTweaks;
 import mod.adrenix.nostalgic.client.config.ClientConfig;
-import mod.adrenix.nostalgic.client.config.gui.toast.ToastNotification;
 import mod.adrenix.nostalgic.client.config.gui.overlay.*;
 import mod.adrenix.nostalgic.client.config.gui.screen.SettingsScreen;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigScreen;
+import mod.adrenix.nostalgic.client.config.gui.toast.ToastNotification;
 import mod.adrenix.nostalgic.client.config.gui.widget.button.*;
 import mod.adrenix.nostalgic.client.config.gui.widget.group.ItemGroup;
 import mod.adrenix.nostalgic.client.config.gui.widget.group.TextGroup;
@@ -34,6 +34,7 @@ import mod.adrenix.nostalgic.util.common.PacketUtil;
 import mod.adrenix.nostalgic.util.common.function.TriConsumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -63,7 +64,7 @@ public abstract class ListScreen extends ConfigScreen
 {
     /* Fields */
 
-    public final ArrayList<TriConsumer<PoseStack, Integer, Integer>> renderOverlayTooltips = new ArrayList<>();
+    public final ArrayList<TriConsumer<GuiGraphics, Integer, Integer>> renderOverlayTooltips = new ArrayList<>();
 
     protected final Set<ListFilter> filters = new HashSet<>();
     protected final ListInclude onlyInclude;
@@ -892,12 +893,12 @@ public abstract class ListScreen extends ConfigScreen
     /**
      * Renders a widget.
      * @param widget The widget to render.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
-    private void renderWidget(Renderable widget, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    private void renderWidget(Renderable widget, GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (widget instanceof AbstractWidget button)
         {
@@ -937,53 +938,53 @@ public abstract class ListScreen extends ConfigScreen
             button.active = !Overlay.isOpened() && this.isListSavable();
 
         // Render the widget to the screen
-        widget.render(poseStack, mouseX, mouseY, partialTick);
+        widget.render(graphics, mouseX, mouseY, partialTick);
     }
 
     /**
      * Override for rendering the list screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         // Background rendering
         if (this.minecraft.level != null)
-            this.fillGradient(poseStack, 0, 0, this.width, this.height, 839913488, 16777216);
+            graphics.fillGradient(0, 0, this.width, this.height, 839913488, 16777216);
         else
-            this.renderDirtBackground(poseStack);
+            this.renderDirtBackground(graphics);
 
-        this.fillGradient(poseStack, 0, 0, this.width, this.height, -1072689136, -804253680);
-        this.fillGradient(poseStack, 0, 0, this.width, this.height, 1744830464, 1744830464);
+        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        graphics.fillGradient(0, 0, this.width, this.height, 1744830464, 1744830464);
 
         // Reset scrollbar position without flashing
         if (this.scrollAmountCache > 0.0D)
         {
-            this.getConfigRowList().render(poseStack, mouseX, mouseY, partialTick);
+            this.getConfigRowList().render(graphics, mouseX, mouseY, partialTick);
             this.getConfigRowList().setScrollAmount(this.scrollAmountCache);
             this.scrollAmountCache = 0.0D;
         }
 
         // Row list rendering
-        this.getConfigRowList().render(poseStack, mouseX, mouseY, partialTick);
+        this.getConfigRowList().render(graphics, mouseX, mouseY, partialTick);
         this.jumpToEntry(this.highlightItem);
 
         // Widget rendering
         for (Renderable widget : this.listWidgets)
-            this.renderWidget(widget, poseStack, mouseX, mouseY, partialTick);
+            this.renderWidget(widget, graphics, mouseX, mouseY, partialTick);
 
         // Mouse overlap highlight
         for (Renderable widget : this.listWidgets)
         {
             if (widget instanceof OverlapButton button && button.isMouseOver(mouseX, mouseY))
-                widget.render(poseStack, mouseX, mouseY, partialTick);
+                widget.render(graphics, mouseX, mouseY, partialTick);
         }
 
         // Screen title rendering
-        drawCenteredString(poseStack, this.font, this.title.getString(), this.width / 2, 8, 0xFFFFFF);
+        graphics.drawCenteredString(this.font, this.title.getString(), this.width / 2, 8, 0xFFFFFF);
 
         // Permission monitor
         Overlay overlay = Overlay.getVisible();
@@ -997,7 +998,7 @@ public abstract class ListScreen extends ConfigScreen
             Overlay.close();
 
         // Overlay rendering
-        Overlay.render(poseStack, mouseX, mouseY, partialTick);
+        Overlay.render(graphics, mouseX, mouseY, partialTick);
 
         // Render last runners
         if (!Overlay.isOpened())
@@ -1008,10 +1009,11 @@ public abstract class ListScreen extends ConfigScreen
             this.widgetProvider.searchBox.setFocused(false);
 
             // Translate on the z-axis for tooltips
+            PoseStack poseStack = graphics.pose();
             poseStack.pushPose();
             poseStack.translate(0.0D, 0.0D, 400.0D);
 
-            this.renderOverlayTooltips.forEach(tooltip -> tooltip.accept(poseStack, mouseX, mouseY));
+            this.renderOverlayTooltips.forEach(tooltip -> tooltip.accept(graphics, mouseX, mouseY));
 
             poseStack.popPose();
         }

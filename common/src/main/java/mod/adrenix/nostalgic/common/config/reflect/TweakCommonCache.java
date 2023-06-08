@@ -4,8 +4,8 @@ import com.google.common.base.Suppliers;
 import dev.architectury.platform.Platform;
 import mod.adrenix.nostalgic.common.config.annotation.TweakData;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.CheckReturnValue;
 
-import javax.annotation.CheckForNull;
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
@@ -51,14 +51,12 @@ public abstract class TweakCommonCache
      * Some tweaks may be associated with a custom list. These lists can be used by the server, so metadata is cached
      * here if it is present.
      */
-    @CheckForNull
     protected final TweakData.List list;
 
     /**
      * Some tweaks may be blocked from running if a certain mod is installed. This annotation provides an easy way to
      * define and change conflicts within a config without updating any logic instructions.
      */
-    @CheckForNull
     protected final TweakData.Conflict conflict;
 
     /* Common Constructor */
@@ -122,7 +120,7 @@ public abstract class TweakCommonCache
     /**
      * @return A tweak's list data if it is present.
      */
-    @CheckForNull
+    @CheckReturnValue
     public TweakData.List getList() { return this.list; }
 
     /**

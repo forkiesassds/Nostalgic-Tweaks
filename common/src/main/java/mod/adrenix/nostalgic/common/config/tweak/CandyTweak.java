@@ -161,7 +161,6 @@ public enum CandyTweak implements Tweak
     // Title Screen Candy
     OVERRIDE_TITLE_SCREEN,
     ALPHA_LOGO,
-    LOGO_OUTLINE,
     TITLE_REALMS,
     TITLE_BUTTON_LAYOUT,
     TITLE_MODS_BUTTON,

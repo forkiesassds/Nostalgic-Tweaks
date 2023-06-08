@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import javax.annotation.CheckForNull;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -49,7 +48,7 @@ public abstract class ItemModelGeneratorMixin
 
     /* Unique */
 
-    @CheckForNull @Unique private TextureAtlasSprite NT$atlasSprite = null;
+    @Unique private TextureAtlasSprite NT$atlasSprite = null;
 
     /* Injections */
 

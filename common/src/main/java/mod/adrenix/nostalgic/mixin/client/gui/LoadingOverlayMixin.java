@@ -8,11 +8,14 @@ import mod.adrenix.nostalgic.util.ModTracker;
 import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -39,21 +42,21 @@ public abstract class LoadingOverlayMixin
      * Prevents the title screen from rendering until the fade out is finished.
      * Controlled by the old overlay tweak.
      */
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"))
-    private void NT$onRenderTitleScreen(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
+    private void NT$onRenderTitleScreen(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         float fade = this.fadeOutStart > -1L ? (float) (Util.getMillis() - this.fadeOutStart) / 1000.0F : -1.0F;
 
         if (!isModified() || fade >= 2.0F)
-            screen.render(poseStack, mouseX, mouseY, partialTick);
+            screen.render(graphics, mouseX, mouseY, partialTick);
     }
 
     /**
      * Changes the shader color to be fully transparent before the modern overlay logo renders.
      * Controlled by the old overlay tweak.
      */
-    @ModifyArg(method = "render", index = 3, at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V"))
-    private float NT$onSetShaderColor(float vanilla)
+    @ModifyArg(method = "render", index = 3, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;setColor(FFFF)V"))
+    private float NT$onSetColor(float vanilla)
     {
         return isModified() ? 0.0F : vanilla;
     }
@@ -63,7 +66,7 @@ public abstract class LoadingOverlayMixin
      * Controlled by the old overlay tweak.
      */
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;disableBlend()V"))
-    private void NT$onRenderLogo(PoseStack poseStack, int mouseX, int mouseY, float partialTick, CallbackInfo callback)
+    private void NT$onRenderLogo(GuiGraphics graphics, int mouseX, int mouseY, float partialTick, CallbackInfo callback)
     {
         if (!isModified())
             return;
@@ -80,18 +83,18 @@ public abstract class LoadingOverlayMixin
             default -> MOJANG_STUDIOS_LOGO_LOCATION;
         };
 
-        RenderSystem.setShaderTexture(0, background);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        LoadingOverlay.blit(poseStack, 0, 0, width, height, 0, 0, 1, 1, 128, 128);
+        graphics.blit(background, 0, 0, width, height, 0, 0, 1, 1, 128, 128);
 
+        PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
         poseStack.scale(2.0F, 2.0F, 2.0F);
 
         int x = (int) ((width / 4.0) - (128 / 2));
         int y = (int) ((height / 4.0) - (128 / 2));
 
-        LoadingOverlay.blit(poseStack, x, y, 0, 0, 128, 128, 128, 128);
+        graphics.blit(background, x, y, 0, 0, 128, 128, 128, 128);
 
         poseStack.popPose();
     }
@@ -107,7 +110,7 @@ public abstract class LoadingOverlayMixin
         slice = @Slice
         (
             from = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/ReloadInstance;getActualProgress()F"),
-            to = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/LoadingOverlay;drawProgressBar(Lcom/mojang/blaze3d/vertex/PoseStack;IIIIF)V")
+            to = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/LoadingOverlay;drawProgressBar(Lnet/minecraft/client/gui/GuiGraphics;IIIIF)V")
         )
     )
     private float NT$onCheckAlphaForProgressBar(float vanilla)
@@ -120,7 +123,7 @@ public abstract class LoadingOverlayMixin
      * Controlled by the remove loading bar tweak.
      */
     @Inject(method = "drawProgressBar", at = @At("HEAD"), cancellable = true)
-    private void NT$onDrawProgressBar(PoseStack poseStack, int minX, int minY, int maxX, int maxY, float partialTick, CallbackInfo callback)
+    private void NT$onDrawProgressBar(GuiGraphics graphics, int minX, int minY, int maxX, int maxY, float partialTick, CallbackInfo callback)
     {
         if (ModConfig.Candy.removeLoadingBar())
             callback.cancel();
@@ -199,12 +202,12 @@ public abstract class LoadingOverlayMixin
     @ModifyArg
     (
         method = "drawProgressBar",
-        index = 5,
+        index = 4,
         at = @At
         (
             ordinal = 0,
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/screens/LoadingOverlay;fill(Lcom/mojang/blaze3d/vertex/PoseStack;IIIII)V"
+            target = "net/minecraft/client/gui/GuiGraphics.fill(IIIII)V"
         )
     )
     private int NT$onFillInnerProgressBar(int vanilla)

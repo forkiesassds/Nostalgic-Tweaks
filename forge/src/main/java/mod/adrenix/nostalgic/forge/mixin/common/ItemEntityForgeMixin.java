@@ -58,7 +58,7 @@ public abstract class ItemEntityForgeMixin extends Entity
     private void NT$onMergeWithNeighbors(CallbackInfo callback, Iterator<ItemEntity> iterator, ItemEntity entity)
     {
         AABB aabb = this.getBoundingBox().inflate(0.5, 0.0, 0.5);
-        List<ItemEntity> entities = this.level.getEntitiesOfClass(ItemEntity.class, aabb, this::NT$getNeighbors);
+        List<ItemEntity> entities = this.level().getEntitiesOfClass(ItemEntity.class, aabb, this::NT$getNeighbors);
 
         ItemServerUtil.mergeWithNeighbors(callback, entities, entity);
     }

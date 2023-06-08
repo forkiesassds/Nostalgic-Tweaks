@@ -1,6 +1,5 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.button;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.overlay.Overlay;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListScreen;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
@@ -9,6 +8,7 @@ import mod.adrenix.nostalgic.util.common.LangUtil;
 import mod.adrenix.nostalgic.util.common.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -133,13 +133,13 @@ public class RemoveButton extends Button
 
     /**
      * Handler method for remove button rendering.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         this.setMessage(RemoveButton.getRemoveTitle(this.removeType, this.isRemoved));
         this.updateX();
@@ -150,6 +150,6 @@ public class RemoveButton extends Button
         if (Overlay.isOpened())
             this.active = false;
 
-        super.render(poseStack, mouseX, mouseY, partialTick);
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 }

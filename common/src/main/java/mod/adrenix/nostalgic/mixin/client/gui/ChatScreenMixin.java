@@ -1,8 +1,8 @@
 package mod.adrenix.nostalgic.mixin.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.common.config.ModConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -41,11 +41,11 @@ public abstract class ChatScreenMixin extends Screen
      * Controlled by the old chat input tweak.
      */
     @Inject(method = "render", at = @At("RETURN"))
-    private void NT$onRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick, CallbackInfo callback)
+    private void NT$onRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick, CallbackInfo callback)
     {
         if (!ModConfig.Candy.oldChatInput())
             return;
 
-        ChatScreen.drawString(poseStack, Minecraft.getInstance().font, ">", 4, this.height - 12, 0xFFFFFF);
+        graphics.drawString(Minecraft.getInstance().font, ">", 4, this.height - 12, 0xFFFFFF);
     }
 }

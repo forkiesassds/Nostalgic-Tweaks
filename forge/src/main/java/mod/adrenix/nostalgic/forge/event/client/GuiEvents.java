@@ -1,10 +1,10 @@
 package mod.adrenix.nostalgic.forge.event.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.util.client.GuiUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -44,7 +44,7 @@ public abstract class GuiEvents
 
         // Old Version & Alternative HUD Elements
 
-        GuiUtil.renderOverlays(event.getPoseStack());
+        GuiUtil.renderOverlays(event.getGuiGraphics());
 
         // Overlay Overrides
 
@@ -70,13 +70,13 @@ public abstract class GuiEvents
 
         if (minecraft.options.renderDebug && isDebug)
         {
-            DEBUG_OVERLAY.render(event.getPoseStack());
+            DEBUG_OVERLAY.render(event.getGuiGraphics());
             event.setCanceled(true);
         }
 
         if (isOverlay && isSurvivalMode && !isVehiclePresent)
         {
-            PoseStack poseStack = event.getPoseStack();
+            GuiGraphics graphics = event.getGuiGraphics();
             ForgeGui gui = (ForgeGui) minecraft.gui;
 
             gui.setupOverlayRenderState(true, false);
@@ -85,11 +85,11 @@ public abstract class GuiEvents
             int height = event.getWindow().getGuiScaledHeight();
 
             if (isArmor)
-                renderArmor(gui, width, height, poseStack);
+                renderArmor(gui, width, height, graphics);
             else if (isFood)
-                renderFood(gui, width, height, poseStack);
+                renderFood(gui, width, height, graphics);
             else
-                renderAir(gui, width, height, poseStack);
+                renderAir(gui, width, height, graphics);
         }
     }
 
@@ -98,9 +98,9 @@ public abstract class GuiEvents
      * @param gui A forge GUI instance.
      * @param width The current screen width.
      * @param height The current screen height.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      */
-    private static void renderFood(ForgeGui gui, int width, int height, PoseStack poseStack)
+    private static void renderFood(ForgeGui gui, int width, int height, GuiGraphics graphics)
     {
         if (ModConfig.Gameplay.disableHungerBar())
             return;
@@ -114,7 +114,7 @@ public abstract class GuiEvents
         minecraft.getProfiler().push("food");
         RenderSystem.enableBlend();
 
-        GuiUtil.renderFood(poseStack, player, width, height, gui.rightHeight);
+        GuiUtil.renderFood(graphics, player, width, height, gui.rightHeight);
 
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
@@ -125,9 +125,9 @@ public abstract class GuiEvents
      * @param gui A forge GUI instance.
      * @param width The current screen width.
      * @param height The current screen height.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      */
-    private static void renderArmor(ForgeGui gui, int width, int height, PoseStack poseStack)
+    private static void renderArmor(ForgeGui gui, int width, int height, GuiGraphics graphics)
     {
         Minecraft minecraft = Minecraft.getInstance();
 
@@ -137,7 +137,7 @@ public abstract class GuiEvents
         minecraft.getProfiler().push("armor");
         RenderSystem.enableBlend();
 
-        GuiUtil.renderArmor(poseStack, minecraft.player, width, height, gui.leftHeight, gui.rightHeight);
+        GuiUtil.renderArmor(graphics, minecraft.player, width, height, gui.leftHeight, gui.rightHeight);
 
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
@@ -158,9 +158,9 @@ public abstract class GuiEvents
      * @param gui A forge GUI instance.
      * @param width The current screen width.
      * @param height The current screen height.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      */
-    private static void renderAir(ForgeGui gui, int width, int height, PoseStack poseStack)
+    private static void renderAir(ForgeGui gui, int width, int height, GuiGraphics graphics)
     {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = (Player) minecraft.getCameraEntity();
@@ -171,7 +171,7 @@ public abstract class GuiEvents
         minecraft.getProfiler().push("air");
         RenderSystem.enableBlend();
 
-        GuiUtil.renderAir(GuiEvents::isPlayerLosingAir, poseStack, player, width, height, gui.leftHeight, gui.rightHeight);
+        GuiUtil.renderAir(GuiEvents::isPlayerLosingAir, graphics, player, width, height, gui.leftHeight, gui.rightHeight);
 
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();

@@ -6,7 +6,10 @@ import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.common.config.tweak.TweakVersion;
 import mod.adrenix.nostalgic.mixin.widen.LevelRendererAccessor;
 import mod.adrenix.nostalgic.util.ModTracker;
-import mod.adrenix.nostalgic.util.client.*;
+import mod.adrenix.nostalgic.util.client.FogUtil;
+import mod.adrenix.nostalgic.util.client.ItemClientUtil;
+import mod.adrenix.nostalgic.util.client.RunUtil;
+import mod.adrenix.nostalgic.util.client.WorldClientUtil;
 import mod.adrenix.nostalgic.util.common.BlockCommonUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -68,7 +71,7 @@ public abstract class LevelRendererMixin
             case BETA, MODERN -> -48.0F;
         };
 
-        this.blueBuffer = new VertexBuffer();
+        this.blueBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC); //TODO: figure out if stuff explodes
         BufferBuilder.RenderedBuffer renderedBuffer = WorldClientUtil.buildSkyDisc(builder, height);
         this.blueBuffer.bind();
         this.blueBuffer.upload(renderedBuffer);

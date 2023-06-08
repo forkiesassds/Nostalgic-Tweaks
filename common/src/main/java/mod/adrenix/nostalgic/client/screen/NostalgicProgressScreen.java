@@ -1,11 +1,11 @@
 package mod.adrenix.nostalgic.client.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.mixin.widen.ProgressScreenAccessor;
 import mod.adrenix.nostalgic.util.client.RunUtil;
 import mod.adrenix.nostalgic.util.common.LangUtil;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ProgressScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -13,9 +13,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ProgressListener;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This screen defines the instructions that are performed while progress is being made.
@@ -28,8 +27,8 @@ public class NostalgicProgressScreen extends Screen implements ProgressListener
 {
     /* Fields */
 
-    private @CheckForNull Component header;
-    private @CheckForNull Component stage;
+    private Component header;
+    private Component stage;
 
     private int progress = 0;
     private double pauseTicking = 0.98;
@@ -104,14 +103,14 @@ public class NostalgicProgressScreen extends Screen implements ProgressListener
      * Gets the last dimension that the player was in.
      * @return A level resource key.
      */
-    @CheckForNull
+    @CheckReturnValue
     public static ResourceKey<Level> getPreviousDimension() { return previousDimension; }
 
     /**
      * Gets the current dimension that the player is in.
      * @return A level resource key.
      */
-    @CheckForNull
+    @CheckReturnValue
     public static ResourceKey<Level> getCurrentDimension() { return currentDimension; }
 
     /* Overrides */
@@ -137,13 +136,13 @@ public class NostalgicProgressScreen extends Screen implements ProgressListener
 
     /**
      * Handler method that provides instructions for rendering this screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (this.minecraft == null)
             return;
@@ -156,12 +155,12 @@ public class NostalgicProgressScreen extends Screen implements ProgressListener
             return;
         }
 
-        this.renderDirtBackground(poseStack);
+        this.renderDirtBackground(graphics);
 
         if (this.renderProgressBar)
             ProgressRenderer.renderProgressWithInt(this.progress);
 
-        this.renderDrawableText(poseStack);
+        this.renderDrawableText(graphics);
 
         if (this.stop)
         {
@@ -275,14 +274,14 @@ public class NostalgicProgressScreen extends Screen implements ProgressListener
 
     /**
      * Renders any text that is eligible for being drawn.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      */
-    private void renderDrawableText(PoseStack poseStack)
+    private void renderDrawableText(GuiGraphics graphics)
     {
         if (this.header != null)
-            ProgressRenderer.drawTitleText(poseStack, this, this.header);
+            ProgressRenderer.drawTitleText(graphics, this, this.header);
 
         if (this.stage != null)
-            ProgressRenderer.drawSubtitleText(poseStack, this, this.stage);
+            ProgressRenderer.drawSubtitleText(graphics, this, this.stage);
     }
 }

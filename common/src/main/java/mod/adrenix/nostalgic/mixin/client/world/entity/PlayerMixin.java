@@ -70,7 +70,7 @@ public abstract class PlayerMixin extends LivingEntity implements SlotTracker
         // Fixes weird bug that occurs when standing on a slime block.
         boolean isGrounded = deltaY < -0.07 && deltaY > -0.08;
 
-        if (isGrounded || this.onGround || this.getHealth() <= 0.0F)
+        if (isGrounded || this.onGround() || this.getHealth() <= 0.0F)
             rotation = 0.0F;
 
         this.NT$setCameraPitch(current + (rotation - current) * 0.8F);

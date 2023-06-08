@@ -15,9 +15,9 @@ import mod.adrenix.nostalgic.util.common.log.ModLogger;
 import net.fabricmc.api.EnvType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -176,7 +176,7 @@ public class NostalgicTweaks
      *
      * @return A minecraft server instance.
      */
-    @CheckForNull
+    @CheckReturnValue
     public static MinecraftServer getServer() { return NostalgicTweaks.server; }
 
     /* State Checkers */

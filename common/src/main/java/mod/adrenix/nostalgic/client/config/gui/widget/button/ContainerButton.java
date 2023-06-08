@@ -1,6 +1,5 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.button;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.overlay.Overlay;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.row.ConfigRowGroup;
@@ -8,6 +7,7 @@ import mod.adrenix.nostalgic.util.client.KeyUtil;
 import mod.adrenix.nostalgic.util.client.RunUtil;
 import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -243,15 +243,14 @@ public class ContainerButton extends Button
 
     /**
      * Rendering instructions for the container button widget.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        RenderSystem.setShaderTexture(0, TextureLocation.WIDGETS);
         Minecraft minecraft = Minecraft.getInstance();
         Screen screen = minecraft.screen;
 
@@ -294,7 +293,7 @@ public class ContainerButton extends Button
         this.width = 20 + minecraft.font.width(this.title);
         this.active = !Overlay.isOpened();
 
-        Screen.blit(poseStack, blitX, blitY, uOffset, vOffset, uWidth, vHeight);
-        Screen.drawString(poseStack, minecraft.font, this.title, this.getX() + 20, this.getY() + 5, isMouseOver ? 0xFFD800 : color);
+        graphics.blit(TextureLocation.WIDGETS, blitX, blitY, uOffset, vOffset, uWidth, vHeight);
+        graphics.drawString(minecraft.font, this.title, this.getX() + 20, this.getY() + 5, isMouseOver ? 0xFFD800 : color);
     }
 }

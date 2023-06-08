@@ -38,7 +38,7 @@ public abstract class LivingEntityFabricMixin extends Entity
     @Redirect(method = "onClimbable", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z"))
     private boolean NT$onClimbable(BlockState instance, TagKey<Block> tagKey)
     {
-        return BlockServerUtil.isClimbable(this.level, instance, this.blockPosition());
+        return BlockServerUtil.isClimbable(this.level(), instance, this.blockPosition());
     }
 
     /**
@@ -53,7 +53,7 @@ public abstract class LivingEntityFabricMixin extends Entity
         at = @At
         (
             value = "INVOKE",
-            target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V"
+            target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootParams;JLjava/util/function/Consumer;)V"
         )
     )
     private Consumer<ItemStack> NT$onDropFromLootTable(Consumer<ItemStack> consumer)

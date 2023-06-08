@@ -1,7 +1,7 @@
 package mod.adrenix.nostalgic.client.config.gui.overlay.template;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.overlay.Overlay;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * This interface provides implementable methods for injecting rendering instructions at specific points during generic
@@ -19,12 +19,12 @@ public interface GenericRendering
      * defined in {@link Overlay#Z_OFFSET}. This offset on the z-axis will be popped before running post-rendering
      * instructions.
      *
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
-    default void onPreRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    default void onPreRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     /**
      * Rendering instructions that happen after pre-rendering and before post-rendering.
@@ -34,12 +34,12 @@ public interface GenericRendering
      * The overlay's border, title, icon, and close button will be rendered after this is called. The tooltip hint from
      * the overlay icon will be rendered after this is called and before post-rendering instructions are performed.
      *
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
-    default void onMainRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    default void onMainRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     /**
      * Rendering instructions that happen after main-rendering.
@@ -48,10 +48,10 @@ public interface GenericRendering
      * The pose stack z-axis offset will be popped before this method is called. Any rendering that needs to be
      * performed before the render cycle is over happens here.
      *
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
-    default void onPostRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    default void onPostRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 }

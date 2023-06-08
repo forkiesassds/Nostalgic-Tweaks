@@ -79,7 +79,7 @@ public abstract class AnimalMixin extends Mob
         if (ModConfig.Gameplay.oldSheepPunching() && (Animal) (Object) this instanceof Sheep sheep)
         {
             boolean isHurtByPlayer = damageSource.getEntity() instanceof Player;
-            boolean canShearSheep = sheep.readyForShearing() && !this.level.isClientSide;
+            boolean canShearSheep = sheep.readyForShearing() && !this.level().isClientSide;
 
             if (!isHurtByPlayer || !canShearSheep)
                 return;

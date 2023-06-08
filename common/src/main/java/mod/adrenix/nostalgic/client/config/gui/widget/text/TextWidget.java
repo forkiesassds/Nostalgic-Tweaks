@@ -1,8 +1,8 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.text;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -75,25 +75,25 @@ public class TextWidget extends AbstractWidget
 
     /**
      * Handler method for rendering a text widget.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The x-position of the mouse.
      * @param mouseY The y-position of the mouse.
      * @param partialTick The change in frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         switch (this.align)
         {
-            case LEFT -> this.label.renderLeftAligned(poseStack, this.getX(), this.getY(), this.lineHeight, 0xFFFFFF);
-            case CENTER -> this.label.renderCentered(poseStack, this.getX() + (this.width / 2), this.getY());
+            case LEFT -> this.label.renderLeftAligned(graphics, this.getX(), this.getY(), this.lineHeight, 0xFFFFFF);
+            case CENTER -> this.label.renderCentered(graphics, this.getX() + (this.width / 2), this.getY());
         }
     }
 
     /* Required Overrides */
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}

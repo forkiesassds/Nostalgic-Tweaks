@@ -2,8 +2,12 @@ package mod.adrenix.nostalgic.client.screen;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -18,30 +22,30 @@ public abstract class ProgressRenderer
 {
     /**
      * Draws the title text to the top of the progress screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param screen A screen instance.
      * @param title The title to draw.
      */
-    public static void drawTitleText(PoseStack poseStack, Screen screen, Component title)
+    public static void drawTitleText(GuiGraphics graphics, Screen screen, Component title)
     {
         Minecraft minecraft = Minecraft.getInstance();
         int scaledHeight = minecraft.getWindow().getGuiScaledHeight();
 
-        Screen.drawCenteredString(poseStack, minecraft.font, title, screen.width / 2, scaledHeight / 2 - 4 - 16, 16777215);
+        graphics.drawCenteredString(minecraft.font, title, screen.width / 2, scaledHeight / 2 - 4 - 16, 16777215);
     }
 
     /**
      * Draws the subtitle text below the title of the progress screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param screen A screen instance.
      * @param subtitle The subtitle to draw.
      */
-    public static void drawSubtitleText(PoseStack poseStack, Screen screen, Component subtitle)
+    public static void drawSubtitleText(GuiGraphics graphics, Screen screen, Component subtitle)
     {
         Minecraft minecraft = Minecraft.getInstance();
         int scaledHeight = minecraft.getWindow().getGuiScaledHeight();
 
-        Screen.drawCenteredString(poseStack, minecraft.font, subtitle, screen.width / 2, scaledHeight / 2 - 4 + 8, 16777215);
+        graphics.drawCenteredString(minecraft.font, subtitle, screen.width / 2, scaledHeight / 2 - 4 + 8, 16777215);
     }
 
     /**

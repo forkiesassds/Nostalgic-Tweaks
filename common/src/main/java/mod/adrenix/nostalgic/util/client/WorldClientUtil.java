@@ -56,7 +56,7 @@ public abstract class WorldClientUtil
         if (player == null)
             return 0.0F;
 
-        float temp = player.level.getBiome(camera.getBlockPosition()).value().getBaseTemperature();
+        float temp = player.level().getBiome(camera.getBlockPosition()).value().getBaseTemperature();
 
         if (Float.isNaN(currentTemperature))
             currentTemperature = temp;

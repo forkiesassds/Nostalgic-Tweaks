@@ -2,7 +2,10 @@ package mod.adrenix.nostalgic.client.config.gui.widget.list;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import mod.adrenix.nostalgic.NostalgicTweaks;
 import mod.adrenix.nostalgic.client.config.gui.overlay.CategoryListOverlay;
 import mod.adrenix.nostalgic.client.config.gui.overlay.Overlay;
@@ -11,39 +14,41 @@ import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigWidgets;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListScreen;
 import mod.adrenix.nostalgic.client.config.gui.widget.PermissionLock;
 import mod.adrenix.nostalgic.client.config.gui.widget.SearchCrumbs;
-import mod.adrenix.nostalgic.client.config.gui.widget.group.TextGroup;
 import mod.adrenix.nostalgic.client.config.gui.widget.TweakTag;
 import mod.adrenix.nostalgic.client.config.gui.widget.button.*;
+import mod.adrenix.nostalgic.client.config.gui.widget.group.TextGroup;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.row.ConfigRowEntry;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.row.ConfigRowTweak;
+import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
 import mod.adrenix.nostalgic.common.config.annotation.TweakData;
 import mod.adrenix.nostalgic.common.config.list.ListMap;
 import mod.adrenix.nostalgic.common.config.reflect.CommonReflect;
-import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
 import mod.adrenix.nostalgic.common.config.reflect.TweakGroup;
 import mod.adrenix.nostalgic.common.config.tweak.GuiTweak;
 import mod.adrenix.nostalgic.mixin.widen.AbstractWidgetAccessor;
 import mod.adrenix.nostalgic.server.config.reflect.TweakServerCache;
 import mod.adrenix.nostalgic.util.client.KeyUtil;
-import mod.adrenix.nostalgic.util.common.ColorUtil;
-import mod.adrenix.nostalgic.util.common.MathUtil;
 import mod.adrenix.nostalgic.util.client.NetUtil;
 import mod.adrenix.nostalgic.util.client.RenderUtil;
+import mod.adrenix.nostalgic.util.common.ColorUtil;
+import mod.adrenix.nostalgic.util.common.MathUtil;
 import mod.adrenix.nostalgic.util.common.TextUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -71,19 +76,15 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
     /* Static Row List Tracking */
 
     // Holds the current row that is rendering.
-    @CheckForNull
     private static ConfigRowList.Row rendering = null;
 
     // Holds the current tweak that the mouse is over in the search tab.
-    @CheckForNull
     public static String overTweakId = null;
 
     // Holds a tweak identification string for tweak search jumping.
-    @CheckForNull
     public static String jumpToTweakId = null;
 
     // Holds a group identification string for crumb search jumping.
-    @CheckForNull
     public static Object jumpToContainerId = null;
 
     // Holds the current indentation for expanding containers
@@ -275,7 +276,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
      * @param <E> A type that is associated with a provided enumeration value.
      * @return A configuration row instance that handles the given value.
      */
-    @CheckForNull
+    @CheckReturnValue
     public <E extends Enum<E>> Row rowFromTweak(TweakGroup group, String key, Object value)
     {
         if (TweakClientCache.get(group, key).isNotAutomated())
@@ -321,7 +322,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
      * @param tweak The tweak to get metadata from.
      * @return A configuration row instance that handles the given tweak.
      */
-    @CheckForNull
+    @CheckReturnValue
     public Row rowFromTweak(TweakClientCache<?> tweak)
     {
         return this.rowFromTweak(tweak.getGroup(), tweak.getKey(), tweak.getValue());
@@ -388,12 +389,12 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
     {
         /* Nullable Fields */
 
-        @CheckForNull private ContainerButton group;
-        @CheckForNull public final TweakClientCache<?> tweak;
-        @CheckForNull public final AbstractWidget controller;
-        @CheckForNull public ResetButton reset = null;
-        @CheckForNull public DeleteButton delete = null;
-        @CheckForNull public RemoveButton remove = null;
+        private ContainerButton group;
+        public final TweakClientCache<?> tweak;
+        public final AbstractWidget controller;
+        public ResetButton reset = null;
+        public DeleteButton delete = null;
+        public RemoveButton remove = null;
 
         /* Fields */
 
@@ -514,7 +515,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
         /**
          * @return Get the container button for this row.
          */
-        @CheckForNull
+        @CheckReturnValue
         public ContainerButton getGroup() { return this.group; }
 
         /* Overrides & Rendering */
@@ -562,12 +563,12 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
 
         /**
          * Renders a semi-transparent rectangle behind rows with controllers that manage a configuration entry.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          * @param screen The current screen.
          * @param top Where the top of the rectangle should start rendering.
          * @param height The height of the rectangle.
          */
-        private void renderOnHover(PoseStack poseStack, Screen screen, int top, int height)
+        private void renderOnHover(GuiGraphics graphics, Screen screen, int top, int height)
         {
             boolean isHoverOn = (Boolean) TweakClientCache.get(GuiTweak.DISPLAY_ROW_HIGHLIGHT).getValue();
             boolean isHoverOff = this.tweak == null && !this.isBindingRow();
@@ -580,7 +581,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
 
             Tesselator tesselator = Tesselator.getInstance();
             BufferBuilder buffer = tesselator.getBuilder();
-            Matrix4f matrix = poseStack.last().pose();
+            Matrix4f matrix = graphics.pose().last().pose();
 
             RenderSystem.depthFunc(515);
             RenderSystem.disableDepthTest();
@@ -609,11 +610,11 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
 
         /**
          * Render a tree that connects containers to their subscribed row entries.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics.
          * @param top A starting y-position for the top of the tree.
          * @param height The ending y-position for the bottom of the tree.
          */
-        private void renderTree(PoseStack poseStack, int top, int height)
+        private void renderTree(GuiGraphics graphics, int top, int height)
         {
             TweakClientCache<String> color = TweakClientCache.get(GuiTweak.CATEGORY_TREE_COLOR);
             TweakClientCache<Boolean> tree = TweakClientCache.get(GuiTweak.DISPLAY_CATEGORY_TREE);
@@ -641,7 +642,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
 
             Tesselator tesselator = Tesselator.getInstance();
             BufferBuilder buffer = tesselator.getBuilder();
-            Matrix4f matrix = poseStack.last().pose();
+            Matrix4f matrix = graphics.pose().last().pose();
 
             RenderSystem.depthFunc(515);
             RenderSystem.disableDepthTest();
@@ -748,7 +749,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
 
         /**
          * The main row renderer.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          * @param index Unused parameter.
          * @param top The top of this row.
          * @param left The starting x-position of this row.
@@ -760,7 +761,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
          * @param partialTick A change in frame time.
          */
         @Override
-        public void render(PoseStack poseStack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTick)
+        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTick)
         {
             Font font = Minecraft.getInstance().font;
             ConfigScreen screen = (ConfigScreen) Minecraft.getInstance().screen;
@@ -780,7 +781,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
                 this.fade = isFaded ? MathUtil.moveClampTowards(this.fade, 0.0F, 0.05F, 0.0F, 1.0F) : 0.0F;
 
             if (this.fade > 0.0F)
-                this.renderOnHover(poseStack, screen, top, height);
+                this.renderOnHover(graphics, screen, top, height);
 
             // Abstract list screen rendering
             if (Minecraft.getInstance().screen instanceof ListScreen)
@@ -791,7 +792,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
                         widget.active = false;
 
                     widget.setY(top);
-                    widget.render(poseStack, mouseX, mouseY, partialTick);
+                    widget.render(graphics, mouseX, mouseY, partialTick);
                 }
 
                 // Clear rendering tracker
@@ -804,7 +805,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
             boolean isRowLocked = this.isRowLocked();
 
             // Tree indent highlights
-            this.renderTree(poseStack, top, height);
+            this.renderTree(graphics, top, height);
 
             // Update indentation and get focus colors on widgets
             boolean isFocused = false;
@@ -856,13 +857,13 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
 
                         // First render pass is invisible and calculates the width of all tweak tags
                         tag.setRender(false);
-                        tag.render(poseStack, mouseX, mouseY, partialTick);
+                        tag.render(graphics, mouseX, mouseY, partialTick);
 
                         // Second render pass continually shrinks the tweak translation title until it fits the row
                         while (tag.getX() + tag.getWidth() >= this.controller.getX() - 6)
                         {
                             tag.setTitle(TextUtil.ellipsis(tag.getTitle()));
-                            tag.render(poseStack, mouseX, mouseY, partialTick);
+                            tag.render(graphics, mouseX, mouseY, partialTick);
 
                             if (tag.getTitle() == null || tag.getTitle().length() < 3)
                                 break;
@@ -870,7 +871,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
 
                         // Third pass is visible and renders the final tag result
                         tag.setRender(true);
-                        tag.render(poseStack, mouseX, mouseY, partialTick);
+                        tag.render(graphics, mouseX, mouseY, partialTick);
 
                         break;
                     }
@@ -933,7 +934,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
                 boolean isHovered = isSearching && MathUtil.isWithinBox(mouseX, mouseY, startX, startY, font.width(title), font.lineHeight);
                 title = isHovered ? title.copy().withStyle(ChatFormatting.UNDERLINE) : title;
 
-                Screen.drawString(poseStack, font, title, startX, startY, 0xFFFFFF);
+                graphics.drawString(font, title, startX, startY, 0xFFFFFF);
 
                 if (this.tweak != null && isHovered)
                     ConfigRowList.overTweakId = this.tweak.getId();
@@ -972,7 +973,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
                 if (widget instanceof PermissionLock && isRowLocked)
                     widget.active = false;
 
-                widget.render(poseStack, mouseX, mouseY, partialTick);
+                widget.render(graphics, mouseX, mouseY, partialTick);
 
                 // Reset widget positions with caches
                 if (widget instanceof EditBox)
@@ -988,7 +989,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
                 if (isEllipsis && isOverText && this.tweak != null)
                 {
                     screen.renderLast.add(() ->
-                        screen.renderComponentTooltip(poseStack, TextUtil.Wrap.tooltip(this.tweak.getComponentTranslation(), 35), mouseX, mouseY))
+                        graphics.renderComponentTooltip(font, TextUtil.Wrap.tooltip(this.tweak.getComponentTranslation(), 35), mouseX, mouseY))
                     ;
                 }
 
@@ -1005,7 +1006,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
                         else if (weight <= 80) color = "§e";
                         else if (weight <= 99) color = "§2";
 
-                        screen.renderTooltip(poseStack, Component.literal(String.format("Fuzzy Weight: %s%s", color, weight)), mouseX, mouseY);
+                        graphics.renderTooltip(font, Component.literal(String.format("Fuzzy Weight: %s%s", color, weight)), mouseX, mouseY);
                     }
                     else
                     {
@@ -1025,7 +1026,7 @@ public class ConfigRowList extends AbstractRowList<ConfigRowList.Row>
                         if (this.tweak.isConflict())
                             lines.add(Component.literal("Mod Conflict: §2true"));
 
-                        screen.renderComponentTooltip(poseStack, lines, mouseX, mouseY);
+                        graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
                     }
                 }
             }

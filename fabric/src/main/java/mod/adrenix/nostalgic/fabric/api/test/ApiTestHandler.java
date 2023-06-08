@@ -121,7 +121,7 @@ public class ApiTestHandler implements NostalgicFabricApi
             event.setY(bubbleY.get());
 
             if (event.isExperienceBarOff())
-                RenderUtil.fill(event.getPoseStack(), 2.0F, 4.0F, 2.0F, 4.0F, 0xFFFF00FF);
+                RenderUtil.fill(event.getGraphics(), 2.0F, 4.0F, 2.0F, 4.0F, 0xFFFF00FF);
         });
 
         NostalgicTweaks.LOGGER.debug("Registered Mod API Hud Events Test");

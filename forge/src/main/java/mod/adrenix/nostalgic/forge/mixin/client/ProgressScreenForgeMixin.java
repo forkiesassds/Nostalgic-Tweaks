@@ -1,7 +1,7 @@
 package mod.adrenix.nostalgic.forge.mixin.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.common.config.ModConfig;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ProgressScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +16,7 @@ public abstract class ProgressScreenForgeMixin
      * Controlled by the old loading screens tweak.
      */
     @Inject(method = "render", at = @At(value = "HEAD"), cancellable = true)
-    private void NT$onRenderProgress(PoseStack poseStack, int mouseX, int mouseY, float partialTick, CallbackInfo callback)
+    private void NT$onRenderProgress(GuiGraphics graphics, int mouseX, int mouseY, float partialTick, CallbackInfo callback)
     {
         if (ModConfig.Candy.oldLoadingScreens())
             callback.cancel();

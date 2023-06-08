@@ -2,13 +2,12 @@ package mod.adrenix.nostalgic.mixin.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import mod.adrenix.nostalgic.NostalgicTweaks;
 import mod.adrenix.nostalgic.client.config.SwingConfig;
 import mod.adrenix.nostalgic.client.screen.NostalgicPauseScreen;
-import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.client.screen.NostalgicProgressScreen;
+import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.common.config.tweak.TweakVersion;
 import mod.adrenix.nostalgic.mixin.duck.SwingBlocker;
 import mod.adrenix.nostalgic.util.client.AnimationUtil;
@@ -17,6 +16,7 @@ import mod.adrenix.nostalgic.util.client.SwingType;
 import mod.adrenix.nostalgic.util.common.LangUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.ProgressScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -312,7 +312,7 @@ public abstract class MinecraftMixin
             target = "Lcom/mojang/blaze3d/vertex/BufferBuilder;begin(Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;Lcom/mojang/blaze3d/vertex/VertexFormat;)V"
         )
     )
-    private void NT$onRenderFpsMeter(PoseStack poseStack, ProfileResults profilerResults, CallbackInfo callback)
+    private void NT$onRenderFpsMeter(GuiGraphics graphics, ProfileResults profilerResults, CallbackInfo callback)
     {
         if (!ModConfig.Candy.oldPieBackground())
             return;

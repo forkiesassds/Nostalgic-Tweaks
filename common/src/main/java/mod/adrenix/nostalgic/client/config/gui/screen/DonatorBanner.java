@@ -1,7 +1,6 @@
 package mod.adrenix.nostalgic.client.config.gui.screen;
 
 import com.google.gson.Gson;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.NostalgicTweaks;
 import mod.adrenix.nostalgic.client.config.ClientConfigCache;
 import mod.adrenix.nostalgic.util.client.RenderUtil;
@@ -9,10 +8,10 @@ import mod.adrenix.nostalgic.util.common.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-import javax.annotation.CheckForNull;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ public class DonatorBanner
 
     /* Static Fields */
 
-    @CheckForNull
     private static JsonSupporters cache = null;
     private static boolean downloaded = false;
     private static boolean opened = ClientConfigCache.getGui().displayDonatorBanner;
@@ -83,7 +81,7 @@ public class DonatorBanner
     /* Fields */
 
     private final Font font = Minecraft.getInstance().font;
-    private float messageX = 0.0F;
+    private int messageX = 0;
     private int messageWidth = 0;
     private boolean isRunning = false;
 
@@ -180,13 +178,13 @@ public class DonatorBanner
 
     /**
      * Render the support message block.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param partialTick The change in game frame time.
      */
-    public void render(PoseStack poseStack, float partialTick)
+    public void render(GuiGraphics graphics, float partialTick)
     {
-        float headerY = 3.0F;
-        float messageY = headerY + this.font.lineHeight + 4.0F;
+        int headerY = 3;
+        int messageY = headerY + this.font.lineHeight + 4;
         int endY = (this.font.lineHeight * 2) + 10;
 
         if (!DonatorBanner.opened)
@@ -197,16 +195,16 @@ public class DonatorBanner
         else
             DonatorBanner.height = endY + 2;
 
-        RenderUtil.fill(poseStack, 0.0F, (float) getWidth(), 0.0F, endY, 0x7F000000);
-        this.font.drawShadow(poseStack, THANKS_MESSAGE, this.getCenterX(THANKS_MESSAGE), headerY, 0xFFFF00);
+        RenderUtil.fill(graphics, 0.0F, (float) getWidth(), 0.0F, endY, 0x7F000000);
+        graphics.drawString(font, THANKS_MESSAGE, (int) this.getCenterX(THANKS_MESSAGE), headerY, 0xFFFF00, true);
 
         if (DonatorBanner.cache == null && DonatorBanner.opened)
         {
             MutableComponent message = DonatorBanner.CACHE_TIMER.isMaxReached() ? DISCONNECT_MESSAGE : CONNECTING_MESSAGE;
             ChatFormatting color = DonatorBanner.CACHE_TIMER.isMaxReached() ? ChatFormatting.RED : ChatFormatting.GOLD;
-            float centerX = this.getCenterX(message);
+            int centerX = (int) this.getCenterX(message);
 
-            this.font.drawShadow(poseStack, message.withStyle(color), centerX, messageY, 0xFFFFFF);
+            graphics.drawString(font, message.withStyle(color), centerX, messageY, 0xFFFFFF, true);
             this.connect();
 
             return;
@@ -218,7 +216,7 @@ public class DonatorBanner
             this.build();
         }
 
-        float startX = getWidth() + 15.0F;
+        int startX = getWidth() + 15;
         float offset = MathUtil.isOdd(getWidth()) ? 0.0F : 0.1F;
 
         if (!this.isRunning)
@@ -234,7 +232,7 @@ public class DonatorBanner
         }
 
         this.messageX -= (1.2F + (1.0F / 3.0F)) * partialTick;
-        float currentX = this.messageX;
+        int currentX = this.messageX;
 
         for (MutableComponent supporter : DonatorBanner.SUPPORTERS)
         {
@@ -249,8 +247,8 @@ public class DonatorBanner
                 continue;
             }
 
-            RenderUtil.blit256(TextureLocation.WIDGETS, poseStack, currentX - 12.5F + offset, messageY, 0, 32, 9, 9);
-            this.font.drawShadow(poseStack, supporter, currentX, messageY, 0xFFFFFF);
+            RenderUtil.blit256(TextureLocation.WIDGETS, graphics, currentX - 12.5F + offset, messageY, 0, 32, 9, 9);
+            graphics.drawString(font, supporter, currentX, messageY, 0xFFFFFF, true);
 
             currentX += width;
         }

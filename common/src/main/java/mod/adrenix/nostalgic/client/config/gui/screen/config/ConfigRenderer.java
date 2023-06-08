@@ -1,7 +1,7 @@
 package mod.adrenix.nostalgic.client.config.gui.screen.config;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.NostalgicTweaks;
+import mod.adrenix.nostalgic.client.config.ClientConfig;
 import mod.adrenix.nostalgic.client.config.annotation.TweakGui;
 import mod.adrenix.nostalgic.client.config.annotation.container.TweakCategory;
 import mod.adrenix.nostalgic.client.config.annotation.container.TweakEmbed;
@@ -9,8 +9,10 @@ import mod.adrenix.nostalgic.client.config.annotation.container.TweakSubcategory
 import mod.adrenix.nostalgic.client.config.gui.overlay.ServerSideModeOverlay;
 import mod.adrenix.nostalgic.client.config.gui.screen.MenuOption;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListMapScreen;
-import mod.adrenix.nostalgic.client.config.gui.widget.button.ControlButton;
+import mod.adrenix.nostalgic.client.config.gui.widget.SearchCrumbs;
+import mod.adrenix.nostalgic.client.config.gui.widget.ToggleCheckbox;
 import mod.adrenix.nostalgic.client.config.gui.widget.button.ContainerId;
+import mod.adrenix.nostalgic.client.config.gui.widget.button.ControlButton;
 import mod.adrenix.nostalgic.client.config.gui.widget.group.RadioGroup;
 import mod.adrenix.nostalgic.client.config.gui.widget.group.TextGroup;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
@@ -18,16 +20,14 @@ import mod.adrenix.nostalgic.client.config.gui.widget.list.row.ConfigRowBuild;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.row.ConfigRowGroup;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.row.ConfigRowTweak;
 import mod.adrenix.nostalgic.client.config.reflect.ClientReflect;
-import mod.adrenix.nostalgic.client.config.ClientConfig;
+import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
 import mod.adrenix.nostalgic.common.config.DefaultConfig;
 import mod.adrenix.nostalgic.common.config.auto.AutoConfig;
 import mod.adrenix.nostalgic.common.config.list.ConfigList;
 import mod.adrenix.nostalgic.common.config.reflect.CommonReflect;
-import mod.adrenix.nostalgic.common.config.tweak.GuiTweak;
-import mod.adrenix.nostalgic.client.config.gui.widget.*;
-import mod.adrenix.nostalgic.common.config.tweak.DisabledTweak;
 import mod.adrenix.nostalgic.common.config.reflect.TweakGroup;
-import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
+import mod.adrenix.nostalgic.common.config.tweak.DisabledTweak;
+import mod.adrenix.nostalgic.common.config.tweak.GuiTweak;
 import mod.adrenix.nostalgic.util.client.KeyUtil;
 import mod.adrenix.nostalgic.util.client.NetUtil;
 import mod.adrenix.nostalgic.util.common.ArrayUtil;
@@ -35,11 +35,11 @@ import mod.adrenix.nostalgic.util.common.LangUtil;
 import mod.adrenix.nostalgic.util.common.PathUtil;
 import mod.adrenix.nostalgic.util.common.TextUtil;
 import net.minecraft.Util;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -948,16 +948,16 @@ public record ConfigRenderer(ConfigScreen parent)
 
     /**
      * Generates config row lists based on the current config tab and renders special effects based on config tab.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick A change in frame time.
      */
-    public void generateAndRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void generateAndRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (this.parent.getConfigTab() == ConfigScreen.ConfigTab.SWING)
         {
-            this.parent.getWidgets().getSwingSpeedPrefix().render(poseStack, mouseX, mouseY, partialTick);
+            this.parent.getWidgets().getSwingSpeedPrefix().render(graphics, mouseX, mouseY, partialTick);
 
             ListMapScreen<Integer> leftSpeedsScreen = new ListMapScreen<>
             (
@@ -1010,9 +1010,8 @@ public record ConfigRenderer(ConfigScreen parent)
             }
 
             if (isInvalidTag)
-                this.parent.renderLast.add(() -> Screen.drawCenteredString
+                this.parent.renderLast.add(() -> graphics.drawCenteredString
                 (
-                    poseStack,
                     this.parent.getFont(),
                     Component.translatable(LangUtil.Gui.SEARCH_INVALID, this.parent.getWidgets().getSearchInput().getValue()),
                     this.parent.width / 2,
@@ -1021,9 +1020,8 @@ public record ConfigRenderer(ConfigScreen parent)
                 ));
             else
             {
-                this.parent.renderLast.add(() -> Screen.drawCenteredString
+                this.parent.renderLast.add(() -> graphics.drawCenteredString
                 (
-                    poseStack,
                     this.parent.getFont(),
                     Component.translatable(LangUtil.Gui.SEARCH_EMPTY),
                     this.parent.width / 2,

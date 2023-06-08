@@ -424,7 +424,6 @@ public abstract class ModConfig
         public static boolean removeRealmsButton() { return getBoolTweak(CandyTweak.TITLE_REALMS, CANDY.removeTitleRealmsButton); }
         public static boolean titleBottomLeftText() { return getBoolTweak(CandyTweak.TITLE_BOTTOM_LEFT_TEXT, CANDY.titleBottomLeftText); }
         public static boolean oldTitleBackground() { return getBoolTweak(CandyTweak.TITLE_BACKGROUND, CANDY.oldTitleBackground); }
-        public static boolean oldLogoOutline() { return getBoolTweak(CandyTweak.LOGO_OUTLINE, CANDY.oldLogoOutline); }
         public static boolean oldAlphaLogo() { return getBoolTweak(CandyTweak.ALPHA_LOGO, CANDY.oldAlphaLogo); }
         public static boolean uncapTitleFPS() { return getBoolTweak(CandyTweak.UNCAP_TITLE_FPS, CANDY.uncapTitleFPS); }
 

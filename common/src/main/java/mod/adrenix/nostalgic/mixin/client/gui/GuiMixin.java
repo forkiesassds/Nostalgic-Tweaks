@@ -1,7 +1,6 @@
 package mod.adrenix.nostalgic.mixin.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.NostalgicTweaks;
 import mod.adrenix.nostalgic.api.ClientEventFactory;
 import mod.adrenix.nostalgic.api.event.HudEvent;
@@ -11,8 +10,9 @@ import mod.adrenix.nostalgic.util.client.GuiUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
     value = Gui.class,
     priority = Integer.MAX_VALUE
 )
-public abstract class GuiMixin extends GuiComponent
+public abstract class GuiMixin
 {
     /* Trackers */
 
@@ -80,7 +80,7 @@ public abstract class GuiMixin extends GuiComponent
         at = @At(value = "HEAD"),
         cancellable = true
     )
-    private void NT$onRenderSelectedItemName(PoseStack poseStack, CallbackInfo callback)
+    private void NT$onRenderSelectedItemName(GuiGraphics graphics, CallbackInfo callback)
     {
         if (ModConfig.Candy.oldNoSelectedItemName())
             callback.cancel();
@@ -96,10 +96,10 @@ public abstract class GuiMixin extends GuiComponent
         at = @At(
             shift = At.Shift.AFTER,
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/Gui;fill(Lcom/mojang/blaze3d/vertex/PoseStack;IIIII)V"
+            target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V"
         )
     )
-    private void NT$onDrawSelectedItemName(PoseStack poseStack, CallbackInfo callback, MutableComponent mutableComponent)
+    private void NT$onDrawSelectedItemName(GuiGraphics graphics, CallbackInfo callback, MutableComponent mutableComponent)
     {
         if (ModConfig.Candy.oldPlainSelectedItemName())
             mutableComponent.withStyle(ChatFormatting.RESET);
@@ -117,7 +117,7 @@ public abstract class GuiMixin extends GuiComponent
             shift = At.Shift.BEFORE
         )
     )
-    private void NT$onPreRenderDebugCrosshair(PoseStack poseStack, CallbackInfo callback)
+    private void NT$onPreRenderDebugCrosshair(GuiGraphics graphics, CallbackInfo callback)
     {
         if (!ModConfig.Candy.getDebugScreen().equals(TweakVersion.Generic.MODERN))
         {
@@ -139,7 +139,7 @@ public abstract class GuiMixin extends GuiComponent
             shift = At.Shift.AFTER
         )
     )
-    private void NT$onPostRenderDebugCrosshair(PoseStack poseStack, CallbackInfo callback)
+    private void NT$onPostRenderDebugCrosshair(GuiGraphics graphics, CallbackInfo callback)
     {
         if (!ModConfig.Candy.getDebugScreen().equals(TweakVersion.Generic.MODERN))
             Minecraft.getInstance().options.renderDebug = this.NT$renderDebug;
@@ -156,7 +156,7 @@ public abstract class GuiMixin extends GuiComponent
             target = "Lnet/minecraft/client/player/LocalPlayer;getAttackStrengthScale(F)F"
         )
     )
-    private void NT$onRenderAttackIndicator(PoseStack poseStack, CallbackInfo callback)
+    private void NT$onRenderAttackIndicator(GuiGraphics graphics, CallbackInfo callback)
     {
         if (ModConfig.Gameplay.disableCooldown())
         {
@@ -191,7 +191,7 @@ public abstract class GuiMixin extends GuiComponent
         at = @At(
             value = "INVOKE",
             ordinal = 0,
-            target = "Lnet/minecraft/client/gui/Gui;blit(Lcom/mojang/blaze3d/vertex/PoseStack;IIIIII)V"
+            target = "net/minecraft/client/gui/GuiGraphics.blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"
         )
     )
     private int NT$onRenderHotbar(int y)
@@ -214,7 +214,7 @@ public abstract class GuiMixin extends GuiComponent
         method = "renderHearts",
         at = @At("HEAD")
     )
-    private void NT$onRenderHearts(PoseStack poseStack, Player player, int x, int y, int height, int regen, float healthMax, int health, int healthLast, int absorb, boolean highlight, CallbackInfo callback)
+    private void NT$onRenderHearts(GuiGraphics graphics, Player player, int x, int y, int height, int regen, float healthMax, int health, int healthLast, int absorb, boolean highlight, CallbackInfo callback)
     {
         this.NT$heartIndex = -1;
         this.NT$heartRow = 0;
@@ -237,10 +237,10 @@ public abstract class GuiMixin extends GuiComponent
             ordinal = 0,
             shift = At.Shift.BEFORE,
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/Gui;renderHeart(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/gui/Gui$HeartType;IIIZZ)V"
+            target = "Lnet/minecraft/client/gui/Gui;renderHeart(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Gui$HeartType;IIIZZ)V"
         )
     )
-    private void NT$onRenderHeartContainer(PoseStack poseStack, Player player, int x, int y, int height, int regen, float healthMax, int health, int healthLast, int absorb, boolean highlight, CallbackInfo callback)
+    private void NT$onRenderHeartContainer(GuiGraphics graphics, Player player, int x, int y, int height, int regen, float healthMax, int health, int healthLast, int absorb, boolean highlight, CallbackInfo callback)
     {
         ++this.NT$heartIndex;
     }
@@ -252,10 +252,10 @@ public abstract class GuiMixin extends GuiComponent
         method = "renderHeart",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/Gui;blit(Lcom/mojang/blaze3d/vertex/PoseStack;IIIIII)V"
+            target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"
         )
     )
-    private void NT$onRenderHeart(PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
+    private void NT$onRenderHeart(GuiGraphics graphics, ResourceLocation location, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
     {
         if (this.NT$heartIndex >= 10)
         {
@@ -265,8 +265,8 @@ public abstract class GuiMixin extends GuiComponent
 
         if (this.NT$isHudVanilla())
         {
-            ClientEventFactory.RENDER_HEART.create(x, y, this.NT$heartIndex, this.NT$heartRow, poseStack).emit();
-            Gui.blit(poseStack, x, y, uOffset, vOffset, uWidth, vHeight);
+            ClientEventFactory.RENDER_HEART.create(x, y, this.NT$heartIndex, this.NT$heartRow, graphics).emit();
+            graphics.blit(location, x, y, uOffset, vOffset, uWidth, vHeight);
 
             GuiUtil.heartY = y;
             return;
@@ -274,13 +274,13 @@ public abstract class GuiMixin extends GuiComponent
 
         int startY = ModConfig.Gameplay.disableExperienceBar() && NostalgicTweaks.isFabric() ? y + 7 : y;
 
-        HudEvent event = ClientEventFactory.RENDER_HEART.create(x, startY, this.NT$heartIndex, this.NT$heartRow, poseStack);
+        HudEvent event = ClientEventFactory.RENDER_HEART.create(x, startY, this.NT$heartIndex, this.NT$heartRow, graphics);
         event.emit();
 
         GuiUtil.heartY = event.getY();
 
         if (!event.isCanceled())
-            Gui.blit(poseStack, event.getX(), event.getY(), uOffset, vOffset, uWidth, vHeight);
+            graphics.blit(location, event.getX(), event.getY(), uOffset, vOffset, uWidth, vHeight);
     }
 
     /**
@@ -290,7 +290,7 @@ public abstract class GuiMixin extends GuiComponent
         method = "renderPlayerHealth",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/Gui;blit(Lcom/mojang/blaze3d/vertex/PoseStack;IIIIII)V"
+            target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"
         ),
         slice = @Slice(
             from = @At(
@@ -305,10 +305,10 @@ public abstract class GuiMixin extends GuiComponent
             )
         )
     )
-    private void NT$onBlitArmor(PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
+    private void NT$onBlitArmor(GuiGraphics graphics, ResourceLocation location, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
     {
         if (this.NT$isHudVanilla())
-            Gui.blit(poseStack, x, y, uOffset, vOffset, uWidth, vHeight);
+            graphics.blit(location, x, y, uOffset, vOffset, uWidth, vHeight);
     }
 
     /**
@@ -318,7 +318,7 @@ public abstract class GuiMixin extends GuiComponent
         method = "renderPlayerHealth",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/Gui;blit(Lcom/mojang/blaze3d/vertex/PoseStack;IIIIII)V"
+            target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"
         ),
         slice = @Slice(
             from = @At(
@@ -333,10 +333,10 @@ public abstract class GuiMixin extends GuiComponent
             )
         )
     )
-    private void NT$onBlitFood(PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
+    private void NT$onBlitFood(GuiGraphics graphics, ResourceLocation location, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
     {
         if (this.NT$isHudVanilla())
-            Gui.blit(poseStack, x, y, uOffset, vOffset, uWidth, vHeight);
+            graphics.blit(location, x, y, uOffset, vOffset, uWidth, vHeight);
     }
 
     /**
@@ -346,7 +346,7 @@ public abstract class GuiMixin extends GuiComponent
         method = "renderPlayerHealth",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/Gui;blit(Lcom/mojang/blaze3d/vertex/PoseStack;IIIIII)V"
+            target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"
         ),
         slice = @Slice(
             from = @At(
@@ -360,10 +360,10 @@ public abstract class GuiMixin extends GuiComponent
             )
         )
     )
-    private void NT$onBlitAir(PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
+    private void NT$onBlitAir(GuiGraphics graphics, ResourceLocation location, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
     {
         if (this.NT$isHudVanilla())
-            Gui.blit(poseStack, x, y, uOffset, vOffset, uWidth, vHeight);
+            graphics.blit(location, x, y, uOffset, vOffset, uWidth, vHeight);
     }
 
     /**
@@ -376,12 +376,12 @@ public abstract class GuiMixin extends GuiComponent
             target = "Lnet/minecraft/world/entity/player/Player;getArmorValue()I"
         )
     )
-    private void NT$onRenderFood(PoseStack poseStack, CallbackInfo callback)
+    private void NT$onRenderFood(GuiGraphics graphics, CallbackInfo callback)
     {
         if (ModConfig.Gameplay.disableHungerBar() || this.NT$isHudVanilla())
             return;
 
-        GuiUtil.renderFood(poseStack, this.getCameraPlayer(), this.screenWidth, this.screenHeight, this.NT$rightHeight);
+        GuiUtil.renderFood(graphics, this.getCameraPlayer(), this.screenWidth, this.screenHeight, this.NT$rightHeight);
 
         this.NT$rightHeight += 10;
     }
@@ -394,15 +394,15 @@ public abstract class GuiMixin extends GuiComponent
         at = @At(
             shift = At.Shift.AFTER,
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/Gui;renderHearts(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/player/Player;IIIIFIIIZ)V"
+            target = "Lnet/minecraft/client/gui/Gui;renderHearts(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/entity/player/Player;IIIIFIIIZ)V"
         )
     )
-    private void NT$onRenderArmor(PoseStack poseStack, CallbackInfo callback)
+    private void NT$onRenderArmor(GuiGraphics graphics, CallbackInfo callback)
     {
         if (this.NT$isHudVanilla())
             return;
 
-        GuiUtil.renderArmor(poseStack, this.getCameraPlayer(), this.screenWidth, this.screenHeight, this.NT$leftHeight, this.NT$rightHeight);
+        GuiUtil.renderArmor(graphics, this.getCameraPlayer(), this.screenWidth, this.screenHeight, this.NT$leftHeight, this.NT$rightHeight);
 
         if (ModConfig.Gameplay.disableHungerBar())
             this.NT$rightHeight += 10;
@@ -432,12 +432,12 @@ public abstract class GuiMixin extends GuiComponent
             target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V"
         )
     )
-    private void NT$onRenderAir(PoseStack poseStack, CallbackInfo callback)
+    private void NT$onRenderAir(GuiGraphics graphics, CallbackInfo callback)
     {
         if (this.NT$isHudVanilla())
             return;
 
-        GuiUtil.renderAir(GuiMixin::isPlayerLosingAir, poseStack, this.getCameraPlayer(), this.screenWidth, this.screenHeight, this.NT$leftHeight, this.NT$rightHeight);
+        GuiUtil.renderAir(GuiMixin::isPlayerLosingAir, graphics, this.getCameraPlayer(), this.screenWidth, this.screenHeight, this.NT$leftHeight, this.NT$rightHeight);
 
         if (isPlayerLosingAir(this.getCameraPlayer()))
         {

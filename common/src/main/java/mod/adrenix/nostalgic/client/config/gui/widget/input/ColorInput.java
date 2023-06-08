@@ -2,15 +2,22 @@ package mod.adrenix.nostalgic.client.config.gui.widget.input;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import mod.adrenix.nostalgic.client.config.gui.overlay.ColorPickerOverlay;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigScreen;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.client.config.reflect.ClientReflect;
 import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
-import mod.adrenix.nostalgic.util.common.*;
 import mod.adrenix.nostalgic.util.client.RenderUtil;
+import mod.adrenix.nostalgic.util.common.ClassUtil;
+import mod.adrenix.nostalgic.util.common.ColorUtil;
+import mod.adrenix.nostalgic.util.common.LangUtil;
+import mod.adrenix.nostalgic.util.common.MathUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -155,13 +162,13 @@ public class ColorInput extends AbstractWidget
 
     /**
      * Handler method for rendering a color input widget.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The x-position of the mouse.
      * @param mouseY The y-position of the mouse.
      * @param partialTick The change in frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         int color = ColorUtil.toHexInt(this.tweak.getValue());
         int border = this.input.isFocused() ? 0xFFFFFFFF : 0xFFA0A0A0;
@@ -173,7 +180,7 @@ public class ColorInput extends AbstractWidget
 
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder buffer = tesselator.getBuilder();
-        Matrix4f matrix = poseStack.last().pose();
+        Matrix4f matrix = graphics.pose().last().pose();
 
         RenderSystem.depthFunc(515);
         RenderSystem.disableDepthTest();
@@ -197,7 +204,7 @@ public class ColorInput extends AbstractWidget
         ConfigScreen screen = (ConfigScreen) Minecraft.getInstance().screen;
 
         if (MathUtil.isWithinBox(mouseX, mouseY, this.getX(), this.getY(), 20, 20))
-            screen.renderLast.add(() -> screen.renderTooltip(poseStack, Component.translatable(LangUtil.Gui.OVERLAY_INPUT_TIP), mouseX, mouseY));
+            screen.renderLast.add(() -> graphics.renderTooltip(Minecraft.getInstance().font, Component.translatable(LangUtil.Gui.OVERLAY_INPUT_TIP), mouseX, mouseY));
 
         this.input.setX(this.getX() + 21);
         this.input.setY(this.getY() + 1);
@@ -209,7 +216,7 @@ public class ColorInput extends AbstractWidget
     /* Required Widget Overrides */
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}

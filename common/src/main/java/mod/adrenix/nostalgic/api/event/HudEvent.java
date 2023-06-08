@@ -1,8 +1,8 @@
 package mod.adrenix.nostalgic.api.event;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.api.EventHandler;
 import mod.adrenix.nostalgic.common.config.ModConfig;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * Use a mod loader specific event handler to tap into this event.
@@ -25,7 +25,7 @@ public interface HudEvent extends EventHandler
      * Get the current pose stack handling the rendering of hearts.
      * @return A pose stack instance.
      */
-    PoseStack getPoseStack();
+    GuiGraphics getGraphics();
 
     /**
      * Change where this overlay starts on the x-axis.

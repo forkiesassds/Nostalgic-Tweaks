@@ -443,7 +443,8 @@ public abstract class ClientLevelMixin
             {
                 BlockState standing = level.getBlockState(pos.below());
 
-                if (standing.getMaterial().isLiquid())
+                //TODO: Does this even work at all?
+                if (!standing.getFluidState().isEmpty())
                     return;
                 else if (standing.is(Blocks.AIR))
                 {

@@ -1,7 +1,5 @@
 package mod.adrenix.nostalgic.client.config.gui.screen.config;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import mod.adrenix.nostalgic.NostalgicTweaks;
 import mod.adrenix.nostalgic.client.config.ClientConfig;
@@ -16,28 +14,33 @@ import mod.adrenix.nostalgic.client.config.gui.widget.button.ContainerButton;
 import mod.adrenix.nostalgic.client.config.gui.widget.button.KeyBindButton;
 import mod.adrenix.nostalgic.client.config.gui.widget.button.OverlapButton;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
+import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
 import mod.adrenix.nostalgic.common.config.annotation.TweakData;
 import mod.adrenix.nostalgic.common.config.auto.AutoConfig;
 import mod.adrenix.nostalgic.common.config.reflect.TweakGroup;
 import mod.adrenix.nostalgic.common.config.reflect.TweakStatus;
-import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
 import mod.adrenix.nostalgic.server.config.reflect.TweakServerCache;
 import mod.adrenix.nostalgic.util.client.KeyUtil;
-import mod.adrenix.nostalgic.util.common.LangUtil;
 import mod.adrenix.nostalgic.util.client.RunUtil;
+import mod.adrenix.nostalgic.util.common.LangUtil;
 import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This is the screen that appears when the settings button is clicked. Most of the user's time will be spent here.
@@ -91,7 +94,6 @@ public class ConfigScreen extends Screen
     public Minecraft getMinecraft() { return this.minecraft; }
     public ConfigWidgets getWidgets() { return this.widgetProvider; }
     public ConfigRenderer getRenderer() { return this.rendererProvider; }
-    public ItemRenderer getItemRenderer() { return this.itemRenderer; }
     public ConfigTab getConfigTab() { return this.configTab; }
 
     /* Constructors */
@@ -786,13 +788,13 @@ public class ConfigScreen extends Screen
 
     /**
      * Handler method for rendering the configuration screen and its subscribed widgets.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The mouse x-position.
      * @param mouseY The mouse y-position.
      * @param partialTick The change in time between frames.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         ConfigRowList list = this.getWidgets().getConfigRowList();
 
@@ -803,13 +805,13 @@ public class ConfigScreen extends Screen
         // Config Row Generation for Group Tabs
 
         if (list.children().isEmpty())
-            this.getRenderer().generateAndRender(poseStack, mouseX, mouseY, partialTick);
+            this.getRenderer().generateAndRender(graphics, mouseX, mouseY, partialTick);
 
         // Reset scrollbar position without flashing
 
         if (this.scrollAmountCache > 0.0D)
         {
-            list.render(poseStack, mouseX, mouseY, partialTick);
+            list.render(graphics, mouseX, mouseY, partialTick);
             this.getWidgets().getConfigRowList().setScrollAmount(this.scrollAmountCache);
             this.scrollAmountCache = 0.0D;
         }
@@ -817,16 +819,16 @@ public class ConfigScreen extends Screen
         // Background Rendering
 
         if (this.minecraft.level != null)
-            this.fillGradient(poseStack, 0, 0, this.width, this.height, 839913488, 16777216);
+            graphics.fillGradient(0, 0, this.width, this.height, 839913488, 16777216);
         else
-            this.renderDirtBackground(poseStack);
+            this.renderDirtBackground(graphics);
 
-        this.fillGradient(poseStack, 0, 0, this.width, this.height, -1072689136, -804253680);
-        this.fillGradient(poseStack, 0, 0, this.width, this.height, 1744830464, 1744830464);
+        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        graphics.fillGradient(0, 0, this.width, this.height, 1744830464, 1744830464);
 
         // Render config row list
 
-        list.render(poseStack, mouseX, mouseY, partialTick);
+        list.render(graphics, mouseX, mouseY, partialTick);
 
         // Widget Overlay Overrides
 
@@ -855,13 +857,13 @@ public class ConfigScreen extends Screen
         for (Renderable widget : this.getWidgets().children)
         {
             if (!(widget instanceof ConfigRowList))
-                widget.render(poseStack, mouseX, mouseY, partialTick);
+                widget.render(graphics, mouseX, mouseY, partialTick);
         }
 
         if (this.configTab != ConfigTab.SEARCH)
         {
             this.getWidgets().getSearchInput().setVisible(false);
-            ConfigScreen.drawCenteredString(poseStack, this.font, title, this.width / 2, 8, 0xFFFFFF);
+            graphics.drawCenteredString(this.font, title, this.width / 2, 8, 0xFFFFFF);
         }
         else if (this.getWidgets().focusInput)
         {
@@ -871,20 +873,19 @@ public class ConfigScreen extends Screen
 
         this.getWidgets().getClear().active = this.getWidgets().getSearchInput().getValue().length() > 0;
         this.getWidgets().getSearchControls().forEach((button) -> button.visible = this.configTab == ConfigTab.SEARCH);
-        this.getWidgets().getSearchInput().render(poseStack, mouseX, mouseY, partialTick);
+        this.getWidgets().getSearchInput().render(graphics, mouseX, mouseY, partialTick);
 
         // Render Highlighted Overlap
 
         for (Renderable widget : this.getWidgets().children)
         {
             if (widget instanceof OverlapButton button && button.isMouseOver(mouseX, mouseY))
-                button.render(poseStack, mouseX, mouseY, partialTick);
+                button.render(graphics, mouseX, mouseY, partialTick);
         }
 
         // Magnifying Glass Icon
 
-        RenderSystem.setShaderTexture(0, TextureLocation.WIDGETS);
-        this.blit(poseStack, this.getWidgets().getSearch().getX() + 5, this.getWidgets().getSearch().getY() + 4, 0, 15, 12, 12);
+        graphics.blit(TextureLocation.WIDGETS, this.getWidgets().getSearch().getX() + 5, this.getWidgets().getSearch().getY() + 4, 0, 15, 12, 12);
 
         // Finish Screen Rendering
 
@@ -895,7 +896,7 @@ public class ConfigScreen extends Screen
 
         // Overlay Rendering
 
-        Overlay.render(poseStack, mouseX, mouseY, partialTick);
+        Overlay.render(graphics, mouseX, mouseY, partialTick);
 
         // Crumb & Tweak Jumping
 
@@ -940,6 +941,6 @@ public class ConfigScreen extends Screen
         // Debugging
 
         if (NostalgicTweaks.isDebugging())
-            drawString(poseStack, this.font, "Debug: §2ON", 2, this.height - 10, 0xFFFF00);
+            graphics.drawString(this.font, "Debug: §2ON", 2, this.height - 10, 0xFFFF00);
     }
 }

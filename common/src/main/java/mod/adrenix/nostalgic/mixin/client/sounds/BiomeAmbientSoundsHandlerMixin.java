@@ -33,7 +33,7 @@ public abstract class BiomeAmbientSoundsHandlerMixin
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getAmbientMood()Ljava/util/Optional;"))
     private Optional<AmbientMoodSettings> NT$onTickMood(Biome biome)
     {
-        if (ModConfig.Sound.disableNetherAmbience() && this.player.level.dimension() == Level.NETHER)
+        if (ModConfig.Sound.disableNetherAmbience() && this.player.level().dimension() == Level.NETHER)
             return Optional.empty();
 
         return biome.getAmbientMood();
@@ -46,7 +46,7 @@ public abstract class BiomeAmbientSoundsHandlerMixin
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getAmbientAdditions()Ljava/util/Optional;"))
     private Optional<AmbientAdditionsSettings> NT$onTickAdditions(Biome biome)
     {
-        if (ModConfig.Sound.disableNetherAmbience() && this.player.level.dimension() == Level.NETHER)
+        if (ModConfig.Sound.disableNetherAmbience() && this.player.level().dimension() == Level.NETHER)
             return Optional.empty();
 
         return biome.getAmbientAdditions();
@@ -59,7 +59,7 @@ public abstract class BiomeAmbientSoundsHandlerMixin
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getAmbientLoop()Ljava/util/Optional;"))
     private Optional<Holder<SoundEvent>> NT$onTickLoop(Biome biome)
     {
-        if (ModConfig.Sound.disableNetherAmbience() && this.player.level.dimension() == Level.NETHER)
+        if (ModConfig.Sound.disableNetherAmbience() && this.player.level().dimension() == Level.NETHER)
             return Optional.empty();
 
         return biome.getAmbientLoop();

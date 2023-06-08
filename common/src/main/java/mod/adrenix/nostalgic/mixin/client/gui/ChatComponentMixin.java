@@ -16,7 +16,7 @@ public abstract class ChatComponentMixin
      * Repositions the chat box, so it is flush with the chat input box.
      * Controlled by the old chat box tweak.
      */
-    @ModifyArg(method = "render", index = 1, at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/client/gui/components/ChatComponent;fill(Lcom/mojang/blaze3d/vertex/PoseStack;IIIII)V"))
+    @ModifyArg(method = "render", index = 0, at = @At(value = "INVOKE", ordinal = 0, target = "net/minecraft/client/gui/GuiGraphics.fill(IIIII)V"))
     private int NT$onRenderBoxFill(int vanilla)
     {
         return ModConfig.Candy.oldChatBox() ? -2 : vanilla;
@@ -26,17 +26,17 @@ public abstract class ChatComponentMixin
      * Repositions the chat box text, so it is flush with the far left of the chat box.
      * Controlled by the old chat box tweak.
      */
-    @ModifyArg(method = "render", index = 2, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;drawShadow(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/util/FormattedCharSequence;FFI)I"))
-    private float NT$onDrawMessagePosition(float vanilla)
+    @ModifyArg(method = "render", index = 2, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)I"))
+    private int NT$onDrawMessagePosition(int vanilla)
     {
-        return ModConfig.Candy.oldChatBox() ? -2.0F + (float) ModConfig.Candy.getChatOffset() : vanilla;
+        return ModConfig.Candy.oldChatBox() ? -2 + ModConfig.Candy.getChatOffset() : vanilla;
     }
 
     /**
      * Prevents the text from fading out with the chat box. Similar to how it appeared in the old days.
      * Controlled by the old chat box tweak.
      */
-    @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;drawShadow(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/util/FormattedCharSequence;FFI)I"))
+    @ModifyArg(method = "render", index = 4, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)I"))
     private int NT$onDrawMessageColor(int vanilla)
     {
         return ModConfig.Candy.oldChatBox() ? 0xFFFFFF : vanilla;

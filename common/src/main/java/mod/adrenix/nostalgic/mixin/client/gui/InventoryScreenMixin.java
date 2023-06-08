@@ -1,7 +1,6 @@
 package mod.adrenix.nostalgic.mixin.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.screen.SlotTracker;
 import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.common.config.tweak.TweakType;
@@ -9,6 +8,7 @@ import mod.adrenix.nostalgic.mixin.widen.AbstractContainerScreenAccessor;
 import mod.adrenix.nostalgic.util.client.GuiUtil;
 import mod.adrenix.nostalgic.util.common.MathUtil;
 import mod.adrenix.nostalgic.util.common.TextureLocation;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
@@ -52,11 +52,10 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
     {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TextureLocation.INVENTORY);
     }
 
     @Unique
-    private void NT$renderOffhandSlot(PoseStack poseStack)
+    private void NT$renderOffhandSlot(GuiGraphics graphics)
     {
         TweakType.InventoryShield shield = ModConfig.Candy.getInventoryShield();
         this.NT$setShader();
@@ -67,20 +66,20 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
         {
             if (this.recipeBookComponent.isVisible())
             {
-                InventoryScreen.blit(poseStack, this.leftPos + 172, this.height / 2 + 51, 200, 33, 26, 32);
+                graphics.blit(TextureLocation.INVENTORY, this.leftPos + 172, this.height / 2 + 51, 200, 33, 26, 32);
                 SlotTracker.OFF_HAND.move(this.NT$offHand, 174, 142);
             }
             else
             {
-                InventoryScreen.blit(poseStack, this.leftPos - 22, this.height / 2 + 51, 200, 0, 25, 32);
+                graphics.blit(TextureLocation.INVENTORY, this.leftPos - 22, this.height / 2 + 51, 200, 0, 25, 32);
                 SlotTracker.OFF_HAND.move(this.NT$offHand, -14, 142);
             }
         }
         else if (shield.equals(TweakType.InventoryShield.MIDDLE_RIGHT) || isModernOverride)
-            InventoryScreen.blit(poseStack, this.leftPos + 151, this.height / 2 - 22, 178, 56, 18, 18);
+            graphics.blit(TextureLocation.INVENTORY, this.leftPos + 151, this.height / 2 - 22, 178, 56, 18, 18);
 
         if (!ModConfig.Candy.oldInventory() && !shield.equals(TweakType.InventoryShield.MODERN))
-            InventoryScreen.blit(poseStack, this.leftPos + 76, this.height / 2 - 22, 178, 74, 18, 18);
+            graphics.blit(TextureLocation.INVENTORY, this.leftPos + 76, this.height / 2 - 22, 178, 74, 18, 18);
     }
 
     /* Injections */
@@ -90,11 +89,11 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
         at = @At("HEAD"),
         cancellable = true
     )
-    private void NT$onRenderLabels(PoseStack poseStack, int mouseX, int mouseY, CallbackInfo callback)
+    private void NT$onRenderLabels(GuiGraphics graphics, int mouseX, int mouseY, CallbackInfo callback)
     {
         if (ModConfig.Candy.oldInventory())
         {
-            this.font.draw(poseStack, this.title, 86.0F, 16.0F, 0x404040);
+            graphics.drawString(this.font, this.title, 86, 16, 0x404040, false);
             callback.cancel();
         }
     }
@@ -162,21 +161,21 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
         at = @At("HEAD"),
         cancellable = true
     )
-    private void NT$onStartBackgroundRender(PoseStack poseStack, float partialTick, int mouseX, int mouseY, CallbackInfo callback)
+    private void NT$onStartBackgroundRender(GuiGraphics graphics, float partialTick, int mouseX, int mouseY, CallbackInfo callback)
     {
         if (!ModConfig.Candy.oldInventory() || this.minecraft == null || this.minecraft.player == null)
             return;
 
         this.NT$setShader();
-        InventoryScreen.blit(poseStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-        this.NT$renderOffhandSlot(poseStack);
+        graphics.blit(TextureLocation.INVENTORY, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        this.NT$renderOffhandSlot(graphics);
 
         int x = this.leftPos + 51;
         int y = this.topPos + 75;
         float mx = (float) (this.leftPos + 51) - this.xMouse;
         float my = (float) (this.topPos + 75 - 50) - this.yMouse;
 
-        InventoryScreen.renderEntityInInventoryFollowsMouse(poseStack, x, y, 30, mx, my, this.minecraft.player);
+        InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, x, y, 30, mx, my, this.minecraft.player);
 
         callback.cancel();
     }
@@ -185,9 +184,9 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
         method = "renderBg",
         at = @At("TAIL")
     )
-    private void NT$onFinishBackgroundRender(PoseStack poseStack, float partialTick, int mouseX, int mouseY, CallbackInfo callback)
+    private void NT$onFinishBackgroundRender(GuiGraphics graphics, float partialTick, int mouseX, int mouseY, CallbackInfo callback)
     {
-        this.NT$renderOffhandSlot(poseStack);
+        this.NT$renderOffhandSlot(graphics);
     }
 
     /**

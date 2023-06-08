@@ -1,6 +1,5 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.button;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.overlay.Overlay;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListScreen;
 import mod.adrenix.nostalgic.client.config.gui.widget.input.ColorInput;
@@ -10,13 +9,13 @@ import mod.adrenix.nostalgic.util.common.ClassUtil;
 import mod.adrenix.nostalgic.util.common.LangUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -38,7 +37,6 @@ public class ResetButton extends Button
     private final Supplier<Boolean> isEntryChanged;
     private final AbstractWidget controller;
 
-    @CheckForNull
     private final TweakClientCache<?> tweak;
 
     /* Constructor Helpers */
@@ -156,13 +154,13 @@ public class ResetButton extends Button
 
     /**
      * Handler method for reset button rendering.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         this.setMessage(ResetButton.getResetTitle(this.isEntryChanged));
         this.updateX();
@@ -179,6 +177,6 @@ public class ResetButton extends Button
         if (Overlay.isOpened() || isDisabled)
             this.active = false;
 
-        super.render(poseStack, mouseX, mouseY, partialTick);
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 }

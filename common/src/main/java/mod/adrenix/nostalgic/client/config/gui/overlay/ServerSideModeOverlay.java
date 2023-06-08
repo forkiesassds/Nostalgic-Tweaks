@@ -1,11 +1,11 @@
 package mod.adrenix.nostalgic.client.config.gui.overlay;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.overlay.template.GenericOverlay;
 import mod.adrenix.nostalgic.client.config.gui.widget.text.TextAlign;
 import mod.adrenix.nostalgic.client.config.gui.widget.text.TextWidget;
 import mod.adrenix.nostalgic.util.common.LangUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 public class ServerSideModeOverlay extends GenericOverlay
@@ -57,9 +57,9 @@ public class ServerSideModeOverlay extends GenericOverlay
     }
 
     @Override
-    public void onMainRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void onMainRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        this.headerText.render(poseStack, mouseX, mouseY, partialTick);
-        this.messageText.render(poseStack, mouseX, mouseY, partialTick);
+        this.headerText.render(graphics, mouseX, mouseY, partialTick);
+        this.messageText.render(graphics, mouseX, mouseY, partialTick);
     }
 }

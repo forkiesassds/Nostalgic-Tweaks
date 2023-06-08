@@ -3,8 +3,6 @@ package mod.adrenix.nostalgic.client.screen;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Axis;
 import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.common.config.tweak.TweakVersion;
 import mod.adrenix.nostalgic.mixin.widen.ScreenAccessor;
@@ -12,19 +10,15 @@ import mod.adrenix.nostalgic.mixin.widen.TitleScreenAccessor;
 import mod.adrenix.nostalgic.util.client.GuiUtil;
 import mod.adrenix.nostalgic.util.client.RunUtil;
 import mod.adrenix.nostalgic.util.common.LangUtil;
-import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
@@ -36,7 +30,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import org.lwjgl.glfw.GLFW;
 
@@ -88,6 +81,7 @@ public class NostalgicTitleScreen extends TitleScreen
     private final List<Renderable> beta = new ArrayList<>();
     private final List<Renderable> release = new ArrayList<>();
     private final NostalgicLogoRenderer logo = new NostalgicLogoRenderer(this.isEasterEgged);
+    private LogoRenderer logoRenderer;
 
     /* Overrides */
 
@@ -118,6 +112,8 @@ public class NostalgicTitleScreen extends TitleScreen
 
         if (ModConfig.Candy.getButtonLayout() != TweakVersion.TitleLayout.MODERN)
             widgets.forEach((widget) -> super.addRenderableWidget((AbstractWidget) widget));
+
+        this.logoRenderer = new LogoRenderer(false);
 
         super.init();
     }
@@ -161,25 +157,24 @@ public class NostalgicTitleScreen extends TitleScreen
 
     /**
      * Handler method that provides instructions for rendering this screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (ModConfig.Candy.oldTitleBackground())
-            this.renderDirtBackground(poseStack);
+            this.renderDirtBackground(graphics);
         else
         {
             this.panorama.render(partialTick, 1.0F);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderTexture(0, OVERLAY);
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            TitleScreen.blit(poseStack, 0, 0, this.width, this.height, 0.0F, 0.0F, 16, 128, 16, 128);
+            graphics.blit(OVERLAY, 0, 0, this.width, this.height, 0.0F, 0.0F, 16, 128, 16, 128);
         }
 
         if (this.updateScreenDelay == 0L)
@@ -195,51 +190,7 @@ public class NostalgicTitleScreen extends TitleScreen
             this.logo.render(partialTick);
         else
         {
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderTexture(0, TextureLocation.MINECRAFT_LOGO);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-            int width = this.width / 2 - 137;
-            int height = 30;
-
-            if (ModConfig.Candy.oldLogoOutline())
-            {
-                if (this.isEasterEgged)
-                {
-                    Screen.blit(poseStack, width, height, 0, 0, 99, 44);
-                    Screen.blit(poseStack, width + 99, height, 129, 0, 27, 44);
-                    Screen.blit(poseStack, width + 99 + 26, height, 126, 0, 3, 44);
-                    Screen.blit(poseStack, width + 99 + 26 + 3, height, 99, 0, 26, 44);
-                    Screen.blit(poseStack, width + 155, height, 0, 45, 155, 44);
-                }
-                else
-                {
-                    Screen.blit(poseStack, width, height, 0, 0, 155, 44);
-                    Screen.blit(poseStack, width + 155, height, 0, 45, 155, 44);
-                }
-            }
-            else
-            {
-                if (this.isEasterEgged)
-                {
-                    Screen.blitOutlineBlack(width, height, (x, y) ->
-                    {
-                        Screen.blit(poseStack, x, y, 0, 0, 99, 44);
-                        Screen.blit(poseStack, x + 99, y, 129, 0, 27, 44);
-                        Screen.blit(poseStack, x + 99 + 26, y, 126, 0, 3, 44);
-                        Screen.blit(poseStack, x + 99 + 26 + 3, y, 99, 0, 26, 44);
-                        Screen.blit(poseStack, x + 155, y, 0, 45, 155, 44);
-                    });
-                }
-                else
-                {
-                    Screen.blitOutlineBlack(width, height, (x, y) ->
-                    {
-                        Screen.blit(poseStack, x, y, 0, 0, 155, 44);
-                        Screen.blit(poseStack, x + 155, y, 0, 45, 155, 44);
-                    });
-                }
-            }
+            this.logoRenderer.renderLogo(graphics, this.width, 1.0F);
         }
 
         NostalgicTitleScreen.isGameReady = true;
@@ -250,16 +201,7 @@ public class NostalgicTitleScreen extends TitleScreen
 
         if (titleAccessor.NT$getSplash() != null)
         {
-            poseStack.pushPose();
-            poseStack.translate((float) this.width / 2 + 90, 70.0, 0.0);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(-20.0F));
-
-            float scale = 1.8F - Mth.abs(Mth.sin((float) (Util.getMillis() % 1000L) / 1000.0F * ((float) Math.PI * 2)) * 0.1F);
-            scale = scale * 100.0F / (float) (this.font.width(titleAccessor.NT$getSplash()) + 32);
-
-            poseStack.scale(scale, scale, scale);
-            TitleScreen.drawCenteredString(poseStack, this.font, titleAccessor.NT$getSplash(), 0, -8, 0xFFFF00);
-            poseStack.popPose();
+            titleAccessor.NT$getSplash().render(graphics, this.width, this.font, 0xFFFF00);
         }
 
         String minecraft = ModConfig.Candy.getVersionText();
@@ -277,8 +219,8 @@ public class NostalgicTitleScreen extends TitleScreen
         int versionColor = ModConfig.Candy.oldTitleBackground() && !minecraft.contains("§") ? 5263440 : 0xFFFFFF;
         int height = ModConfig.Candy.titleBottomLeftText() ? this.height - 10 : 2;
 
-        TitleScreen.drawString(poseStack, this.font, minecraft, 2, height, versionColor);
-        TitleScreen.drawString(poseStack, this.font, copyright, this.width - this.font.width(copyright) - 2, this.height - 10, 0xFFFFFF);
+        graphics.drawString(this.font, minecraft, 2, height, versionColor);
+        graphics.drawString(this.font, copyright, this.width - this.font.width(copyright) - 2, this.height - 10, 0xFFFFFF);
 
         boolean isRelease = layout == TweakVersion.TitleLayout.RELEASE_TEXTURE_PACK || layout == TweakVersion.TitleLayout.RELEASE_NO_TEXTURE_PACK;
 
@@ -300,16 +242,16 @@ public class NostalgicTitleScreen extends TitleScreen
                 this.setButtonVisibility();
 
                 for (Renderable widget : screenAccessor.NT$getRenderables())
-                    widget.render(poseStack, mouseX, mouseY, partialTick);
+                    widget.render(graphics, mouseX, mouseY, partialTick);
 
                 if (titleAccessor.NT$getRealmsNotificationsEnabled())
-                    titleAccessor.NT$getRealmsNotificationsScreen().render(poseStack, mouseX, mouseY, partialTick);
+                    titleAccessor.NT$getRealmsNotificationsScreen().render(graphics, mouseX, mouseY, partialTick);
             }
 
-            case ALPHA -> this.alpha.forEach(widget -> widget.render(poseStack, mouseX, mouseY, partialTick));
-            case BETA -> this.beta.forEach(widget -> widget.render(poseStack, mouseX, mouseY, partialTick));
+            case ALPHA -> this.alpha.forEach(widget -> widget.render(graphics, mouseX, mouseY, partialTick));
+            case BETA -> this.beta.forEach(widget -> widget.render(graphics, mouseX, mouseY, partialTick));
 
-            default -> this.release.forEach(widget -> widget.render(poseStack, mouseX, mouseY, partialTick));
+            default -> this.release.forEach(widget -> widget.render(graphics, mouseX, mouseY, partialTick));
         }
     }
 

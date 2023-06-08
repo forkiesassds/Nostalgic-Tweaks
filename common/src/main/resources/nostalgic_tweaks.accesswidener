@@ -3,5 +3,6 @@ accessWidener v2 named
 accessible class net/minecraft/client/renderer/LevelRenderer$RenderChunkInfo
 
 mutable field net/minecraft/client/gui/components/AbstractSelectionList itemHeight I
+accessible field net/minecraft/client/gui/components/AbstractSliderButton SLIDER_LOCATION Lnet/minecraft/resources/ResourceLocation;
 mutable field net/minecraft/world/inventory/Slot x I
 mutable field net/minecraft/world/inventory/Slot y I

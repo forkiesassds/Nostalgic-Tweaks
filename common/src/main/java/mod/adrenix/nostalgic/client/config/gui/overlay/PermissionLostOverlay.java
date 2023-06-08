@@ -1,6 +1,5 @@
 package mod.adrenix.nostalgic.client.config.gui.overlay;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.ClientConfig;
 import mod.adrenix.nostalgic.client.config.gui.overlay.template.AbstractWidgetProvider;
 import mod.adrenix.nostalgic.client.config.gui.overlay.template.ListScreenOverlay;
@@ -8,9 +7,10 @@ import mod.adrenix.nostalgic.client.config.gui.screen.SettingsScreen;
 import mod.adrenix.nostalgic.client.config.gui.widget.text.TextAlign;
 import mod.adrenix.nostalgic.client.config.gui.widget.text.TextWidget;
 import mod.adrenix.nostalgic.common.config.auto.AutoConfig;
-import mod.adrenix.nostalgic.util.common.*;
+import mod.adrenix.nostalgic.util.common.LangUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -210,13 +210,13 @@ public class PermissionLostOverlay extends ListScreenOverlay<PermissionLostOverl
 
     /**
      * Handler method for overlay main rendering.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick A change in game frame time.
      */
     @Override
-    public void onMainRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void onMainRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         // Widget management
         if (this.timeSinceLast == 0L)
@@ -231,6 +231,6 @@ public class PermissionLostOverlay extends ListScreenOverlay<PermissionLostOverl
         this.widgetProvider.exitWithoutSaving.active = this.countdown == 0;
         this.widgetProvider.exitSaveLocally.active = this.countdown == 0;
 
-        super.onMainRender(poseStack, mouseX, mouseY, partialTick);
+        super.onMainRender(graphics, mouseX, mouseY, partialTick);
     }
 }

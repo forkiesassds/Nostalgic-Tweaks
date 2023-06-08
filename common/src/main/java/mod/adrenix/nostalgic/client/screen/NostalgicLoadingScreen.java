@@ -1,6 +1,6 @@
 package mod.adrenix.nostalgic.client.screen;
 
-import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
@@ -70,21 +70,21 @@ public class NostalgicLoadingScreen extends Screen
 
     /**
      * Handler method that provides instructions for rendering this screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (this.minecraft == null)
             return;
 
-        this.renderDirtBackground(poseStack);
+        this.renderDirtBackground(graphics);
 
-        ProgressRenderer.drawTitleText(poseStack, this, this.title);
-        ProgressRenderer.drawSubtitleText(poseStack, this, this.subtitle);
+        ProgressRenderer.drawTitleText(graphics, this, this.title);
+        ProgressRenderer.drawSubtitleText(graphics, this, this.subtitle);
         ProgressRenderer.renderProgressWithChunks(this.progressListener);
     }
 }

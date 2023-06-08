@@ -1,6 +1,5 @@
 package mod.adrenix.nostalgic.client.config.gui.widget;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigScreen;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigWidgets;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
@@ -9,6 +8,7 @@ import mod.adrenix.nostalgic.util.common.MathUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -115,27 +115,27 @@ public class SearchCrumbs extends AbstractWidget
 
     /**
      * Draws a crumb onto the current screen using the crumb's rendering information.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param crumb A crumb instance.
      * @param isUnderlined Whether the text rendering should have an underline to it.
      */
-    private void drawCrumb(PoseStack poseStack, Crumb crumb, boolean isUnderlined)
+    private void drawCrumb(GuiGraphics graphics, Crumb crumb, boolean isUnderlined)
     {
         MutableComponent crumbText = isUnderlined ? crumb.text().copy().withStyle(ChatFormatting.UNDERLINE) : crumb.text();
-        drawString(poseStack, Minecraft.getInstance().font, crumbText, crumb.startX(), this.getY(), 0xFFFFFF);
+        graphics.drawString(Minecraft.getInstance().font, crumbText, crumb.startX(), this.getY(), 0xFFFFFF);
     }
 
     /**
      * Draws a slash in front of a crumb. This is used to separate individual crumbs.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param crumb A crumb instance.
      */
-    private void drawSlash(PoseStack poseStack, Crumb crumb)
+    private void drawSlash(GuiGraphics graphics, Crumb crumb)
     {
         Font font = Minecraft.getInstance().font;
         int startX = crumb.getEndX() - font.width(Component.literal("/"));
 
-        drawString(poseStack, font, this.slashText, startX, this.getY(), 0xFFFFFF);
+        graphics.drawString(font, this.slashText, startX, this.getY(), 0xFFFFFF);
     }
 
     /**
@@ -224,18 +224,18 @@ public class SearchCrumbs extends AbstractWidget
 
     /**
      * Renders a crumb onto the screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick A change in frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (this.crumbs.size() == 1)
         {
             Crumb crumb = this.crumbs.get(0);
-            drawCrumb(poseStack, crumb, this.isOverCrumb(mouseX, mouseY, crumb));
+            drawCrumb(graphics, crumb, this.isOverCrumb(mouseX, mouseY, crumb));
         }
         else
         {
@@ -244,9 +244,9 @@ public class SearchCrumbs extends AbstractWidget
                 Crumb crumb = this.crumbs.get(i);
 
                 if (i != this.crumbs.size() - 1)
-                    drawSlash(poseStack, crumb);
+                    drawSlash(graphics, crumb);
 
-                drawCrumb(poseStack, crumb, this.isOverCrumb(mouseX, mouseY, crumb));
+                drawCrumb(graphics, crumb, this.isOverCrumb(mouseX, mouseY, crumb));
             }
         }
     }
@@ -254,7 +254,7 @@ public class SearchCrumbs extends AbstractWidget
     /* Required Widget Overrides */
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) { }

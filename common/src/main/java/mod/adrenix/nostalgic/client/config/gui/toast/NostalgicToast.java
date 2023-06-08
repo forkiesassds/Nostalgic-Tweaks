@@ -16,7 +16,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,7 +25,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 
-import javax.annotation.CheckForNull;
 import java.util.List;
 
 public class NostalgicToast implements Toast
@@ -60,7 +59,7 @@ public class NostalgicToast implements Toast
      * met so that toasts are properly opened and/or closed.
      */
     @SuppressWarnings("unused") // Unused parameters are needed for functional shortcut
-    public static void onPostRender(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public static void onPostRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (WELCOME.isClosed() && screen instanceof TitleScreen && !ClientConfigCache.getGui().interactedWithConfig)
             WELCOME.open();
@@ -71,7 +70,6 @@ public class NostalgicToast implements Toast
 
     /* Fields */
 
-    @CheckForNull
     private TimeWatcher timer = null;
     private final Font font = Minecraft.getInstance().font;
     private final ToastId id;
@@ -208,36 +206,38 @@ public class NostalgicToast implements Toast
 
     /**
      * Render the toast.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param toast A toast component instance.
      * @param timeSinceLastVisible The time in milliseconds.
      * @return A visibility enumeration instance that indicates whether the toast is visible or not.
      */
     @Override
-    public Visibility render(PoseStack poseStack, ToastComponent toast, long timeSinceLastVisible)
+    public Visibility render(GuiGraphics graphics, ToastComponent toast, long timeSinceLastVisible)
     {
         RenderSystem.setShaderTexture(0, TextureLocation.TOASTS);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        toast.blit(poseStack, 0, 0, 0, 0, 8, 8);
-        toast.blit(poseStack, 0, this.drawHeight() - 8, 0, 9, 8, 8);
-        toast.blit(poseStack, this.width() - 8, 0, 9, 0, 8, 8);
-        toast.blit(poseStack, this.width() - 8, this.drawHeight() - 8, 9, 9, 8, 8);
+        graphics.blit(TextureLocation.TOASTS, 0, 0, 0, 0, 8, 8);
+        graphics.blit(TextureLocation.TOASTS, 0, this.drawHeight() - 8, 0, 9, 8, 8);
+        graphics.blit(TextureLocation.TOASTS, this.width() - 8, 0, 9, 0, 8, 8);
+        graphics.blit(TextureLocation.TOASTS, this.width() - 8, this.drawHeight() - 8, 9, 9, 8, 8);
 
         for (int x = 8; x < this.width() - 8; x++)
         {
-            toast.blit(poseStack, x, 0, 8, 0, 1, 8);
-            toast.blit(poseStack, x, this.drawHeight() - 8, 8, 9, 1, 8);
+            graphics.blit(TextureLocation.TOASTS, x, 0, 8, 0, 1, 8);
+            graphics.blit(TextureLocation.TOASTS, x, this.drawHeight() - 8, 8, 9, 1, 8);
         }
 
         for (int y = 0; y < this.drawHeight() - 16; y++)
         {
-            toast.blit(poseStack, 0, 8 + y, 0, 8, 8, 1);
-            toast.blit(poseStack, this.width() - 8, 8 + y, 9, 8, 8, 1);
+            graphics.blit(TextureLocation.TOASTS, 0, 8 + y, 0, 8, 8, 1);
+            graphics.blit(TextureLocation.TOASTS, this.width() - 8, 8 + y, 9, 8, 8, 1);
         }
 
-        RenderUtil.fill(poseStack, 8, this.width() - 8, 8, this.drawHeight() - 8, 0xAF000000);
-        GearSpinner.getInstance().render(poseStack, 16.0F, 10, 10);
+        RenderUtil.fill(graphics, 8, this.width() - 8, 8, this.drawHeight() - 8, 0xAF000000);
+        GearSpinner.getInstance().render(graphics, 16.0F, 10, 10);
+
+        PoseStack poseStack = graphics.pose();
 
         poseStack.pushPose();
         poseStack.translate(23.0F, 23.0F, 1.0);
@@ -248,13 +248,13 @@ public class NostalgicToast implements Toast
         scale = scale * 5.0F / (float) (this.font.width(splash));
 
         poseStack.scale(scale, scale, scale);
-        GuiComponent.drawCenteredString(poseStack, this.font, splash, 1, -6, 0xFFFF00);
+        graphics.drawCenteredString(this.font, splash, 1, -6, 0xFFFF00);
         poseStack.popPose();
 
-        this.font.drawShadow(poseStack, this.title, 30.0F, 14.0F, 0xFFFF00);
+        graphics.drawString(this.font, this.title, 30, 14, 0xFFFF00, true);
 
         for (int i = 0; i < this.messageLines.size(); i++)
-            this.font.drawShadow(poseStack, this.messageLines.get(i), 12.0F, 30.0F + i * 12.0F, 0xFFFFFF);
+            graphics.drawString(this.font, this.messageLines.get(i), 12, 30 + i * 12, 0xFFFFFF, true);
 
         if (this.timer != null && this.timer.isReady())
             this.close();

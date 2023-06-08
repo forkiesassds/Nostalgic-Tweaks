@@ -1,11 +1,11 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.group;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.client.config.gui.widget.text.TextAlign;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -115,13 +115,13 @@ public class TextGroup extends AbstractWidget
 
     /**
      * Handler method for rendering a text group widget.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The x-position of the mouse.
      * @param mouseY The y-position of the mouse.
      * @param partialTick The change in frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         ArrayList<ConfigRowList.Row> rows = this.generate();
         ArrayList<Integer> found = new ArrayList<>();
@@ -142,7 +142,7 @@ public class TextGroup extends AbstractWidget
     /* Required Widget Overrides */
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) { }
@@ -201,13 +201,13 @@ public class TextGroup extends AbstractWidget
 
         /**
          * Handler method for rendering a text row widget.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          * @param mouseX The x-position of the mouse.
          * @param mouseY The y-position of the mouse.
          * @param partialTick The change in frame time.
          */
         @Override
-        public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+        public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
         {
             if (!this.first)
                 return;
@@ -217,15 +217,15 @@ public class TextGroup extends AbstractWidget
 
             switch (TextGroup.this.align)
             {
-                case LEFT -> label.renderLeftAligned(poseStack, ConfigRowList.getStartX(), this.getY() - 1, font.lineHeight + 4, 0xFFFFFF);
-                case CENTER -> label.renderCentered(poseStack, TextGroup.this.list.getRowWidth() / 2, this.getY() - 1);
+                case LEFT -> label.renderLeftAligned(graphics, ConfigRowList.getStartX(), this.getY() - 1, font.lineHeight + 4, 0xFFFFFF);
+                case CENTER -> label.renderCentered(graphics, TextGroup.this.list.getRowWidth() / 2, this.getY() - 1);
             }
         }
 
         /* Required Widget Overrides */
 
         @Override
-        public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+        public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
         @Override
         protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}

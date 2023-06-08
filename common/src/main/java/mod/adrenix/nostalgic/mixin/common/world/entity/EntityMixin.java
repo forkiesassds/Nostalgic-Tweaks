@@ -50,7 +50,8 @@ public abstract class EntityMixin
             if (isEntityIgnored || isModdedIgnored)
                 return;
 
-            if (!state.getMaterial().isLiquid())
+            //TODO: Does this even work at all?
+            if (state.getFluidState().isEmpty())
             {
                 BlockState blockStateAbove = this.level.getBlockState(pos.above());
                 SoundType soundType = blockStateAbove.is(Blocks.SNOW) ? blockStateAbove.getSoundType() : state.getSoundType();

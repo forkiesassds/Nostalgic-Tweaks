@@ -1,11 +1,11 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.slider;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.annotation.TweakGui;
-import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.client.config.gui.widget.PermissionLock;
+import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
 import mod.adrenix.nostalgic.common.config.annotation.TweakData;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * This type of slider widget is used exclusively by the configuration screen.
@@ -51,19 +51,19 @@ public class ConfigSlider extends GenericSlider implements PermissionLock
 
     /**
      * Handler method that provides logic for widget rendering.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick A change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (!this.tweak.isResettable() && !this.isHovered)
             this.setValue(this.tweak.getValue());
 
         this.updateMessage();
 
-        super.render(poseStack, mouseX, mouseY, partialTick);
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 }

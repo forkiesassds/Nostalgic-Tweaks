@@ -12,6 +12,7 @@ import mod.adrenix.nostalgic.mixin.widen.ScreenAccessor;
 import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import org.joml.Matrix4f;
 
-import javax.annotation.CheckForNull;
 import java.util.function.Function;
 
 /**
@@ -34,7 +34,6 @@ public abstract class GuiUtil
     /**
      * A mod screen supplier (defined in mod loaders)
      */
-    @CheckForNull
     public static Function<Screen, Screen> modScreen = null;
 
     /* Recipe Button Helpers */
@@ -205,24 +204,24 @@ public abstract class GuiUtil
 
     /**
      * Draws the given text to the in-game HUD.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param text The text to render.
      * @param corner The corner to render the text to.
      * @param manager The corner manager for this render cycle.
      */
-    public static void drawText(PoseStack poseStack, String text, TweakType.Corner corner, CornerManager manager)
+    public static void drawText(GuiGraphics graphics, String text, TweakType.Corner corner, CornerManager manager)
     {
         Minecraft minecraft = Minecraft.getInstance();
         boolean isLeft = corner.equals(TweakType.Corner.TOP_LEFT) || corner.equals(TweakType.Corner.BOTTOM_LEFT);
 
-        minecraft.font.drawShadow(poseStack, text, isLeft ? 2.0F : getRightX(text), manager.getAndAdd(corner), 0xFFFFFF);
+        graphics.drawString(minecraft.font, text, isLeft ? 2 : getRightX(text), (int) manager.getAndAdd(corner), 0xFFFFFF, true);
     }
 
     /**
      * Renders in-game HUD text overlays - game version, food, experience, etc.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      */
-    public static void renderOverlays(PoseStack poseStack)
+    public static void renderOverlays(GuiGraphics graphics)
     {
         Minecraft minecraft = Minecraft.getInstance();
 
@@ -245,13 +244,13 @@ public abstract class GuiUtil
         int satPercent = (int) ((player.getFoodData().getSaturationLevel() / 20.0F) * 100.0F);
 
         if (ModConfig.Candy.oldVersionOverlay())
-            drawText(poseStack, ModConfig.Candy.getOverlayText(), ModConfig.Candy.oldOverlayCorner(), manager);
+            drawText(graphics, ModConfig.Candy.getOverlayText(), ModConfig.Candy.oldOverlayCorner(), manager);
 
         if (ModConfig.Gameplay.displayAlternativeLevelText() && (!isCreative || isLevelCreative))
         {
             TweakType.Corner levelCorner = ModConfig.Gameplay.alternativeLevelCorner();
             String level = ModConfig.Gameplay.getAlternativeLevelText(Integer.toString(player.experienceLevel));
-            drawText(poseStack, level, levelCorner, manager);
+            drawText(graphics, level, levelCorner, manager);
         }
 
         if (ModConfig.Gameplay.displayAlternativeProgressText() && (!isCreative || isProgressCreative))
@@ -259,7 +258,7 @@ public abstract class GuiUtil
             boolean useColor = ModConfig.Gameplay.useDynamicProgressColor();
             TweakType.Corner xpCorner = ModConfig.Gameplay.alternativeProgressCorner();
             String xp = ModConfig.Gameplay.getAlternativeProgressText((useColor ? getPercentColor(xpPercent) : "") + xpPercent);
-            drawText(poseStack, xp, xpCorner, manager);
+            drawText(graphics, xp, xpCorner, manager);
         }
 
         if (ModConfig.Gameplay.displayAlternativeFoodText() && !isCreative)
@@ -267,7 +266,7 @@ public abstract class GuiUtil
             boolean useColor = ModConfig.Gameplay.useDynamicFoodColor();
             TweakType.Corner foodCorner = ModConfig.Gameplay.alternativeFoodCorner();
             String food = ModConfig.Gameplay.getAlternativeFoodText((useColor ? getFoodColor(foodLevel) : "") + foodLevel);
-            drawText(poseStack, food, foodCorner, manager);
+            drawText(graphics, food, foodCorner, manager);
         }
 
         if (ModConfig.Gameplay.displayAlternativeSatText() && !isCreative)
@@ -275,7 +274,7 @@ public abstract class GuiUtil
             boolean useColor = ModConfig.Gameplay.useDynamicSatColor();
             TweakType.Corner satCorner = ModConfig.Gameplay.alternativeSaturationCorner();
             String sat = ModConfig.Gameplay.getAlternativeSaturationText((useColor ? getPercentColor(satPercent) : "") + satPercent);
-            drawText(poseStack, sat, satCorner, manager);
+            drawText(graphics, sat, satCorner, manager);
         }
     }
 
@@ -293,7 +292,7 @@ public abstract class GuiUtil
 
     /**
      * Renders an inverse half-armor texture.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param x The x-position.
      * @param y The y-position.
      * @param uOffset The u-coordinate (horizontal) on the texture sheet.
@@ -301,10 +300,10 @@ public abstract class GuiUtil
      * @param uWidth The horizontal width of the texture.
      * @param vHeight The vertical height of the texture.
      */
-    public static void renderInverseArmor(PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
+    public static void renderInverseArmor(GuiGraphics graphics, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
     {
         // Flip the vertex’s u texture coordinates so the half armor texture rendering goes from right to left
-        Matrix4f matrix = poseStack.last().pose();
+        Matrix4f matrix = graphics.pose().last().pose();
         BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         bufferBuilder.vertex(matrix, x, y + vHeight, 0.0F).uv((uOffset + uWidth) / 256.0F, (vOffset + vHeight) / 256.0F).endVertex();
@@ -316,14 +315,14 @@ public abstract class GuiUtil
 
     /**
      * Renders the armor icon texture on the HUD depending on the state of various tweaks.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param player A player instance.
      * @param width The current screen width.
      * @param height The current screen height.
      * @param leftHeight The left side GUI offset.
      * @param rightHeight The right side GUI offset.
      */
-    public static void renderArmor(PoseStack poseStack, Player player, int width, int height, int leftHeight, int rightHeight)
+    public static void renderArmor(GuiGraphics graphics, Player player, int width, int height, int leftHeight, int rightHeight)
     {
         boolean isHungerDisabled = ModConfig.Gameplay.disableHungerBar();
 
@@ -338,7 +337,7 @@ public abstract class GuiUtil
             int x = isHungerDisabled ? width - left - 10 : left;
             int y = top;
 
-            HudEvent event = ClientEventFactory.RENDER_ARMOR.create(x, y, ++index, poseStack);
+            HudEvent event = ClientEventFactory.RENDER_ARMOR.create(x, y, ++index, graphics);
             event.emit();
 
             if (event.isCanceled())
@@ -354,19 +353,19 @@ public abstract class GuiUtil
             {
                 // Half armor
                 if (isHungerDisabled && !isXChanged)
-                    GuiUtil.renderInverseArmor(poseStack, x, y, 25, 9, 9, 9);
+                    GuiUtil.renderInverseArmor(graphics, x, y, 25, 9, 9, 9);
                 else
-                    Gui.blit(poseStack, x, y, 25, 9, 9, 9);
+                    graphics.blit(null, x, y, 25, 9, 9, 9);
             }
             else if (i < level)
             {
                 // Full armor
-                Gui.blit(poseStack, x, y, 34, 9, 9, 9);
+                graphics.blit(null, x, y, 34, 9, 9, 9);
             }
             else
             {
                 // No armor
-                Gui.blit(poseStack, x, y, 16, 9, 9, 9);
+                graphics.blit(null, x, y, 16, 9, 9, 9);
             }
 
             left += 8;
@@ -375,13 +374,13 @@ public abstract class GuiUtil
 
     /**
      * Renders the food icon texture on the HUD depending on the state of various tweaks.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param player A player instance.
      * @param width The current screen width.
      * @param height The current screen height.
      * @param rightHeight The right side GUI offset.
      */
-    public static void renderFood(PoseStack poseStack, Player player, int width, int height, int rightHeight)
+    public static void renderFood(GuiGraphics graphics, Player player, int width, int height, int rightHeight)
     {
         Gui gui = Minecraft.getInstance().gui;
         RandomSource random = RandomSource.create();
@@ -411,7 +410,7 @@ public abstract class GuiUtil
             if (player.getFoodData().getSaturationLevel() <= 0.0F && gui.getGuiTicks() % (level * 3 + 1) == 0)
                 y = top + (random.nextInt(3) - 1);
 
-            HudEvent event = ClientEventFactory.RENDER_FOOD.create(x, y, ++index, poseStack);
+            HudEvent event = ClientEventFactory.RENDER_FOOD.create(x, y, ++index, graphics);
             event.emit();
 
             GuiUtil.foodY = event.getY();
@@ -422,26 +421,26 @@ public abstract class GuiUtil
             x = event.getX();
             y = event.getY();
 
-            Gui.blit(poseStack, x, y, 16 + background * 9, 27, 9, 9);
+            graphics.blit(null, x, y, 16 + background * 9, 27, 9, 9);
 
             if (iconX < level)
-                Gui.blit(poseStack, x, y, icon + 36, 27, 9, 9);
+                graphics.blit(null, x, y, icon + 36, 27, 9, 9);
             else if (iconX == level)
-                Gui.blit(poseStack, x, y, icon + 45, 27, 9, 9);
+                graphics.blit(null, x, y, icon + 45, 27, 9, 9);
         }
     }
 
     /**
      * Renders the air bubble icon texture on the HUD depending on the state of various tweaks.
      * @param isPlayerLosingAir A function that accepts a player instance and returns whether the player is losing air.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param player A player instance.
      * @param width The current screen width.
      * @param height The current screen height.
      * @param leftHeight The left side GUI offset.
      * @param rightHeight The right side GUI offset.
      */
-    public static void renderAir(Function<Player, Boolean> isPlayerLosingAir, PoseStack poseStack, Player player, int width, int height, int leftHeight, int rightHeight)
+    public static void renderAir(Function<Player, Boolean> isPlayerLosingAir, GuiGraphics graphics, Player player, int width, int height, int leftHeight, int rightHeight)
     {
         boolean isHungerDisabled = ModConfig.Gameplay.disableHungerBar();
 
@@ -465,7 +464,7 @@ public abstract class GuiUtil
                 int mirrorX = width - shiftX - 10;
                 int x = isHungerDisabled ? mirrorX : shiftX;
 
-                HudEvent event = ClientEventFactory.RENDER_BUBBLE.create(x, y, ++index, poseStack);
+                HudEvent event = ClientEventFactory.RENDER_BUBBLE.create(x, y, ++index, graphics);
                 event.emit();
 
                 if (event.isCanceled())
@@ -474,7 +473,7 @@ public abstract class GuiUtil
                 x = event.getX();
                 y = event.getY();
 
-                Gui.blit(poseStack, x, y, (i < full ? 16 : 25), 18, 9, 9);
+                graphics.blit(null, x, y, (i < full ? 16 : 25), 18, 9, 9);
             }
         }
     }

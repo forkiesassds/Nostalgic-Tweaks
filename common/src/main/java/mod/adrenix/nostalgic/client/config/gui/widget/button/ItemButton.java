@@ -11,6 +11,8 @@ import mod.adrenix.nostalgic.common.config.tweak.GuiTweak;
 import mod.adrenix.nostalgic.util.client.ItemClientUtil;
 import mod.adrenix.nostalgic.util.client.RenderUtil;
 import mod.adrenix.nostalgic.util.common.ColorUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -103,24 +105,24 @@ public class ItemButton extends Button
 
     /**
      * Handler method for rendering a tooltip for this item button.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      */
-    public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY)
+    public void renderToolTip(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        this.screen.renderComponentTooltip(poseStack, this.screen.getTooltipFromItem(this.itemStack), mouseX, mouseY);
+        graphics.renderTooltip(Minecraft.getInstance().font, this.itemStack, mouseX, mouseY);
     }
 
     /**
      * Handler method for rendering an item button.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         // Overlay activation
 
@@ -157,12 +159,12 @@ public class ItemButton extends Button
         if (isMouseOver && !this.isForOverlay)
         {
             viewStack.translate(0.0F, -0.6F, 0.0F);
-            RenderUtil.fill(poseStack, this.getX(), this.getX() + this.width, this.getY(), this.getY() + this.height, color);
+            RenderUtil.fill(graphics, this.getX(), this.getX() + this.width, this.getY(), this.getY() + this.height, color);
         }
 
         RenderSystem.applyModelViewMatrix();
 
-        this.screen.getItemRenderer().renderGuiItem(poseStack, this.itemStack, startX, startY);
+        graphics.renderItem(this.itemStack, startX, startY);
 
         viewStack.popPose();
         RenderSystem.applyModelViewMatrix();
@@ -170,7 +172,7 @@ public class ItemButton extends Button
         if (isMouseOver)
         {
             if (!this.isForOverlay)
-                this.screen.renderLast.add(() -> this.renderToolTip(poseStack, mouseX, mouseY));
+                this.screen.renderLast.add(() -> this.renderToolTip(graphics, mouseX, mouseY));
             else
                 this.screen.renderOverlayTooltips.add(this::renderToolTip);
         }

@@ -1,9 +1,8 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.text;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigWidgets;
-import mod.adrenix.nostalgic.client.config.gui.screen.list.ListScreen;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListMapScreen;
+import mod.adrenix.nostalgic.client.config.gui.screen.list.ListScreen;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListSetScreen;
 import mod.adrenix.nostalgic.client.config.gui.widget.button.RemoveType;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
@@ -12,16 +11,15 @@ import mod.adrenix.nostalgic.util.common.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.CheckForNull;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -42,10 +40,10 @@ public class TextTitle<V> extends AbstractWidget
 
     private final String resourceKey;
 
-    @CheckForNull private final RemoveType removeType;
-    @CheckForNull private final Map.Entry<String, V> entry;
-    @CheckForNull private final Supplier<Boolean> isRemoved;
-    @CheckForNull private final V currentValue;
+    private final RemoveType removeType;
+    private final Map.Entry<String, V> entry;
+    private final Supplier<Boolean> isRemoved;
+    private final V currentValue;
 
     /* Constructors */
 
@@ -120,13 +118,13 @@ public class TextTitle<V> extends AbstractWidget
 
     /**
      * Handler method for rendering an entry title widget.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The x-position of the mouse.
      * @param mouseY The y-position of the mouse.
      * @param partialTick The change in frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         boolean isInvalid = !ItemCommonUtil.isValidKey(this.resourceKey);
         int startX = ConfigRowList.getStartX() - 1;
@@ -177,21 +175,21 @@ public class TextTitle<V> extends AbstractWidget
             entryTitle = Component.literal(entryTitle.getString() + ChatFormatting.RED + " (" + saved + ")");
         }
 
-        listScreen.getItemRenderer().renderGuiItem(poseStack, itemStack, startX, startY);
-        Screen.drawString(poseStack, font, entryTitle, startX + 21, this.getY() + 6, 0xFFFFFF);
+        graphics.renderItem(itemStack, startX, startY);
+        graphics.drawString(font, entryTitle, startX + 21, this.getY() + 6, 0xFFFFFF);
 
         boolean isHovering = MathUtil.isWithinBox(mouseX, mouseY, startX, this.getY() + 4, font.width(entryTitle) + 21, 14);
         boolean isInBounds = ConfigWidgets.isInsideRowList(mouseY);
         boolean isNotDefault = this.removeType != RemoveType.DEFAULT;
 
         if (isHovering && isInBounds && isNotDefault)
-            listScreen.renderLast.add(() -> listScreen.renderComponentTooltip(poseStack, tooltip, mouseX, mouseY));
+            listScreen.renderLast.add(() -> graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY));
     }
 
     /* Required Overrides */
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}

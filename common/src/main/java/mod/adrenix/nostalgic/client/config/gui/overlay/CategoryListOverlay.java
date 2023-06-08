@@ -3,7 +3,10 @@ package mod.adrenix.nostalgic.client.config.gui.overlay;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import mod.adrenix.nostalgic.client.config.gui.overlay.template.GenericOverlay;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigScreen;
 import mod.adrenix.nostalgic.client.config.gui.widget.button.ContainerButton;
@@ -12,10 +15,13 @@ import mod.adrenix.nostalgic.client.config.gui.widget.list.AbstractRowList;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.mixin.widen.AbstractWidgetAccessor;
 import mod.adrenix.nostalgic.util.client.KeyUtil;
-import mod.adrenix.nostalgic.util.common.*;
 import mod.adrenix.nostalgic.util.client.RenderUtil;
+import mod.adrenix.nostalgic.util.common.ClassUtil;
+import mod.adrenix.nostalgic.util.common.LangUtil;
+import mod.adrenix.nostalgic.util.common.MathUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -23,10 +29,10 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -149,13 +155,13 @@ public class CategoryListOverlay extends GenericOverlay
 
         /**
          * Rendering instructions for the text button widget.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          * @param mouseX The current x-position of the mouse.
          * @param mouseY The current y-position of the mouse.
          * @param partialTick The change in frame time.
          */
         @Override
-        public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+        public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
         {
             CategoryListOverlay overlay = (CategoryListOverlay) Overlay.getVisible();
 
@@ -175,7 +181,7 @@ public class CategoryListOverlay extends GenericOverlay
             if (isSelected && overlay.list.getLastSelection() == null)
                 overlay.list.setLastSelection(this);
 
-            drawString(poseStack, this.screen.getFont(), isSelected ? this.title.copy().withStyle(ChatFormatting.GOLD) : this.title, this.getX(), this.getY(), highlight);
+            graphics.drawString(this.screen.getFont(), isSelected ? this.title.copy().withStyle(ChatFormatting.GOLD) : this.title, this.getX(), this.getY(), highlight);
         }
     }
 
@@ -306,7 +312,7 @@ public class CategoryListOverlay extends GenericOverlay
 
         /**
          * Rendering instructions for an individual text row.
-         * @param poseStack The current pose stack.
+         * @param graphics The current GuiGraphics object.
          * @param index Unused parameter.
          * @param top The top of this row.
          * @param left The left side (starting x-position) of this row.
@@ -318,7 +324,7 @@ public class CategoryListOverlay extends GenericOverlay
          * @param partialTick A change in time between frames.
          */
         @Override
-        public void render(PoseStack poseStack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTick)
+        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTick)
         {
             // Draw row background
             if (this.isMouseOver(mouseX, mouseY))
@@ -331,7 +337,7 @@ public class CategoryListOverlay extends GenericOverlay
 
                 Tesselator tesselator = Tesselator.getInstance();
                 BufferBuilder buffer = tesselator.getBuilder();
-                Matrix4f matrix = poseStack.last().pose();
+                Matrix4f matrix = graphics.pose().last().pose();
 
                 buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
                 RenderUtil.fill(buffer, matrix, left - 6, left + DEFAULT_WIDTH - 13, top - 1, top + height + 2, 0x32FFFFFF);
@@ -342,7 +348,7 @@ public class CategoryListOverlay extends GenericOverlay
             for (AbstractWidget widget : this.children)
             {
                 widget.setY(top);
-                widget.render(poseStack, mouseX, mouseY, partialTick);
+                widget.render(graphics, mouseX, mouseY, partialTick);
             }
 
             RenderSystem.disableBlend();
@@ -363,7 +369,7 @@ public class CategoryListOverlay extends GenericOverlay
      * There is no setter method for this field. This is handled by widget handlers automatically.
      * @return A selected config row, null otherwise.
      */
-    @CheckForNull
+    @CheckReturnValue
     public ConfigRowList.Row getSelected() { return this.selected; }
 
     /**
@@ -538,33 +544,33 @@ public class CategoryListOverlay extends GenericOverlay
 
     /**
      * Rendering instructions for this overlay window.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in time between frames.
      */
     @Override
-    public void onMainRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void onMainRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         // Render category list
         if (this.list != null)
-            this.list.render(poseStack, mouseX, mouseY, partialTick);
+            this.list.render(graphics, mouseX, mouseY, partialTick);
     }
 
     /**
      * Rendering instructions for post overlay window rendering.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in time between frames.
      */
     @Override
-    public void onPostRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void onPostRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         // Render hint button
-        this.renderHintButton(poseStack, mouseX, mouseY);
+        this.renderHintButton(graphics, mouseX, mouseY);
 
         // Render hint tooltip
-        this.renderTooltipHint(poseStack, mouseX, mouseY);
+        this.renderTooltipHint(graphics, mouseX, mouseY);
     }
 }

@@ -1,16 +1,14 @@
 package mod.adrenix.nostalgic.client.config.gui.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.annotation.TweakGui;
 import mod.adrenix.nostalgic.client.config.annotation.TweakReload;
+import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigScreen;
 import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigWidgets;
 import mod.adrenix.nostalgic.client.config.gui.widget.button.StatusButton;
 import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
+import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
 import mod.adrenix.nostalgic.common.config.annotation.TweakData;
 import mod.adrenix.nostalgic.common.config.tweak.GuiTweak;
-import mod.adrenix.nostalgic.client.config.gui.screen.config.ConfigScreen;
-import mod.adrenix.nostalgic.client.config.reflect.TweakClientCache;
 import mod.adrenix.nostalgic.util.ModTracker;
 import mod.adrenix.nostalgic.util.common.LangUtil;
 import mod.adrenix.nostalgic.util.common.TextUtil;
@@ -18,10 +16,12 @@ import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * There are multiple tags that can be displayed next to a tweak's display name in a configuration row.
@@ -121,22 +121,23 @@ public class TweakTag extends AbstractWidget
 
     /**
      * Draws a tag to the screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
+     * @param location The ResourceLocation to the resource to render.
      * @param x The x-position of where the tag should be drawn.
      * @param y The y-position of where the tag should be drawn.
      * @param uOffset The horizontal texture coordinate offset.
      * @param vOffset The vertical texture coordinate offset.
      * @param render Whether the tag should be rendered.
      */
-    private static void draw(PoseStack poseStack, int x, int y, int uOffset, int vOffset, boolean render)
+    private static void draw(GuiGraphics graphics, ResourceLocation location, int x, int y, int uOffset, int vOffset, boolean render)
     {
         if (render)
-            Screen.blit(poseStack, x, y, uOffset, vOffset, U_GLOBAL_WIDTH, V_GLOBAL_HEIGHT);
+            graphics.blit(location, x, y, uOffset, vOffset, U_GLOBAL_WIDTH, V_GLOBAL_HEIGHT);
     }
 
     /**
      * Renders a complete tag to the screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param tag The tag to render.
      * @param startX The x-position of where the tag should be drawn.
      * @param startY The y-position of where the tag should be drawn.
@@ -144,47 +145,46 @@ public class TweakTag extends AbstractWidget
      * @param render Whether the tag should be rendered.
      * @return An x-position of where the next tag should start rendering. This includes the defined tag margin.
      */
-    public static int renderTag(PoseStack poseStack, Component tag, int startX, int startY, int uOffset, boolean render)
+    public static int renderTag(GuiGraphics graphics, Component tag, int startX, int startY, int uOffset, boolean render)
     {
-        RenderSystem.setShaderTexture(0, TextureLocation.WIDGETS);
         Font font = Minecraft.getInstance().font;
 
         int tagWidth = font.width(tag);
         int endX = getTagWidth(tag, startX);
 
-        TweakTag.draw(poseStack, startX, startY, uOffset, V_GLOBAL_OFFSET, render);
+        TweakTag.draw(graphics, TextureLocation.WIDGETS, startX, startY, uOffset, V_GLOBAL_OFFSET, render);
 
         for (int i = 0; i < tagWidth + TAG_MARGIN; i++)
-            TweakTag.draw(poseStack, startX + U_GLOBAL_WIDTH + i, startY, uOffset + 1, 0, render);
+            TweakTag.draw(graphics, TextureLocation.WIDGETS, startX + U_GLOBAL_WIDTH + i, startY, uOffset + 1, 0, render);
 
-        TweakTag.draw(poseStack, endX, startY, uOffset, V_GLOBAL_OFFSET, render);
+        TweakTag.draw(graphics, TextureLocation.WIDGETS, endX, startY, uOffset, V_GLOBAL_OFFSET, render);
 
         if (render)
-            font.draw(poseStack, tag, startX + 4, startY + 2, 0xFFFFFF);
+            graphics.drawString(font, tag, startX + 4, startY + 2, 0xFFFFFF);
 
         return endX + TAG_MARGIN;
     }
 
     /**
-     * An override method of {@link TweakTag#renderTag(PoseStack, Component, int, int, int, boolean)} that does
+     * An override method of {@link TweakTag#renderTag(GuiGraphics, Component, int, int, int, boolean)} that does
      * not require a rendering state.
      *
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param tag The tag to render.
      * @param startX The x-position of where the tag should be drawn.
      * @param startY The y-position of where the tag should be drawn.
      * @param uOffset The horizontal texture coordinate offset.
      * @return An x-position of where the next tag should start rendering. This includes the defined tag margin.
      */
-    public static int renderTag(PoseStack poseStack, Component tag, int startX, int startY, int uOffset)
+    public static int renderTag(GuiGraphics graphics, Component tag, int startX, int startY, int uOffset)
     {
-        return renderTag(poseStack, tag, startX, startY, uOffset, true);
+        return renderTag(graphics, tag, startX, startY, uOffset, true);
     }
 
     /**
      * Render a tooltip on the screen if the mouse is over a specific position.
      * @param screen The current screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param title The title component of a tag.
      * @param tooltip The tooltip component to display.
      * @param startX Where the tooltip box starts rendering on the x-axis.
@@ -192,7 +192,7 @@ public class TweakTag extends AbstractWidget
      * @param mouseX Where the mouse currently sits on the x-axis.
      * @param mouseY Where the mouse currently sits on the y-axis.
      */
-    public static void renderTooltip(Screen screen, PoseStack poseStack, Component title, Component tooltip, int startX, int startY, int mouseX, int mouseY)
+    public static void renderTooltip(Screen screen, GuiGraphics graphics, Component title, Component tooltip, int startX, int startY, int mouseX, int mouseY)
     {
         int endX = getTagWidth(title, startX);
         boolean isMouseOver = (mouseX >= startX && mouseX <= endX) && (mouseY >= startY && mouseY <= startY + V_GLOBAL_HEIGHT);
@@ -203,18 +203,18 @@ public class TweakTag extends AbstractWidget
 
         if (isMouseOver && isWithinList && isInitialized && screen instanceof ConfigScreen configScreen)
             configScreen.renderLast.add(() ->
-                screen.renderComponentTooltip(poseStack, TextUtil.Wrap.tooltip(tooltip, 38), mouseX, mouseY));
+                graphics.renderComponentTooltip(Minecraft.getInstance().font, TextUtil.Wrap.tooltip(tooltip, 38), mouseX, mouseY));
     }
 
     /**
      * An override method that instructs the screen renderer what to show.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The x-position of the mouse.
      * @param mouseY The y-position of the mouse.
      * @param partialTick The change in frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         Minecraft minecraft = Minecraft.getInstance();
         Screen screen = minecraft.screen;
@@ -272,65 +272,65 @@ public class TweakTag extends AbstractWidget
         if (newTag != null && isNewRenderable)
         {
             if (isTooltipRenderable)
-                renderTooltip(screen, poseStack, newTitle, newTooltip, lastX, startY, mouseX, mouseY);
+                renderTooltip(screen, graphics, newTitle, newTooltip, lastX, startY, mouseX, mouseY);
 
-            lastX = renderTag(poseStack, newTitle, lastX, startY, U_NEW_OFFSET, this.render);
+            lastX = renderTag(graphics, newTitle, lastX, startY, U_NEW_OFFSET, this.render);
         }
 
         if (clientTag != null && isSidedRenderable)
         {
             if (isTooltipRenderable)
-                renderTooltip(screen, poseStack, clientTitle, clientTooltip, lastX, startY, mouseX, mouseY);
+                renderTooltip(screen, graphics, clientTitle, clientTooltip, lastX, startY, mouseX, mouseY);
 
-            lastX = renderTag(poseStack, clientTitle, lastX, startY, U_CLIENT_OFFSET, this.render);
+            lastX = renderTag(graphics, clientTitle, lastX, startY, U_CLIENT_OFFSET, this.render);
         }
 
         if (serverTag != null && isSidedRenderable)
         {
             if (isTooltipRenderable)
-                renderTooltip(screen, poseStack, serverTitle, serverTooltip, lastX, startY, mouseX, mouseY);
+                renderTooltip(screen, graphics, serverTitle, serverTooltip, lastX, startY, mouseX, mouseY);
 
-            lastX = renderTag(poseStack, serverTitle, lastX, startY, U_SERVER_OFFSET, this.render);
+            lastX = renderTag(graphics, serverTitle, lastX, startY, U_SERVER_OFFSET, this.render);
         }
 
         if (dynamicTag != null && isSidedRenderable)
         {
             if (isTooltipRenderable)
-                renderTooltip(screen, poseStack, dynamicTitle, dynamicTooltip, lastX, startY, mouseX, mouseY);
+                renderTooltip(screen, graphics, dynamicTitle, dynamicTooltip, lastX, startY, mouseX, mouseY);
 
-            lastX = renderTag(poseStack, dynamicTitle, lastX, startY, U_DYNAMIC_OFFSET, this.render);
+            lastX = renderTag(graphics, dynamicTitle, lastX, startY, U_DYNAMIC_OFFSET, this.render);
         }
 
         if (reloadTag != null)
         {
-            renderTooltip(screen, poseStack, reloadTitle, reloadTooltip, lastX, startY, mouseX, mouseY);
-            lastX = renderTag(poseStack, reloadTitle, lastX, startY, U_RELOAD_OFFSET, this.render);
+            renderTooltip(screen, graphics, reloadTitle, reloadTooltip, lastX, startY, mouseX, mouseY);
+            lastX = renderTag(graphics, reloadTitle, lastX, startY, U_RELOAD_OFFSET, this.render);
         }
 
         if (restartTag != null)
         {
-            renderTooltip(screen, poseStack, restartTitle, restartTooltip, lastX, startY, mouseX, mouseY);
-            lastX = renderTag(poseStack, restartTitle, lastX, startY, U_RESTART_OFFSET, this.render);
+            renderTooltip(screen, graphics, restartTitle, restartTooltip, lastX, startY, mouseX, mouseY);
+            lastX = renderTag(graphics, restartTitle, lastX, startY, U_RESTART_OFFSET, this.render);
         }
 
         if (alertTag != null && alertTag.condition().active())
         {
             Component tooltip = Component.translatable(alertTag.langKey());
-            renderTooltip(screen, poseStack, alertTitle, tooltip, lastX, startY, mouseX, mouseY);
-            lastX = renderTag(poseStack, alertTitle, lastX, startY, U_WARNING_OFFSET, this.render);
+            renderTooltip(screen, graphics, alertTitle, tooltip, lastX, startY, mouseX, mouseY);
+            lastX = renderTag(graphics, alertTitle, lastX, startY, U_WARNING_OFFSET, this.render);
         }
 
         if (conflictTag != null && this.tweak.isConflict())
         {
             Component tooltip = Component.translatable(this.tweak.getConflictKey());
-            renderTooltip(screen, poseStack, alertTitle, tooltip, lastX, startY, mouseX, mouseY);
-            lastX = renderTag(poseStack, alertTitle, lastX, startY, U_WARNING_OFFSET, this.render);
+            renderTooltip(screen, graphics, alertTitle, tooltip, lastX, startY, mouseX, mouseY);
+            lastX = renderTag(graphics, alertTitle, lastX, startY, U_WARNING_OFFSET, this.render);
         }
 
         if (warningTag != null)
         {
-            renderTooltip(screen, poseStack, warningTitle, warningTooltip, lastX, startY, mouseX, mouseY);
-            lastX = renderTag(poseStack, warningTitle, lastX, startY, U_WARNING_OFFSET, this.render);
+            renderTooltip(screen, graphics, warningTitle, warningTooltip, lastX, startY, mouseX, mouseY);
+            lastX = renderTag(graphics, warningTitle, lastX, startY, U_WARNING_OFFSET, this.render);
         }
 
         if (sodiumTag != null && ModTracker.SODIUM.isInstalled())
@@ -338,8 +338,8 @@ public class TweakTag extends AbstractWidget
             if (sodiumTag.incompatible())
                 sodiumTooltip = Component.translatable(LangUtil.Gui.TAG_SODIUM_TOOLTIP);
 
-            renderTooltip(screen, poseStack, sodiumTitle, sodiumTooltip, lastX, startY, mouseX, mouseY);
-            lastX = renderTag(poseStack, sodiumTitle, lastX, startY, U_RESTART_OFFSET, this.render);
+            renderTooltip(screen, graphics, sodiumTitle, sodiumTooltip, lastX, startY, mouseX, mouseY);
+            lastX = renderTag(graphics, sodiumTitle, lastX, startY, U_RESTART_OFFSET, this.render);
         }
 
         if (optifineTag != null && ModTracker.OPTIFINE.isInstalled())
@@ -347,8 +347,8 @@ public class TweakTag extends AbstractWidget
             if (optifineTag.incompatible())
                 optifineTooltip = Component.translatable(LangUtil.Gui.TAG_OPTIFINE_TOOLTIP);
 
-            renderTooltip(screen, poseStack, optifineTitle, optifineTooltip, lastX, startY, mouseX, mouseY);
-            lastX = renderTag(poseStack, optifineTitle, lastX, startY, U_RESTART_OFFSET, this.render);
+            renderTooltip(screen, graphics, optifineTitle, optifineTooltip, lastX, startY, mouseX, mouseY);
+            lastX = renderTag(graphics, optifineTitle, lastX, startY, U_RESTART_OFFSET, this.render);
         }
 
         int previousWidth = this.width;
@@ -363,7 +363,7 @@ public class TweakTag extends AbstractWidget
     /* Required Widget Overrides */
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {}
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) { }

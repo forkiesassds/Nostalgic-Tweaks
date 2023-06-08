@@ -1,14 +1,14 @@
 package mod.adrenix.nostalgic.client.config.gui.widget.button;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
-import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.client.config.gui.widget.TweakTag;
+import mod.adrenix.nostalgic.client.config.gui.widget.list.ConfigRowList;
 import mod.adrenix.nostalgic.util.client.KeyUtil;
 import mod.adrenix.nostalgic.util.common.LangUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -101,11 +101,11 @@ public class KeyBindButton extends ControlButton
 
     /**
      * Render the tags associated with key bind buttons.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      */
-    private void renderTags(PoseStack poseStack, int mouseX, int mouseY)
+    private void renderTags(GuiGraphics graphics, int mouseX, int mouseY)
     {
         Minecraft minecraft = Minecraft.getInstance();
         Screen screen = minecraft.screen;
@@ -123,23 +123,23 @@ public class KeyBindButton extends ControlButton
         int startY = this.getY() + 4;
         int lastX = startX;
 
-        TweakTag.renderTooltip(screen, poseStack, syncTag, syncTooltip, lastX, startY, mouseX, mouseY);
+        TweakTag.renderTooltip(screen, graphics, syncTag, syncTooltip, lastX, startY, mouseX, mouseY);
 
-        lastX = TweakTag.renderTag(poseStack, syncTag, lastX, startY, TweakTag.U_KEY_OFFSET);
+        lastX = TweakTag.renderTag(graphics, syncTag, lastX, startY, TweakTag.U_KEY_OFFSET);
 
-        TweakTag.renderTooltip(screen, poseStack, autoTag, autoTooltip, lastX, startY, mouseX, mouseY);
-        TweakTag.renderTag(poseStack, autoTag, lastX, startY, TweakTag.U_SYNC_OFFSET);
+        TweakTag.renderTooltip(screen, graphics, autoTag, autoTooltip, lastX, startY, mouseX, mouseY);
+        TweakTag.renderTag(graphics, autoTag, lastX, startY, TweakTag.U_SYNC_OFFSET);
     }
 
     /**
      * Handler method for rendering this controller button.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         this.setMessage(this.mapping.getTranslatedKeyMessage());
 
@@ -158,7 +158,7 @@ public class KeyBindButton extends ControlButton
         else if (KeyUtil.isMappingConflict(this.mapping))
             this.setMessage(this.mapping.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.RED));
 
-        super.renderWidget(poseStack, mouseX, mouseY, partialTick);
-        this.renderTags(poseStack, mouseX, mouseY);
+        super.renderWidget(graphics, mouseX, mouseY, partialTick);
+        this.renderTags(graphics, mouseX, mouseY);
     }
 }

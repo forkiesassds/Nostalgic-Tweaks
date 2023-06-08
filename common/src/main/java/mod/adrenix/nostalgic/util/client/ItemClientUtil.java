@@ -18,7 +18,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.*;
 
-import javax.annotation.CheckForNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +59,7 @@ public abstract class ItemClientUtil
      * Used to cache the current level pose stack position matrix for re-enabling diffused lighting after flat
      * rendering.
      */
-    @CheckForNull public static PoseStack.Pose levelPoseStack;
+    public static PoseStack.Pose levelPoseStack;
 
     /**
      * Used to cache the current buffer source during the entity render cycle. This is needed so we can end the batch
@@ -90,7 +89,7 @@ public abstract class ItemClientUtil
     /**
      * Flattens an item to be as close to 2D as possible via scaling.
      *
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      */
     public static void flatten(PoseStack poseStack) { poseStack.scale(1.0F, 1.0F, 0.001F); }
 

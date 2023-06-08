@@ -3,8 +3,7 @@ package mod.adrenix.nostalgic.util.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.world.entity.player.Player;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Network utility methods for the client.

@@ -1,7 +1,7 @@
 package mod.adrenix.nostalgic.client.config.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import mod.adrenix.nostalgic.NostalgicTweaks;
 import mod.adrenix.nostalgic.client.config.ClientConfigCache;
@@ -13,12 +13,16 @@ import mod.adrenix.nostalgic.common.config.tweak.TweakType;
 import mod.adrenix.nostalgic.util.ModTracker;
 import mod.adrenix.nostalgic.util.client.GuiUtil;
 import mod.adrenix.nostalgic.util.client.LinkUtil;
-import mod.adrenix.nostalgic.util.client.RunUtil;
-import mod.adrenix.nostalgic.util.common.*;
 import mod.adrenix.nostalgic.util.client.NetUtil;
+import mod.adrenix.nostalgic.util.client.RunUtil;
+import mod.adrenix.nostalgic.util.common.LangUtil;
+import mod.adrenix.nostalgic.util.common.LinkLocation;
+import mod.adrenix.nostalgic.util.common.MathUtil;
+import mod.adrenix.nostalgic.util.common.TextureLocation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -286,50 +290,50 @@ public class SettingsScreen extends Screen
 
     /**
      * Renders the home settings screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (this.minecraft.level != null)
-            this.fillGradient(poseStack, 0, 0, this.width, this.height, -1072689136, -804253680);
+            graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
         else
-            this.renderDirtBackground(poseStack);
+            this.renderDirtBackground(graphics);
 
-        this.renderLogo(poseStack);
+        this.renderLogo(graphics);
 
         if (NostalgicTweaks.isDebugging())
-            this.renderDebug(poseStack);
+            this.renderDebug(graphics);
         else
         {
-            this.banner.render(poseStack, partialTick);
+            this.banner.render(graphics, partialTick);
 
             if (DonatorBanner.isOpen())
             {
                 int height = DonatorBanner.getHeight();
-                this.fillGradient(poseStack, 0, height - 5, this.width, height - 2, 0, 0x8F000000);
-                this.fillGradient(poseStack, 0, 0, this.width, 3, 0x8F000000, 0);
+                graphics.fillGradient(0, height - 5, this.width, height - 2, 0, 0x8F000000);
+                graphics.fillGradient(0, 0, this.width, 3, 0x8F000000, 0);
             }
 
-            this.renderSupportToggle(poseStack, mouseX, mouseY);
+            this.renderSupportToggle(graphics, mouseX, mouseY);
 
             Component hint = Component.literal("Debug (Ctrl + Shift + D)").withStyle(ChatFormatting.DARK_GRAY);
-            SettingsScreen.drawString(poseStack, this.font, hint, 2, this.height - 10, 0xFFFFFF);
+            graphics.drawString(this.font, hint, 2, this.height - 10, 0xFFFFFF);
         }
 
-        super.render(poseStack, mouseX, mouseY, partialTick);
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 
     /**
      * Renders the toggle "button" text that controls support banner opening.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      */
-    private void renderSupportToggle(PoseStack poseStack, int mouseX, int mouseY)
+    private void renderSupportToggle(GuiGraphics graphics, int mouseX, int mouseY)
     {
         MutableComponent button = DonatorBanner.isOpen() ?
             Component.literal("\u274c").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED) :
@@ -337,10 +341,10 @@ public class SettingsScreen extends Screen
         ;
 
         boolean isOpen = DonatorBanner.isOpen();
-        float textHeight = this.font.lineHeight;
-        float textWidth = this.font.width(button);
-        float startX = this.width - textWidth - 2.0F;
-        float startY = isOpen ? DonatorBanner.getHeight() : 2.0F;
+        int textHeight = this.font.lineHeight;
+        int textWidth = this.font.width(button);
+        int startX = this.width - textWidth - 2;
+        int startY = isOpen ? DonatorBanner.getHeight() : 2;
         boolean isOver = MathUtil.isWithinBox(mouseX, mouseY, startX, startY, textWidth, textHeight);
         int color = isOver ? 0xFFFFA0 : 0xFFFFFF;
         this.isMouseOverSupportToggle = isOver;
@@ -348,7 +352,7 @@ public class SettingsScreen extends Screen
         if (isOver)
             button.withStyle(ChatFormatting.DARK_RED);
 
-        this.font.drawShadow(poseStack, button, startX, startY, color);
+        graphics.drawString(this.font, button, startX, startY, color, true);
     }
 
     /**
@@ -366,43 +370,43 @@ public class SettingsScreen extends Screen
 
     /**
      * Renders debug information when the user has the feature enabled.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      */
-    private void renderDebug(PoseStack poseStack)
+    private void renderDebug(GuiGraphics graphics)
     {
         GuiUtil.CornerManager manager = new GuiUtil.CornerManager();
         NostalgicConnection connection = NostalgicTweaks.getConnection().orElseGet(NostalgicConnection::disconnected);
 
-        drawCenteredString(poseStack, this.font, "Debug Mode (Ctrl + Shift + D)", this.width / 2, 2, 0xFFFF00);
+        graphics.drawCenteredString(this.font, "Debug Mode (Ctrl + Shift + D)", this.width / 2, 2, 0xFFFF00);
 
-        GuiUtil.drawText(poseStack, String.format("Loader: §d%s", NostalgicTweaks.isForge() ? "Forge" : "Fabric"), TweakType.Corner.TOP_LEFT, manager);
-        GuiUtil.drawText(poseStack, String.format("Version: §e%s", NostalgicTweaks.getShortVersion()), TweakType.Corner.TOP_LEFT, manager);
-        GuiUtil.drawText(poseStack, String.format("Protocol: §b%s", NostalgicTweaks.PROTOCOL), TweakType.Corner.TOP_LEFT, manager);
+        GuiUtil.drawText(graphics, String.format("Loader: §d%s", NostalgicTweaks.isForge() ? "Forge" : "Fabric"), TweakType.Corner.TOP_LEFT, manager);
+        GuiUtil.drawText(graphics, String.format("Version: §e%s", NostalgicTweaks.getShortVersion()), TweakType.Corner.TOP_LEFT, manager);
+        GuiUtil.drawText(graphics, String.format("Protocol: §b%s", NostalgicTweaks.PROTOCOL), TweakType.Corner.TOP_LEFT, manager);
 
-        GuiUtil.drawText(poseStack, String.format("Singleplayer: %s", getColored(NetUtil.isSingleplayer())), TweakType.Corner.BOTTOM_LEFT, manager);
-        GuiUtil.drawText(poseStack, String.format("Multiplayer: %s", getColored(NetUtil.isMultiplayer())), TweakType.Corner.BOTTOM_LEFT, manager);
-        GuiUtil.drawText(poseStack, String.format("Connected: %s", getColored(NetUtil.isConnected())), TweakType.Corner.BOTTOM_LEFT, manager);
-        GuiUtil.drawText(poseStack, String.format("Operator: %s", getColored(NetUtil.isPlayerOp())), TweakType.Corner.BOTTOM_LEFT, manager);
-        GuiUtil.drawText(poseStack, String.format("Verified: %s", getColored(NostalgicTweaks.isNetworkVerified())), TweakType.Corner.BOTTOM_LEFT, manager);
-        GuiUtil.drawText(poseStack, String.format("LAN: %s", getColored(NetUtil.isLocalHost())), TweakType.Corner.BOTTOM_LEFT, manager);
+        GuiUtil.drawText(graphics, String.format("Singleplayer: %s", getColored(NetUtil.isSingleplayer())), TweakType.Corner.BOTTOM_LEFT, manager);
+        GuiUtil.drawText(graphics, String.format("Multiplayer: %s", getColored(NetUtil.isMultiplayer())), TweakType.Corner.BOTTOM_LEFT, manager);
+        GuiUtil.drawText(graphics, String.format("Connected: %s", getColored(NetUtil.isConnected())), TweakType.Corner.BOTTOM_LEFT, manager);
+        GuiUtil.drawText(graphics, String.format("Operator: %s", getColored(NetUtil.isPlayerOp())), TweakType.Corner.BOTTOM_LEFT, manager);
+        GuiUtil.drawText(graphics, String.format("Verified: %s", getColored(NostalgicTweaks.isNetworkVerified())), TweakType.Corner.BOTTOM_LEFT, manager);
+        GuiUtil.drawText(graphics, String.format("LAN: %s", getColored(NetUtil.isLocalHost())), TweakType.Corner.BOTTOM_LEFT, manager);
 
-        GuiUtil.drawText(poseStack, String.format("Server Protocol: §b%s", connection.getProtocol()), TweakType.Corner.BOTTOM_RIGHT, manager);
-        GuiUtil.drawText(poseStack, String.format("Server Version: §e%s", connection.getVersion()), TweakType.Corner.BOTTOM_RIGHT, manager);
-        GuiUtil.drawText(poseStack, String.format("Server Loader: §d%s", connection.getLoader()), TweakType.Corner.BOTTOM_RIGHT, manager);
-        GuiUtil.drawText(poseStack, String.format("Server: %s", getColored(NostalgicTweaks.getConnection().isPresent())), TweakType.Corner.BOTTOM_RIGHT, manager);
+        GuiUtil.drawText(graphics, String.format("Server Protocol: §b%s", connection.getProtocol()), TweakType.Corner.BOTTOM_RIGHT, manager);
+        GuiUtil.drawText(graphics, String.format("Server Version: §e%s", connection.getVersion()), TweakType.Corner.BOTTOM_RIGHT, manager);
+        GuiUtil.drawText(graphics, String.format("Server Loader: §d%s", connection.getLoader()), TweakType.Corner.BOTTOM_RIGHT, manager);
+        GuiUtil.drawText(graphics, String.format("Server: %s", getColored(NostalgicTweaks.getConnection().isPresent())), TweakType.Corner.BOTTOM_RIGHT, manager);
 
-        GuiUtil.drawText(poseStack, String.format("Flywheel: %s", getColored(ModTracker.FLYWHEEL.isInstalled())), TweakType.Corner.TOP_RIGHT, manager);
-        GuiUtil.drawText(poseStack, String.format("Optifine: %s", getColored(ModTracker.OPTIFINE.isInstalled())), TweakType.Corner.TOP_RIGHT, manager);
+        GuiUtil.drawText(graphics, String.format("Flywheel: %s", getColored(ModTracker.FLYWHEEL.isInstalled())), TweakType.Corner.TOP_RIGHT, manager);
+        GuiUtil.drawText(graphics, String.format("Optifine: %s", getColored(ModTracker.OPTIFINE.isInstalled())), TweakType.Corner.TOP_RIGHT, manager);
 
         if (NostalgicTweaks.isFabric())
-            GuiUtil.drawText(poseStack, String.format("Sodium: %s", getColored(ModTracker.SODIUM.isInstalled())), TweakType.Corner.TOP_RIGHT, manager);
+            GuiUtil.drawText(graphics, String.format("Sodium: %s", getColored(ModTracker.SODIUM.isInstalled())), TweakType.Corner.TOP_RIGHT, manager);
     }
 
     /**
      * Renders the mod's logo to the home settings screen.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      */
-    private void renderLogo(PoseStack poseStack)
+    private void renderLogo(GuiGraphics graphics)
     {
         RenderSystem.enableBlend();
 
@@ -411,7 +415,7 @@ public class SettingsScreen extends Screen
         int titleX = this.width / 2 - 129;
         int titleY = (this.height / 4 - 25);
 
-        GearSpinner.getInstance().render(poseStack, 44.279F, gearX, gearY);
+        GearSpinner.getInstance().render(graphics, 44.279F, gearX, gearY);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, TextureLocation.NOSTALGIC_TWEAKS);
@@ -419,10 +423,11 @@ public class SettingsScreen extends Screen
 
         float titleScale = 0.03325F;
 
+        PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
         poseStack.translate(titleX, titleY, 1.0D);
         poseStack.scale(titleScale, titleScale, titleScale);
-        SettingsScreen.blit(poseStack, 0, 0, 0, 0, 7808, 742, 7808, 742);
+        graphics.blit(TextureLocation.NOSTALGIC_TWEAKS, 0, 0, 0, 0, 7808, 742, 7808, 742);
         poseStack.popPose();
 
         poseStack.pushPose();
@@ -434,7 +439,7 @@ public class SettingsScreen extends Screen
         scale = scale * 17.0F / (float) (this.font.width(splash));
 
         poseStack.scale(scale, scale, scale);
-        SettingsScreen.drawCenteredString(poseStack, this.font, splash, 1, -6, 0xFFFF00);
+        graphics.drawCenteredString(this.font, splash, 1, -6, 0xFFFF00);
         poseStack.popPose();
 
         String beta = NostalgicTweaks.getBetaVersion();
@@ -447,7 +452,7 @@ public class SettingsScreen extends Screen
         poseStack.pushPose();
         poseStack.translate(gearX + 46, gearY + 34, 1.0D);
         poseStack.scale(betaScale, betaScale, betaScale);
-        this.font.drawShadow(poseStack, beta, 0, 0, 0xFFFF00);
+        graphics.drawString(this.font, beta, 0, 0, 0xFFFF00, true);
         poseStack.popPose();
 
         RenderSystem.disableBlend();

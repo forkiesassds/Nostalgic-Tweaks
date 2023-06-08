@@ -52,7 +52,7 @@ public abstract class HumanoidArmorLayerFabricMixin <T extends LivingEntity, A e
      * Controlled by the old damage armor tint tweak.
      */
     @Inject(method = "renderModel", at = @At("HEAD"), cancellable = true)
-    private void NT$onRenderModel(PoseStack poseStack, MultiBufferSource buffer, int packedLight, ArmorItem armorItem, boolean hasFoil, A model, boolean isLayered, float r, float g, float b, @Nullable String location, CallbackInfo callback)
+    private void NT$onRenderModel(PoseStack poseStack, MultiBufferSource buffer, int packedLight, ArmorItem armorItem, A model, boolean isLayered, float r, float g, float b, @Nullable String location, CallbackInfo callback)
     {
         boolean isHurt = ModConfig.Candy.oldDamageArmorTint() && (this.NT$armorWearer.hurtTime > 0 || this.NT$armorWearer.deathTime > 0);
 

@@ -1,8 +1,8 @@
 package mod.adrenix.nostalgic.mixin.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.common.config.ModConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AnvilScreen;
@@ -32,11 +32,11 @@ public abstract class AbstractContainerScreenMixin extends Screen
      * Controlled by various tweaks.
      */
     @Inject(method = "renderLabels", at = @At("HEAD"), cancellable = true)
-    private void NT$onRenderLabels(PoseStack poseStack, int mouseX, int mouseY, CallbackInfo callback)
+    private void NT$onRenderLabels(GuiGraphics graphics, int mouseX, int mouseY, CallbackInfo callback)
     {
         if (Minecraft.getInstance().screen instanceof AnvilScreen && ModConfig.Candy.oldAnvilScreen())
         {
-            this.font.draw(poseStack, this.title, (float) this.titleLabelX, (float) this.titleLabelY, 0x404040);
+            graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
             callback.cancel();
         }
     }

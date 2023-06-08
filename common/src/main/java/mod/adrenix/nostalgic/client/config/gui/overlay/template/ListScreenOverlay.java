@@ -1,10 +1,10 @@
 package mod.adrenix.nostalgic.client.config.gui.overlay.template;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.client.config.gui.overlay.OverlayFlag;
 import mod.adrenix.nostalgic.client.config.gui.screen.list.ListScreen;
 import mod.adrenix.nostalgic.util.common.ClassUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.network.chat.Component;
@@ -128,14 +128,14 @@ public abstract class ListScreenOverlay <W extends AbstractWidgetProvider> exten
 
     /**
      * Handler method for main overlay rendering.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void onMainRender(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void onMainRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        this.widgetProvider.render(poseStack, mouseX, mouseY, partialTick);
+        this.widgetProvider.render(graphics, mouseX, mouseY, partialTick);
     }
 }

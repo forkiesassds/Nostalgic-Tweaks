@@ -1,9 +1,9 @@
 package mod.adrenix.nostalgic.forge.mixin.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.forge.event.client.GuiEvents;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
@@ -52,7 +52,7 @@ public abstract class ForgeGuiMixin
             target = "Lnet/minecraftforge/eventbus/api/IEventBus;post(Lnet/minecraftforge/eventbus/api/Event;)Z"
         )
     )
-    private void NT$onBeforeEventPost(PoseStack poseStack, float partialTick, CallbackInfo callback)
+    private void NT$onBeforeEventPost(GuiGraphics graphics, float partialTick, CallbackInfo callback)
     {
         if (isRendererBlocked())
         {
@@ -67,7 +67,7 @@ public abstract class ForgeGuiMixin
      * Controlled by whether the overlay is blocked from rendering.
      */
     @Inject(method = "renderArmor", remap = false, at = @At("HEAD"), cancellable = true)
-    private void NT$onRenderArmor(PoseStack poseStack, int width, int height, CallbackInfo callback)
+    private void NT$onRenderArmor(GuiGraphics graphics, int width, int height, CallbackInfo callback)
     {
         if (isRendererBlocked())
         {
@@ -85,7 +85,7 @@ public abstract class ForgeGuiMixin
      * Controlled by whether the overlay is blocked from rendering.
      */
     @Inject(method = "renderFood", remap = false, at = @At("HEAD"), cancellable = true)
-    private void NT$onRenderFood(int width, int height, PoseStack poseStack, CallbackInfo callback)
+    private void NT$onRenderFood(int width, int height, GuiGraphics graphics, CallbackInfo callback)
     {
         if (isRendererBlocked())
         {
@@ -99,7 +99,7 @@ public abstract class ForgeGuiMixin
      * Controlled by whether the overlay is blocked from rendering.
      */
     @Inject(method = "renderAir", remap = false, at = @At("HEAD"), cancellable = true)
-    private void NT$onRenderAir(int width, int height, PoseStack poseStack, CallbackInfo callback)
+    private void NT$onRenderAir(int width, int height, GuiGraphics graphics, CallbackInfo callback)
     {
         if (isRendererBlocked())
         {

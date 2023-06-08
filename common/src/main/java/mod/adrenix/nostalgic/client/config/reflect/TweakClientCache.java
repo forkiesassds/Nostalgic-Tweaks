@@ -5,19 +5,19 @@ import mod.adrenix.nostalgic.client.config.annotation.TweakGui;
 import mod.adrenix.nostalgic.client.config.annotation.TweakReload;
 import mod.adrenix.nostalgic.client.config.gui.toast.ToastNotification;
 import mod.adrenix.nostalgic.common.config.annotation.TweakData;
+import mod.adrenix.nostalgic.common.config.reflect.TweakCommonCache;
 import mod.adrenix.nostalgic.common.config.reflect.TweakGroup;
 import mod.adrenix.nostalgic.common.config.reflect.TweakStatus;
-import mod.adrenix.nostalgic.common.config.reflect.TweakCommonCache;
 import mod.adrenix.nostalgic.common.config.tweak.Tweak;
-import mod.adrenix.nostalgic.server.config.reflect.TweakServerCache;
 import mod.adrenix.nostalgic.network.packet.PacketC2SChangeTweak;
+import mod.adrenix.nostalgic.server.config.reflect.TweakServerCache;
 import mod.adrenix.nostalgic.util.client.NetUtil;
 import mod.adrenix.nostalgic.util.client.RunUtil;
 import mod.adrenix.nostalgic.util.common.PacketUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.CheckReturnValue;
 
-import javax.annotation.CheckForNull;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -189,10 +189,10 @@ public class TweakClientCache<T> extends TweakCommonCache
     private final boolean isAnnotatedReloadChunks;
     private final boolean isAnnotatedReloadResources;
 
-    @CheckForNull private final TweakGui.Placement placement;
-    @CheckForNull private final TweakGui.Category category;
-    @CheckForNull private final TweakGui.Subcategory subcategory;
-    @CheckForNull private final TweakGui.Embed embed;
+    private final TweakGui.Placement placement;
+    private final TweakGui.Category category;
+    private final TweakGui.Subcategory subcategory;
+    private final TweakGui.Embed embed;
 
     /**
      * This field will track the tweak enumeration associated with this cache. Once defined, this will speed up value
@@ -354,7 +354,7 @@ public class TweakClientCache<T> extends TweakCommonCache
      * @see mod.adrenix.nostalgic.client.config.ClientConfig
      * @return Whether the tweak is ordered at the top or bottom of a category.
      */
-    @CheckForNull
+    @CheckReturnValue
     public TweakGui.Position getPosition() { return this.position; }
 
     /**
@@ -515,22 +515,22 @@ public class TweakClientCache<T> extends TweakCommonCache
     /**
      * @return A tweak's container placement data if it is present.
      */
-    @CheckForNull public TweakGui.Placement getPlacement() { return this.placement; }
+    @CheckReturnValue public TweakGui.Placement getPlacement() { return this.placement; }
 
     /**
      * @return A tweak's category if it is present.
      */
-    @CheckForNull public TweakGui.Category getCategory() { return this.category; }
+    @CheckReturnValue public TweakGui.Category getCategory() { return this.category; }
 
     /**
      * @return A tweak's subcategory if it is present.
      */
-    @CheckForNull public TweakGui.Subcategory getSubcategory() { return this.subcategory; }
+    @CheckReturnValue public TweakGui.Subcategory getSubcategory() { return this.subcategory; }
 
     /**
      * @return A tweak's embed if it is present.
      */
-    @CheckForNull public TweakGui.Embed getEmbed() { return this.embed; }
+    @CheckReturnValue public TweakGui.Embed getEmbed() { return this.embed; }
 
     /**
      * Get the translation of this tweak's container. If this tweak does not reside in a container then an empty string

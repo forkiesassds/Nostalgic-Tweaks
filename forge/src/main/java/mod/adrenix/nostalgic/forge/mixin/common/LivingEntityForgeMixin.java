@@ -44,7 +44,7 @@ public abstract class LivingEntityForgeMixin extends Entity
     )
     private boolean NT$onClimbable(Optional<BlockPos> ladder)
     {
-        return BlockServerUtil.isClimbable(this.level, this.getFeetBlockState(), this.blockPosition()) ||
+        return BlockServerUtil.isClimbable(this.level(), this.getFeetBlockState(), this.blockPosition()) ||
             ladder.isPresent();
     }
 

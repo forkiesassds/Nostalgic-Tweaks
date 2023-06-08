@@ -1,13 +1,13 @@
 package mod.adrenix.nostalgic.client.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.realmsclient.RealmsMainScreen;
 import mod.adrenix.nostalgic.common.config.ModConfig;
 import mod.adrenix.nostalgic.common.config.tweak.TweakVersion;
 import mod.adrenix.nostalgic.mixin.widen.ScreenAccessor;
-import mod.adrenix.nostalgic.util.common.LangUtil;
 import mod.adrenix.nostalgic.util.client.GuiUtil;
 import mod.adrenix.nostalgic.util.client.NetUtil;
+import mod.adrenix.nostalgic.util.common.LangUtil;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.*;
@@ -83,13 +83,13 @@ public class NostalgicPauseScreen extends PauseScreen
 
     /**
      * Handler method that provides instructions for screen rendering.
-     * @param poseStack The current pose stack.
+     * @param graphics The current GuiGraphics object.
      * @param mouseX The current x-position of the mouse.
      * @param mouseY The current y-position of the mouse.
      * @param partialTick The change in game frame time.
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if (!this.isFirstRender)
         {
@@ -102,9 +102,9 @@ public class NostalgicPauseScreen extends PauseScreen
             this.isFirstRender = true;
         }
 
-        super.render(poseStack, mouseX, mouseY, partialTick);
+        super.render(graphics, mouseX, mouseY, partialTick);
 
-        NostalgicPauseScreen.drawCenteredString(poseStack, this.font, this.title, this.width / 2, this.height / 4 - 20, 0xFFFFFF);
+        graphics.drawCenteredString(this.font, this.title, this.width / 2, this.height / 4 - 20, 0xFFFFFF);
     }
 
     /* Methods */
