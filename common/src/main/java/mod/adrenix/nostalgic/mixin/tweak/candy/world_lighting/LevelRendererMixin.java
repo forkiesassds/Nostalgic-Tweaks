@@ -51,7 +51,7 @@ public abstract class LevelRendererMixin
         method = "renderLevel",
         at = @At("HEAD")
     )
-    private void nt_world_lighting$onRenderLevel(PoseStack poseStack, float partialTick, long finishNanoTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, CallbackInfo callback)
+    private void nt_world_lighting$onRenderLevel(float partialTick, long nanoTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, Matrix4f frustrumMatrix, CallbackInfo ci)
     {
         if (!ModTweak.ENABLED.get() || this.level == null)
             return;

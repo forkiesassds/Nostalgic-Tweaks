@@ -41,17 +41,17 @@ public abstract class CreateWorldScreenMixin extends Screen
      * Renders a full dirt background if the old style world tabs are enabled.
      */
     @WrapWithCondition(
-        method = "renderDirtBackground",
+        method = "renderMenuBackground",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIFFIIII)V"
+            target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIFFIIII)V"
         )
     )
-    private boolean nt_create_world_screen$shouldRenderNewDirtBackground(GuiGraphics graphics, ResourceLocation atlasLocation, int x, int y, int blitOffset, float uOffset, float vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight)
+    private boolean nt_create_world_screen$shouldRenderNewDirtBackground(GuiGraphics instance, ResourceLocation atlasLocation, int x, int y, float uOffset, float vOffset, int width, int height, int textureWidth, int textureHeight)
     {
         if (CandyTweak.OLD_STYLE_CREATE_WORLD_TABS.get())
         {
-            super.renderDirtBackground(graphics);
+            super.renderMenuBackground(instance);
             return false;
         }
 

@@ -5,6 +5,7 @@ import mod.adrenix.nostalgic.tweak.config.CandyTweak;
 import mod.adrenix.nostalgic.util.client.gui.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderBuffers;
@@ -39,7 +40,7 @@ public abstract class MinecraftMixin
         at = @At(
             shift = At.Shift.BEFORE,
             value = "INVOKE",
-            target = "Lnet/minecraft/client/MouseHandler;turnPlayer()V"
+            target = "Lnet/minecraft/client/MouseHandler;handleAccumulatedMovement()V"
         )
     )
     private void nt_progress_screen$onRunTick(boolean renderLevel, CallbackInfo callback)
@@ -65,7 +66,7 @@ public abstract class MinecraftMixin
         method = "setLevel",
         at = @At("HEAD")
     )
-    private void nt_progress_screen$onSetLevel(ClientLevel level, CallbackInfo callback)
+    private void nt_progress_screen$onSetLevel(ClientLevel level, ReceivingLevelScreen.Reason reason, CallbackInfo ci)
     {
         if (this.level != null)
             NostalgicProgressScreen.PREVIOUS_DIMENSION.set(this.level.dimension());

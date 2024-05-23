@@ -394,10 +394,9 @@ public abstract class AbstractInput<Builder extends AbstractInputMaker<Builder, 
         int max = Math.max(this.cursorPos, this.highlightPos);
         int start = this.getMaxLength() - this.input.length() - (min - max);
 
-        String filtered = SharedConstants.filterText(text);
-        String insert = new StringBuilder(this.input).replace(min, max, filtered).toString();
+        String insert = new StringBuilder(this.input).replace(min, max, text).toString();
 
-        int end = filtered.length();
+        int end = text.length();
 
         if (start < end)
             end = start;
@@ -870,16 +869,10 @@ public abstract class AbstractInput<Builder extends AbstractInputMaker<Builder, 
     {
         if (this.isUnfocused())
             return false;
+        if (this.editable)
+            this.insertText(Character.toString(codePoint));
 
-        if (SharedConstants.isAllowedChatCharacter(codePoint))
-        {
-            if (this.editable)
-                this.insertText(Character.toString(codePoint));
-
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**

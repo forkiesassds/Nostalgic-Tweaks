@@ -72,12 +72,12 @@ public abstract class LevelRendererMixin
         method = "renderSky",
         at = @At("HEAD")
     )
-    private void nt_world_sky$onRenderSky(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable skyFogSetup, CallbackInfo callback)
+    private void nt_world_sky$onRenderSky(Matrix4f projectionMatrix, Matrix4f frustrumMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable skyFogSetup, CallbackInfo ci)
     {
         if (!ModTweak.ENABLED.get())
             return;
 
-        SkyMixinHelper.MODEL_VIEW_MATRIX.set(new Matrix4f(poseStack.last().pose()));
+        SkyMixinHelper.MODEL_VIEW_MATRIX.set(new Matrix4f(frustrumMatrix));
         SkyMixinHelper.PROJECTION_MATRIX.set(new Matrix4f(projectionMatrix));
     }
 
@@ -163,7 +163,7 @@ public abstract class LevelRendererMixin
             target = "Lnet/minecraft/client/renderer/FogRenderer;setupNoFog()V"
         )
     )
-    private void nt_world_sky$onSetupStarColor(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable skyFogSetup, CallbackInfo callback)
+    private void nt_world_sky$onSetupStarColor(Matrix4f projectionMatrix, Matrix4f frustrumMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable skyFogSetup, CallbackInfo ci)
     {
         Generic starsState = CandyTweak.OLD_STARS.get();
         boolean isDimmed = Generic.MODERN == starsState || Generic.BETA == starsState;

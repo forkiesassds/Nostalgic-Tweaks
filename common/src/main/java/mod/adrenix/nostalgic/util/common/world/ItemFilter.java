@@ -2,6 +2,7 @@ package mod.adrenix.nostalgic.util.common.world;
 
 import mod.adrenix.nostalgic.tweak.listing.ItemListing;
 import mod.adrenix.nostalgic.tweak.listing.ItemRule;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.AbstractChestBlock;
 
@@ -28,13 +29,13 @@ public abstract class ItemFilter
         else if (list.rules().contains(ItemRule.ONLY_BLOCKS))
             return !isBlockLike(item);
         else if (list.rules().contains(ItemRule.ONLY_EDIBLES))
-            return !item.isEdible();
+            return !item.getDefaultInstance().has(DataComponents.FOOD);
         else
         {
             boolean isToolFiltered = ItemFilter.isToolLike(item) && list.rules().contains(ItemRule.NO_TOOLS);
             boolean isItemFiltered = ItemFilter.isItemLike(item) && list.rules().contains(ItemRule.NO_ITEMS);
             boolean isBlockFiltered = ItemFilter.isBlockLike(item) && list.rules().contains(ItemRule.NO_BLOCKS);
-            boolean isEdibleFiltered = item.isEdible() && list.rules().contains(ItemRule.NO_EDIBLES);
+            boolean isEdibleFiltered = item.getDefaultInstance().has(DataComponents.FOOD) && list.rules().contains(ItemRule.NO_EDIBLES);
 
             return isToolFiltered || isItemFiltered || isBlockFiltered || isEdibleFiltered;
         }
@@ -63,7 +64,7 @@ public abstract class ItemFilter
         ItemStack itemStack = item.getDefaultInstance();
         ItemStack copyStack = ItemUtil.getItemStack(ItemUtil.getResourceKey(item));
 
-        return itemStack.getTag() != null && !itemStack.getTag().equals(copyStack.getTag());
+        return itemStack.getComponents() != null && !itemStack.getComponents().equals(copyStack.getComponents());
     }
 
     /**

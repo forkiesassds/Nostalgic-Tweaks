@@ -47,7 +47,7 @@ public abstract class LevelRendererMixin
             target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V"
         )
     )
-    private void nt_world_fog$onSetSunriseColor(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable skyFogSetup, CallbackInfo callback)
+    private void nt_world_fog$onSetSunriseColor(Matrix4f projectionMatrix, Matrix4f frustrumMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable skyFogSetup, CallbackInfo ci)
     {
         if (ModTweak.ENABLED.get())
             VoidFogRenderer.setCelestialTransparency();

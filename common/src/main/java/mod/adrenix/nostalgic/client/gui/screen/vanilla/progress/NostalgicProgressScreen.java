@@ -241,7 +241,7 @@ public class NostalgicProgressScreen extends ProgressScreen implements ProgressL
         if (this.header == null && this.stage == null)
             return;
 
-        this.renderDirtBackground(graphics);
+        this.renderMenuBackground(graphics);
 
         if (this.renderProgress)
             ProgressRenderer.renderProgressWithInt(this.progress);

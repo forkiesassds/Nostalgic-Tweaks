@@ -1,6 +1,6 @@
 {
   "package": "mod.adrenix.nostalgic.mixin.access",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
     "AbstractContainerScreenAccess",
@@ -21,7 +21,6 @@
   "mixins": [
     "EntityAccess",
     "LivingEntityAccess",
-    "MobAccess",
     "PlayerAccess",
     "SheepAccess"
   ]

@@ -255,8 +255,9 @@ public class NostalgicSelectWorldScreen extends SelectWorldScreen implements Dyn
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
+        //TODO: make this not have to render the list just to poll for worlds.
         this.selectionList.render(graphics, mouseX, mouseY, partialTick);
-        this.renderDirtBackground(graphics);
+        this.renderMenuBackground(graphics);
 
         if (this.selectionList.children().contains(this.getAccessToSelectionList().nt$getLoadingHeader()))
         {

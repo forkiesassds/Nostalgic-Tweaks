@@ -40,14 +40,14 @@ config = "mixin.nostalgic_tweaks-embeddium.json"
 [[dependencies.nostalgic_tweaks]]
 modId = "neoforge"
 type = "required"
-versionRange = "[20.4,)"
+versionRange = "[20.5-beta,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.nostalgic_tweaks]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.20.3,1.20.4]"
+versionRange = "[1.20.5,1.20.6]"
 ordering = "NONE"
 side = "BOTH"
 

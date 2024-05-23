@@ -169,10 +169,10 @@ public class NostalgicTitleScreen extends TitleScreen implements DynamicScreen<N
         }
 
         if (CandyTweak.OLD_TITLE_BACKGROUND.get())
-            this.renderDirtBackground(graphics);
+            this.renderMenuBackground(graphics);
         else
         {
-            this.panorama.render(partialTick, 1.0F);
+            this.panorama.render(graphics, this.width, this.height, this.titleAccess.nt$getPanoramaFade(), this.advancePanoramaTime());
 
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.enableBlend();
@@ -200,7 +200,7 @@ public class NostalgicTitleScreen extends TitleScreen implements DynamicScreen<N
         {
             case ALPHA -> Lang.Title.COPYRIGHT_ALPHA.get();
             case BETA -> Lang.Title.COPYRIGHT_BETA.get();
-            default -> COPYRIGHT_TEXT;
+            default -> this.titleAccess.nt$getCopyrightText();
         };
 
         String minecraft = CandyTweak.TITLE_VERSION_TEXT.parse(GameUtil.getVersion());

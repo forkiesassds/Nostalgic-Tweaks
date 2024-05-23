@@ -28,14 +28,14 @@ public abstract class LightingMixin
         method = "setupNetherLevel",
         at = @At(
             value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/systems/RenderSystem;setupLevelDiffuseLighting(Lorg/joml/Vector3f;Lorg/joml/Vector3f;Lorg/joml/Matrix4f;)V"
+            target = "Lcom/mojang/blaze3d/systems/RenderSystem;setupLevelDiffuseLighting(Lorg/joml/Vector3f;Lorg/joml/Vector3f;)V"
         )
     )
-    private static boolean nt_world_lighting$modifyNetherDiffuseLighting(Vector3f dir0, Vector3f dir1, Matrix4f matrix)
+    private static boolean nt_world_lighting$modifyNetherDiffuseLighting(Vector3f vector3f, Vector3f vector3f2)
     {
         if (CandyTweak.OLD_NETHER_LIGHTING.get())
         {
-            RenderSystem.setupLevelDiffuseLighting(DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1, matrix);
+            RenderSystem.setupLevelDiffuseLighting(DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1);
             return false;
         }
 

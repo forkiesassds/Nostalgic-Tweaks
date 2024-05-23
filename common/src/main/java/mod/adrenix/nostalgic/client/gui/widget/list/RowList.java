@@ -991,7 +991,7 @@ public class RowList extends DynamicWidget<RowListBuilder, RowList> implements C
         {
             if (Minecraft.getInstance().level == null && this.getBuilder().renderBackgroundDirt)
             {
-                BufferBuilder builder = RenderUtil.getAndBeginTexture(Screen.BACKGROUND_LOCATION);
+                BufferBuilder builder = RenderUtil.getAndBeginTexture(Screen.MENU_BACKGROUND);
 
                 if (!this.getBuilder().renderBackgroundOpacity)
                     RenderSystem.setShaderColor(0.125F, 0.125F, 0.125F, 1.0F);
@@ -1029,7 +1029,7 @@ public class RowList extends DynamicWidget<RowListBuilder, RowList> implements C
 
         if (this.getBuilder().renderTopAndBottomDirt)
         {
-            BufferBuilder builder = RenderUtil.getAndBeginTexture(Screen.BACKGROUND_LOCATION);
+            BufferBuilder builder = RenderUtil.getAndBeginTexture(Screen.MENU_BACKGROUND);
 
             float shadow = 127 / 255.0F;
             int screenWidth = GuiUtil.getScreenWidth();

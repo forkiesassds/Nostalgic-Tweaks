@@ -126,7 +126,7 @@ public enum Panorama implements PreparableReloadListener
      */
     private void draw(GuiGraphics graphics, float partialTick)
     {
-        this.panorama.render(partialTick, 1.0F);
+        this.panorama.render(graphics, graphics.guiWidth(), graphics.guiHeight(), 1.0F, partialTick);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

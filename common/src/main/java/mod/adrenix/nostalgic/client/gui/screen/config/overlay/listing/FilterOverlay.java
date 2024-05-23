@@ -10,6 +10,7 @@ import mod.adrenix.nostalgic.util.common.data.Holder;
 import mod.adrenix.nostalgic.util.common.function.BooleanConsumer;
 import mod.adrenix.nostalgic.util.common.world.ItemFilter;
 import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -92,7 +93,7 @@ public class FilterOverlay
         boolean isToolFiltered = ItemFilter.isToolLike(item) && this.tools.get();
         boolean isItemFiltered = ItemFilter.isItemLike(item) && this.items.get();
         boolean isBlockFiltered = ItemFilter.isBlockLike(item) && this.blocks.get();
-        boolean isEdibleFiltered = item.isEdible() && this.edibles.get();
+        boolean isEdibleFiltered = item.getDefaultInstance().has(DataComponents.FOOD) && this.edibles.get();
 
         return isToolFiltered || isItemFiltered || isBlockFiltered || isEdibleFiltered;
     }
