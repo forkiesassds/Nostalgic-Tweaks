@@ -2,6 +2,7 @@ package mod.adrenix.nostalgic.mixin.tweak.candy.world_sky;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -70,15 +71,19 @@ public abstract class LevelRendererMixin
      */
     @Inject(
         method = "renderSky",
-        at = @At("HEAD")
+        at = @At(
+            shift = At.Shift.AFTER,
+            value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lorg/joml/Matrix4f;)V"
+        )
     )
-    private void nt_world_sky$onRenderSky(Matrix4f projectionMatrix, Matrix4f frustrumMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable skyFogSetup, CallbackInfo ci)
+    private void nt_world_sky$onRenderSky(Matrix4f projectionMatrix, Matrix4f frustrumMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable skyFogSetup, CallbackInfo ci, @Local PoseStack poseStack)
     {
         if (!ModTweak.ENABLED.get())
             return;
 
-        SkyMixinHelper.MODEL_VIEW_MATRIX.set(new Matrix4f(frustrumMatrix));
-        SkyMixinHelper.PROJECTION_MATRIX.set(new Matrix4f(projectionMatrix));
+        SkyMixinHelper.MODEL_VIEW_MATRIX.set(new Matrix4f(poseStack.last().pose()));
+        SkyMixinHelper.FRUSTRUM_MATRIX.set(new Matrix4f(frustrumMatrix));
     }
 
     /**
@@ -106,7 +111,7 @@ public abstract class LevelRendererMixin
         {
             SkyMixinHelper.BLUE_VOID_BUFFER.ifPresent(buffer -> {
                 buffer.bind();
-                buffer.drawWithShader(SkyMixinHelper.MODEL_VIEW_MATRIX.get(), SkyMixinHelper.PROJECTION_MATRIX.get(), shader);
+                buffer.drawWithShader(SkyMixinHelper.MODEL_VIEW_MATRIX.get(), SkyMixinHelper.FRUSTRUM_MATRIX.get(), shader);
                 VertexBuffer.unbind();
             });
         }
