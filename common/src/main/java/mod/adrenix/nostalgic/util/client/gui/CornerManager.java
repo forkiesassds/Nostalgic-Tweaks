@@ -1,8 +1,17 @@
 package mod.adrenix.nostalgic.util.client.gui;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import mod.adrenix.nostalgic.tweak.enums.Corner;
+import mod.adrenix.nostalgic.util.common.annotation.PublicAPI;
+import mod.adrenix.nostalgic.util.common.data.NullableResult;
+import mod.adrenix.nostalgic.util.common.data.NumberHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * This utility manages and keeps track of where the overlay text should be rendered on the HUD. Use this utility when
@@ -11,10 +20,10 @@ import net.minecraft.client.gui.GuiGraphics;
 public class CornerManager
 {
     private final float height = (float) GuiUtil.getGuiHeight();
-    private final AtomicDouble topLeft = new AtomicDouble(2.0D);
-    private final AtomicDouble topRight = new AtomicDouble(2.0D);
-    private final AtomicDouble bottomLeft = new AtomicDouble(this.height - 10.0D);
-    private final AtomicDouble bottomRight = new AtomicDouble(this.height - 10.0D);
+    private final NumberHolder<Double> topLeft = NumberHolder.create(2.0D);
+    private final NumberHolder<Double> topRight = NumberHolder.create(2.0D);
+    private final NumberHolder<Double> bottomLeft = NumberHolder.create(this.height - 10.0D);
+    private final NumberHolder<Double> bottomRight = NumberHolder.create(this.height - 10.0D);
 
     /**
      * Get where the next line for the given corner should be drawn and then add 10 units to the corner offset.
@@ -22,7 +31,7 @@ public class CornerManager
      * @param corner The {@link Corner} context.
      * @return Where the next line for the given corner should be drawn.
      */
-    public double getAndAdd(Corner corner)
+    private double getAndAdd(Corner corner)
     {
         return switch (corner)
         {
@@ -39,7 +48,7 @@ public class CornerManager
      * @param text The text to get a right side offset for.
      * @return The starting point of where the given text should render.
      */
-    public int getRightOffset(String text)
+    private int getRightOffset(String text)
     {
         return GuiUtil.getGuiWidth() - GuiUtil.font().width(text) - 2;
     }
@@ -51,10 +60,39 @@ public class CornerManager
      * @param text     The text to draw.
      * @param corner   The {@link Corner} to draw to.
      */
+    @PublicAPI
     public void drawText(GuiGraphics graphics, String text, Corner corner)
     {
-        DrawText.begin(graphics, text)
-            .pos(corner.isLeft() ? 2 : this.getRightOffset(text), (int) this.getAndAdd(corner))
-            .draw();
+        this.drawText(graphics, text, corner, 0, 0);
+    }
+
+    /**
+     * Draws the given text to the screen using the given text, corner, and x/y offsets.
+     *
+     * @param graphics The {@link GuiGraphics} instance.
+     * @param text     The text to draw.
+     * @param corner   The {@link Corner} to draw to.
+     * @param xOffset  The x-coordinate offset.
+     * @param yOffset  The y-coordinate offset.
+     */
+    @PublicAPI
+    public void drawText(GuiGraphics graphics, String text, Corner corner, int xOffset, int yOffset)
+    {
+        int x = (corner.isLeft() ? 2 : this.getRightOffset(text)) + xOffset;
+        int y = (int) this.getAndAdd(corner) + yOffset;
+
+        if (corner == Corner.TOP_RIGHT)
+        {
+            LocalPlayer player = Minecraft.getInstance().player;
+            Collection<MobEffectInstance> effects = NullableResult.getOrElse(player, new HashSet<>(), LocalPlayer::getActiveEffects);
+
+            if (!effects.isEmpty())
+                y += 24;
+        }
+
+        x = Mth.clamp(x, 0, GuiUtil.getGuiWidth() - GuiUtil.font().width(text));
+        y = Mth.clamp(y, 0, GuiUtil.getGuiHeight() - GuiUtil.textHeight());
+
+        DrawText.begin(graphics, text).pos(x, y).draw();
     }
 }

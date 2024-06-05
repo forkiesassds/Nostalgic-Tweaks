@@ -228,8 +228,9 @@ public abstract class GuiListener
         CornerManager corner = new CornerManager();
         boolean isCreative = PlayerUtil.isCreativeOrSpectator(player);
         boolean isHungerEnabled = !GameplayTweak.DISABLE_HUNGER.get();
-        boolean isExperienceLevelCreative = isCreative && GameplayTweak.SHOW_XP_LEVEL_IN_CREATIVE.get();
-        boolean isExperienceProgressCreative = isCreative && GameplayTweak.SHOW_XP_PROGRESS_IN_CREATIVE.get();
+        boolean isExperienceEnabled = !GameplayTweak.DISABLE_ORB_SPAWN.get();
+        boolean isExperienceLevelCreative = isCreative && CandyTweak.SHOW_EXP_LEVEL_IN_CREATIVE.get();
+        boolean isExperienceProgressCreative = isCreative && CandyTweak.SHOW_EXP_PROGRESS_IN_CREATIVE.get();
 
         int foodLevel = player.getFoodData().getFoodLevel();
         int experiencePercent = (int) (player.experienceProgress * 100.0F);
@@ -240,37 +241,49 @@ public abstract class GuiListener
         if (CandyTweak.OLD_VERSION_OVERLAY.get())
         {
             String text = CandyTweak.OLD_OVERLAY_TEXT.parse(GameUtil.getVersion());
-            corner.drawText(graphics, text, CandyTweak.OLD_OVERLAY_CORNER.get());
+            int xOffset = CandyTweak.OLD_OVERLAY_OFFSET_X.get();
+            int yOffset = CandyTweak.OLD_OVERLAY_OFFSET_Y.get();
+
+            corner.drawText(graphics, text, CandyTweak.OLD_OVERLAY_CORNER.get(), xOffset, yOffset);
         }
 
-        if (GameplayTweak.SHOW_XP_LEVEL_TEXT.get() && (!isCreative || isExperienceLevelCreative))
+        if (CandyTweak.SHOW_EXP_LEVEL_TEXT.get() && isExperienceEnabled && (!isCreative || isExperienceLevelCreative))
         {
-            String text = GameplayTweak.ALT_XP_LEVEL_TEXT.parse(Integer.toString(player.experienceLevel));
-            corner.drawText(graphics, text, GameplayTweak.ALT_XP_LEVEL_CORNER.get());
+            String text = CandyTweak.ALT_EXP_LEVEL_TEXT.parse(Integer.toString(player.experienceLevel));
+            int xOffset = CandyTweak.ALT_EXP_LEVEL_OFFSET_X.get();
+            int yOffset = CandyTweak.ALT_EXP_LEVEL_OFFSET_Y.get();
+
+            corner.drawText(graphics, text, CandyTweak.ALT_EXP_LEVEL_CORNER.get(), xOffset, yOffset);
         }
 
-        if (GameplayTweak.SHOW_XP_PROGRESS_TEXT.get() && (!isCreative || isExperienceProgressCreative))
+        if (CandyTweak.SHOW_EXP_PROGRESS_TEXT.get() && isExperienceEnabled && (!isCreative || isExperienceProgressCreative))
         {
-            String percent = GameplayTweak.USE_DYNAMIC_PROGRESS_COLOR.get() ? TextUtil.getPercentColorLow(experiencePercent) : Integer.toString(experiencePercent);
-            String text = GameplayTweak.ALT_XP_PROGRESS_TEXT.parse(percent);
+            String percent = CandyTweak.USE_DYNAMIC_PROGRESS_COLOR.get() ? TextUtil.getPercentColorLow(experiencePercent) : Integer.toString(experiencePercent);
+            String text = CandyTweak.ALT_EXP_PROGRESS_TEXT.parse(percent);
+            int xOffset = CandyTweak.ALT_EXP_PROGRESS_OFFSET_X.get();
+            int yOffset = CandyTweak.ALT_EXP_PROGRESS_OFFSET_Y.get();
 
-            corner.drawText(graphics, text, GameplayTweak.ALT_XP_PROGRESS_CORNER.get());
+            corner.drawText(graphics, text, CandyTweak.ALT_EXP_PROGRESS_CORNER.get(), xOffset, yOffset);
         }
 
-        if (GameplayTweak.SHOW_HUNGER_FOOD_TEXT.get() && isHungerEnabled && !isCreative)
+        if (CandyTweak.SHOW_HUNGER_FOOD_TEXT.get() && isHungerEnabled && !isCreative)
         {
-            String food = GameplayTweak.USE_DYNAMIC_FOOD_COLOR.get() ? getFoodColor(foodLevel) : Integer.toString(foodLevel);
-            String text = GameplayTweak.ALT_HUNGER_FOOD_TEXT.parse(food);
+            String food = CandyTweak.USE_DYNAMIC_FOOD_COLOR.get() ? getFoodColor(foodLevel) : Integer.toString(foodLevel);
+            String text = CandyTweak.ALT_HUNGER_FOOD_TEXT.parse(food);
+            int xOffset = CandyTweak.ALT_HUNGER_FOOD_OFFSET_X.get();
+            int yOffset = CandyTweak.ALT_HUNGER_FOOD_OFFSET_Y.get();
 
-            corner.drawText(graphics, text, GameplayTweak.ALT_HUNGER_FOOD_CORNER.get());
+            corner.drawText(graphics, text, CandyTweak.ALT_HUNGER_FOOD_CORNER.get(), xOffset, yOffset);
         }
 
-        if (GameplayTweak.SHOW_HUNGER_SATURATION_TEXT.get() && isHungerEnabled && !isCreative)
+        if (CandyTweak.SHOW_HUNGER_SATURATION_TEXT.get() && isHungerEnabled && !isCreative)
         {
-            String saturation = GameplayTweak.USE_DYNAMIC_SATURATION_COLOR.get() ? TextUtil.getPercentColorLow(saturationPercent) : Integer.toString(saturationPercent);
-            String text = GameplayTweak.ALT_HUNGER_SATURATION_TEXT.parse(saturation);
+            String saturation = CandyTweak.USE_DYNAMIC_SATURATION_COLOR.get() ? TextUtil.getPercentColorLow(saturationPercent) : Integer.toString(saturationPercent);
+            String text = CandyTweak.ALT_HUNGER_SATURATION_TEXT.parse(saturation);
+            int xOffset = CandyTweak.ALT_HUNGER_SATURATION_OFFSET_X.get();
+            int yOffset = CandyTweak.ALT_HUNGER_SATURATION_OFFSET_Y.get();
 
-            corner.drawText(graphics, text, GameplayTweak.ALT_HUNGER_SATURATION_CORNER.get());
+            corner.drawText(graphics, text, CandyTweak.ALT_HUNGER_SATURATION_CORNER.get(), xOffset, yOffset);
         }
 
         RenderUtil.endBatching();

@@ -68,6 +68,56 @@ public interface CandyTweak
 
     TweakFlag HIDE_PLAYER_IN_BED = TweakFlag.client(true, CandyGroup.BLOCK_BED).newForUpdate().build();
 
+    // Heads-up Display
+
+    TweakFlag HIDE_EXPERIENCE_BAR = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_EXP_BAR).newForUpdate().build();
+    TweakFlag HIDE_HUNGER_BAR = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_HUNGER_BAR).newForUpdate().build();
+
+    // Game Version Overlay
+
+    TweakFlag OLD_VERSION_OVERLAY = TweakFlag.client(true, CandyGroup.INTERFACE_HUD_VERSION).build();
+    TweakEnum<Corner> OLD_OVERLAY_CORNER = TweakEnum.client(Corner.TOP_LEFT, CandyGroup.INTERFACE_HUD_VERSION).newForUpdate().load().build();
+    TweakNumber<Integer> OLD_OVERLAY_OFFSET_X = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_VERSION).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakNumber<Integer> OLD_OVERLAY_OFFSET_Y = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_VERSION).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakText OLD_OVERLAY_TEXT = TweakText.client("Minecraft %v", CandyGroup.INTERFACE_HUD_VERSION).load().build();
+
+    // Alternative Experience Text
+
+    TweakFlag SHOW_EXP_LEVEL_TEXT = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_LEVEL).newForUpdate().build();
+    TweakFlag SHOW_EXP_LEVEL_IN_CREATIVE = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_LEVEL).newForUpdate().build();
+    TweakEnum<Corner> ALT_EXP_LEVEL_CORNER = TweakEnum.client(Corner.TOP_LEFT, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_LEVEL).newForUpdate().load().build();
+    TweakNumber<Integer> ALT_EXP_LEVEL_OFFSET_X = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_LEVEL).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakNumber<Integer> ALT_EXP_LEVEL_OFFSET_Y = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_LEVEL).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakText ALT_EXP_LEVEL_TEXT = TweakText.client("Level: %a%v", CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_LEVEL).newForUpdate().load().build();
+
+    // Alternative Progress Text
+
+    TweakFlag SHOW_EXP_PROGRESS_TEXT = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_PROGRESS).newForUpdate().build();
+    TweakFlag SHOW_EXP_PROGRESS_IN_CREATIVE = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_PROGRESS).newForUpdate().build();
+    TweakFlag USE_DYNAMIC_PROGRESS_COLOR = TweakFlag.client(true, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_PROGRESS).newForUpdate().load().build();
+    TweakEnum<Corner> ALT_EXP_PROGRESS_CORNER = TweakEnum.client(Corner.TOP_LEFT, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_PROGRESS).newForUpdate().load().build();
+    TweakNumber<Integer> ALT_EXP_PROGRESS_OFFSET_X = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_PROGRESS).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakNumber<Integer> ALT_EXP_PROGRESS_OFFSET_Y = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_PROGRESS).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakText ALT_EXP_PROGRESS_TEXT = TweakText.client("Experience: %v%", CandyGroup.INTERFACE_HUD_EXP_BAR_ALT_PROGRESS).newForUpdate().load().build();
+
+    // Alternative Food Text
+
+    TweakFlag SHOW_HUNGER_FOOD_TEXT = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_FOOD).newForUpdate().build();
+    TweakFlag USE_DYNAMIC_FOOD_COLOR = TweakFlag.client(true, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_FOOD).newForUpdate().load().build();
+    TweakEnum<Corner> ALT_HUNGER_FOOD_CORNER = TweakEnum.client(Corner.TOP_LEFT, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_FOOD).newForUpdate().load().build();
+    TweakNumber<Integer> ALT_HUNGER_FOOD_OFFSET_X = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_FOOD).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakNumber<Integer> ALT_HUNGER_FOOD_OFFSET_Y = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_FOOD).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakText ALT_HUNGER_FOOD_TEXT = TweakText.client("Food: %v", CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_FOOD).newForUpdate().load().build();
+
+    // Alternative Saturation Text
+
+    TweakFlag SHOW_HUNGER_SATURATION_TEXT = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_SATURATION).newForUpdate().build();
+    TweakFlag USE_DYNAMIC_SATURATION_COLOR = TweakFlag.client(true, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_SATURATION).newForUpdate().load().build();
+    TweakEnum<Corner> ALT_HUNGER_SATURATION_CORNER = TweakEnum.client(Corner.TOP_LEFT, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_SATURATION).newForUpdate().load().build();
+    TweakNumber<Integer> ALT_HUNGER_SATURATION_OFFSET_X = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_SATURATION).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakNumber<Integer> ALT_HUNGER_SATURATION_OFFSET_Y = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_SATURATION).newForUpdate().slider(Lang.Slider.OFFSET, -100, 100).build();
+    TweakText ALT_HUNGER_SATURATION_TEXT = TweakText.client("Saturation: %v%", CandyGroup.INTERFACE_HUD_HUNGER_BAR_ALT_SATURATION).newForUpdate().load().build();
+
     // Window Title
 
     TweakFlag ENABLE_WINDOW_TITLE = TweakFlag.client(false, CandyGroup.INTERFACE_WINDOW).newForUpdate().whenDisabled(false).build();
@@ -116,7 +166,7 @@ public interface CandyTweak
     TweakFlag INVERTED_PLAYER_LIGHTING = TweakFlag.client(true, CandyGroup.INTERFACE_INVENTORY).newForUpdate().build();
     TweakEnum<Hotbar> OLD_CREATIVE_HOTBAR = TweakEnum.server(Hotbar.CLASSIC, CandyGroup.INTERFACE_INVENTORY).ignoreNetworkCheck().whenDisabled(Hotbar.MODERN).build();
 
-    // Gui
+    // Generic Screen
 
     TweakFlag OLD_BUTTON_TEXT_COLOR = TweakFlag.client(true, CandyGroup.INTERFACE_GUI).build();
     TweakEnum<GuiBackground> OLD_GUI_BACKGROUND = TweakEnum.client(GuiBackground.SOLID_BLACK, CandyGroup.INTERFACE_GUI).newForUpdate().build();
@@ -133,12 +183,6 @@ public interface CandyTweak
     TweakFlag CUSTOM_LOADING_PROGRESS_BAR = TweakFlag.client(false, CandyGroup.INTERFACE_LOADING_COLOR).newForUpdate().build();
     TweakColor PROGRESS_BAR_OUTLINE_COLOR = TweakColor.client("#FFFFFF", CandyGroup.INTERFACE_LOADING_COLOR).newForUpdate().build();
     TweakColor PROGRESS_BAR_INSIDE_COLOR = TweakColor.client("#FFFFFF", CandyGroup.INTERFACE_LOADING_COLOR).newForUpdate().build();
-
-    // Version Overlay
-
-    TweakFlag OLD_VERSION_OVERLAY = TweakFlag.client(true, CandyGroup.INTERFACE_VERSION).build();
-    TweakEnum<Corner> OLD_OVERLAY_CORNER = TweakEnum.client(Corner.TOP_LEFT, CandyGroup.INTERFACE_VERSION).newForUpdate().load().build();
-    TweakText OLD_OVERLAY_TEXT = TweakText.client("Minecraft %v", CandyGroup.INTERFACE_VERSION).load().build();
 
     // Progress Screen
 

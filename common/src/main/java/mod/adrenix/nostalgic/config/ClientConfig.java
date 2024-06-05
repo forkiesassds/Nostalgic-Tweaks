@@ -227,10 +227,55 @@ public class ClientConfig implements ConfigMeta
 
         public boolean hidePlayerInBed = CandyTweak.HIDE_PLAYER_IN_BED.register("hidePlayerInBed");
 
-        // Interface
+        // Heads-up Display
 
-        public boolean oldButtonTextColor = CandyTweak.OLD_BUTTON_TEXT_COLOR.register("oldButtonTextColor");
-        public Hotbar oldCreativeHotbar = CandyTweak.OLD_CREATIVE_HOTBAR.register("oldCreativeHotbar");
+        public boolean hideExperienceBar = CandyTweak.HIDE_EXPERIENCE_BAR.register("hideExperienceBar");
+        public boolean hideHungerBar = CandyTweak.HIDE_HUNGER_BAR.register("hideHungerBar");
+
+        // Alternative Experience Text
+
+        public boolean showExpLevelText = CandyTweak.SHOW_EXP_LEVEL_TEXT.register("showExpLevelText");
+        public boolean showExpLevelInCreative = CandyTweak.SHOW_EXP_LEVEL_IN_CREATIVE.register("showExpLevelInCreative");
+        public Corner altExpLevelCorner = CandyTweak.ALT_EXP_LEVEL_CORNER.register("altExpLevelCorner");
+        public int altExpLevelOffsetX = CandyTweak.ALT_EXP_LEVEL_OFFSET_X.register("altExpLevelOffsetX");
+        public int altExpLevelOffsetY = CandyTweak.ALT_EXP_LEVEL_OFFSET_Y.register("altExpLevelOffsetY");
+        public String altExpLevelText = CandyTweak.ALT_EXP_LEVEL_TEXT.register("altExpLevelText");
+
+        // Alternative Progress Text
+
+        public boolean showExpProgressText = CandyTweak.SHOW_EXP_PROGRESS_TEXT.register("showExpProgressText");
+        public boolean showExpProgressInCreative = CandyTweak.SHOW_EXP_PROGRESS_IN_CREATIVE.register("showExpProgressInCreative");
+        public boolean useDynamicProgressColor = CandyTweak.USE_DYNAMIC_PROGRESS_COLOR.register("useDynamicProgressColor");
+        public Corner altExpProgressCorner = CandyTweak.ALT_EXP_PROGRESS_CORNER.register("altExpProgressCorner");
+        public int altExpProgressOffsetX = CandyTweak.ALT_EXP_PROGRESS_OFFSET_X.register("altExpProgressOffsetX");
+        public int altExpProgressOffsetY = CandyTweak.ALT_EXP_PROGRESS_OFFSET_Y.register("altExpProgressOffsetY");
+        public String altExpProgressText = CandyTweak.ALT_EXP_PROGRESS_TEXT.register("altExpProgressText");
+
+        // Alternative Food Text
+
+        public boolean showHungerFoodText = CandyTweak.SHOW_HUNGER_FOOD_TEXT.register("showHungerFoodText");
+        public boolean useDynamicFoodColor = CandyTweak.USE_DYNAMIC_FOOD_COLOR.register("useDynamicFoodColor");
+        public Corner altHungerFoodCorner = CandyTweak.ALT_HUNGER_FOOD_CORNER.register("altHungerFoodCorner");
+        public int altHungerFoodOffsetX = CandyTweak.ALT_HUNGER_FOOD_OFFSET_X.register("altHungerFoodOffsetX");
+        public int altHungerFoodOffsetY = CandyTweak.ALT_HUNGER_FOOD_OFFSET_Y.register("altHungerFoodOffsetY");
+        public String altHungerFoodText = CandyTweak.ALT_HUNGER_FOOD_TEXT.register("altHungerFoodText");
+
+        // Alternative Saturation Text
+
+        public boolean showHungerSaturationText = CandyTweak.SHOW_HUNGER_SATURATION_TEXT.register("showHungerSaturationText");
+        public boolean useDynamicSaturationColor = CandyTweak.USE_DYNAMIC_SATURATION_COLOR.register("useDynamicSaturationColor");
+        public Corner altHungerSaturationCorner = CandyTweak.ALT_HUNGER_SATURATION_CORNER.register("altHungerSaturationCorner");
+        public int altHungerSaturationOffsetX = CandyTweak.ALT_HUNGER_SATURATION_OFFSET_X.register("altHungerSaturationOffsetX");
+        public int altHungerSaturationOffsetY = CandyTweak.ALT_HUNGER_SATURATION_OFFSET_Y.register("altHungerSaturationOffsetY");
+        public String altHungerSaturationText = CandyTweak.ALT_HUNGER_SATURATION_TEXT.register("altHungerSaturationText");
+
+        // Game Version Overlay
+
+        public boolean oldVersionOverlay = CandyTweak.OLD_VERSION_OVERLAY.register("oldVersionOverlay");
+        public Corner oldOverlayCorner = CandyTweak.OLD_OVERLAY_CORNER.register("oldOverlayCorner");
+        public int oldOverlayOffsetX = CandyTweak.OLD_OVERLAY_OFFSET_X.register("oldOverlayOffsetX");
+        public int oldOverlayOffsetY = CandyTweak.OLD_OVERLAY_OFFSET_Y.register("oldOverlayOffsetY");
+        public String oldOverlayText = CandyTweak.OLD_OVERLAY_TEXT.register("oldOverlayText");
 
         // Window Title
 
@@ -278,9 +323,11 @@ public class ClientConfig implements ConfigMeta
         public boolean disableEmptyArmorTexture = CandyTweak.DISABLE_EMPTY_ARMOR_TEXTURE.register("disableEmptyArmorTexture");
         public boolean disableEmptyShieldTexture = CandyTweak.DISABLE_EMPTY_SHIELD_TEXTURE.register("disableEmptyShieldTexture");
         public boolean invertedPlayerLighting = CandyTweak.INVERTED_PLAYER_LIGHTING.register("invertedPlayerLighting");
+        public Hotbar oldCreativeHotbar = CandyTweak.OLD_CREATIVE_HOTBAR.register("oldCreativeHotbar");
 
-        // GUI
+        // Generic Screen
 
+        public boolean oldButtonTextColor = CandyTweak.OLD_BUTTON_TEXT_COLOR.register("oldButtonTextColor");
         public GuiBackground oldGuiBackground = CandyTweak.OLD_GUI_BACKGROUND.register("oldGuiBackground");
         public boolean customGuiBackground = CandyTweak.CUSTOM_GUI_BACKGROUND.register("customGuiBackground");
         public String customGuiTopGradient = CandyTweak.CUSTOM_GUI_TOP_GRADIENT.register("customGuiTopGradient");
@@ -295,12 +342,6 @@ public class ClientConfig implements ConfigMeta
         public boolean customLoadingProgressBar = CandyTweak.CUSTOM_LOADING_PROGRESS_BAR.register("customLoadingProgressBar");
         public String progressBarOutlineColor = CandyTweak.PROGRESS_BAR_OUTLINE_COLOR.register("progressBarOutlineColor");
         public String progressBarInsideColor = CandyTweak.PROGRESS_BAR_INSIDE_COLOR.register("progressBarInsideColor");
-
-        // Version Overlay
-
-        public boolean oldVersionOverlay = CandyTweak.OLD_VERSION_OVERLAY.register("oldVersionOverlay");
-        public Corner oldOverlayCorner = CandyTweak.OLD_OVERLAY_CORNER.register("oldOverlayCorner");
-        public String oldOverlayText = CandyTweak.OLD_OVERLAY_TEXT.register("oldOverlayText");
 
         // Progress Screen
 
@@ -644,25 +685,6 @@ public class ClientConfig implements ConfigMeta
         public boolean instantBow = GameplayTweak.INSTANT_BOW.register("instantBow");
         public boolean invincibleBow = GameplayTweak.INVINCIBLE_BOW.register("invincibleBow");
 
-        // Experience Bar
-
-        public boolean disableExperienceBar = GameplayTweak.DISABLE_EXPERIENCE_BAR.register("disableExperienceBar");
-
-        // Alternative Experience Text
-
-        public boolean showXpLevelText = GameplayTweak.SHOW_XP_LEVEL_TEXT.register("showXpLevelText");
-        public boolean showXpLevelInCreative = GameplayTweak.SHOW_XP_LEVEL_IN_CREATIVE.register("showXpLevelInCreative");
-        public Corner altXpLevelCorner = GameplayTweak.ALT_XP_LEVEL_CORNER.register("altXpLevelCorner");
-        public String altXpLevelText = GameplayTweak.ALT_XP_LEVEL_TEXT.register("altXpLevelText");
-
-        // Alternative Progress Text
-
-        public boolean showXpProgressText = GameplayTweak.SHOW_XP_PROGRESS_TEXT.register("showXpProgressText");
-        public boolean showXpProgressInCreative = GameplayTweak.SHOW_XP_PROGRESS_IN_CREATIVE.register("showXpProgressInCreative");
-        public boolean useDynamicProgressColor = GameplayTweak.USE_DYNAMIC_PROGRESS_COLOR.register("useDynamicProgressColor");
-        public Corner altXpProgressCorner = GameplayTweak.ALT_XP_PROGRESS_CORNER.register("altXpProgressCorner");
-        public String altXpProgressText = GameplayTweak.ALT_XP_PROGRESS_TEXT.register("altXpProgressText");
-
         // Experience Orb
 
         public boolean disableOrbSpawn = GameplayTweak.DISABLE_ORB_SPAWN.register("disableOrbSpawn");
@@ -703,24 +725,6 @@ public class ClientConfig implements ConfigMeta
 
         public boolean disableBedBounce = GameplayTweak.DISABLE_BED_BOUNCE.register("disableBedBounce");
         public boolean alwaysOpenChest = GameplayTweak.ALWAYS_OPEN_CHEST.register("alwaysOpenChest");
-
-        // Hunger Bar
-
-        public boolean disableHungerBar = GameplayTweak.DISABLE_HUNGER_BAR.register("disableHungerBar");
-
-        // Alternative Food Text
-
-        public boolean showHungerFoodText = GameplayTweak.SHOW_HUNGER_FOOD_TEXT.register("showHungerFoodText");
-        public boolean useDynamicFoodColor = GameplayTweak.USE_DYNAMIC_FOOD_COLOR.register("useDynamicFoodColor");
-        public Corner altHungerFoodCorner = GameplayTweak.ALT_HUNGER_FOOD_CORNER.register("altHungerFoodCorner");
-        public String altHungerFoodText = GameplayTweak.ALT_HUNGER_FOOD_TEXT.register("altHungerFoodText");
-
-        // Alternative Saturation Text
-
-        public boolean showHungerSaturationText = GameplayTweak.SHOW_HUNGER_SATURATION_TEXT.register("showHungerSaturationText");
-        public boolean useDynamicSaturationColor = GameplayTweak.USE_DYNAMIC_SATURATION_COLOR.register("useDynamicSaturationColor");
-        public Corner altHungerSaturationCorner = GameplayTweak.ALT_HUNGER_SATURATION_CORNER.register("altHungerSaturationCorner");
-        public String altHungerSaturationText = GameplayTweak.ALT_HUNGER_SATURATION_TEXT.register("altHungerSaturationText");
 
         // Food
 
