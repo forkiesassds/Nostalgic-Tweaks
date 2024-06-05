@@ -1,27 +1,33 @@
 package mod.adrenix.nostalgic.forge.mixin.tweak.candy.old_hud;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.mojang.blaze3d.systems.RenderSystem;
 import mod.adrenix.nostalgic.mixin.util.candy.hud.HudMixinHelper;
 import mod.adrenix.nostalgic.tweak.config.CandyTweak;
 import mod.adrenix.nostalgic.util.common.data.NullableResult;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ExtendedGui.class)
-public abstract class ExtendedGuiMixin
+@Mixin(Gui.class)
+public abstract class GuiMixin
 {
     /* Shadows */
 
     @Shadow public int leftHeight;
     @Shadow public int rightHeight;
+
+    @Shadow
+    private static void renderArmor(GuiGraphics guiGraphics, Player player, int y, int heartRows, int height, int x) {}
 
     /* Injections */
 
@@ -35,7 +41,7 @@ public abstract class ExtendedGuiMixin
             target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V"
         )
     )
-    private boolean nt_neoforge_old_hud$shouldRenderModernArmor(GuiGraphics graphics, ResourceLocation sprite, int x, int y, int width, int height)
+    private static boolean nt_neoforge_old_hud$shouldRenderModernArmor(GuiGraphics graphics, ResourceLocation sprite, int x, int y, int width, int height)
     {
         return !CandyTweak.HIDE_HUNGER_BAR.get();
     }
@@ -43,32 +49,39 @@ public abstract class ExtendedGuiMixin
     /**
      * Renders the old armor sprites on the right side of the heads-up display.
      */
-    @Inject(
-        method = "renderArmor",
+    @Redirect(
+        method = "renderArmorLevel",
         at = @At(
-            shift = At.Shift.AFTER,
             value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V"
+            target = "Lnet/minecraft/client/gui/Gui;renderArmor(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/entity/player/Player;IIII)V"
         )
     )
-    private void nt_neoforge_old_hud$renderOldArmor(GuiGraphics graphics, int width, int height, CallbackInfo callback)
+    private void nt_neoforge_old_hud$renderOldArmor(GuiGraphics guiGraphics, Player player, int y, int heartRows, int height, int x)
     {
-        if (CandyTweak.HIDE_HUNGER_BAR.get())
-            HudMixinHelper.renderArmor(graphics, this.rightHeight);
+        if (CandyTweak.HIDE_HUNGER_BAR.get() && NullableResult.getOrElse(Minecraft.getInstance().player, 0, LocalPlayer::getArmorValue) > 0)
+        {
+            RenderSystem.enableBlend();
+            HudMixinHelper.renderArmor(guiGraphics, this.rightHeight);
+            RenderSystem.disableBlend();
+        }
+        else
+        {
+            GuiMixin.renderArmor(guiGraphics, player, y, heartRows, height, x);
+        }
     }
 
     /**
      * Modifies left and right height offsets according to armor context.
      */
     @Inject(
-        method = "renderArmor",
+        method = "renderArmorLevel",
         at = @At(
-            shift = At.Shift.BEFORE,
+            shift = At.Shift.AFTER,
             value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/systems/RenderSystem;disableBlend()V"
+            target = "Lnet/minecraft/client/gui/Gui;renderArmor(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/entity/player/Player;IIII)V"
         )
     )
-    private void nt_neoforge_old_hud$modifyArmorHeightOffsets(CallbackInfo callback)
+    private void nt_neoforge_old_hud$modifyArmorHeightOffsets(GuiGraphics arg, CallbackInfo ci)
     {
         if (!CandyTweak.HIDE_HUNGER_BAR.get())
             return;
@@ -84,7 +97,7 @@ public abstract class ExtendedGuiMixin
      * Prevents rendering of the modern air sprites if the hunger bar is hidden.
      */
     @WrapWithCondition(
-        method = "renderAir",
+        method = "renderAirLevel",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V"
@@ -99,7 +112,7 @@ public abstract class ExtendedGuiMixin
      * Renders the old air sprites on the left side of the heads-up display above the hearts.
      */
     @Inject(
-        method = "renderAir",
+        method = "renderAirLevel",
         at = @At(
             shift = At.Shift.BEFORE,
             ordinal = 0,
@@ -107,22 +120,22 @@ public abstract class ExtendedGuiMixin
             target = "Lnet/minecraft/util/Mth;ceil(D)I"
         )
     )
-    private void nt_neoforge_old_hud$renderOldAir(int width, int height, GuiGraphics graphics, CallbackInfo callback)
+    private void nt_neoforge_old_hud$renderOldAir(GuiGraphics arg, CallbackInfo ci)
     {
         if (CandyTweak.HIDE_HUNGER_BAR.get())
-            HudMixinHelper.renderAir(graphics, this.leftHeight);
+            HudMixinHelper.renderAir(arg, this.leftHeight);
     }
 
     /**
      * Modifies left and right height offsets according to air context.
      */
     @Inject(
-        method = "renderAir",
+        method = "renderAirLevel",
         at = @At(
             ordinal = 2,
             shift = At.Shift.AFTER,
             value = "FIELD",
-            target = "Lnet/neoforged/neoforge/client/gui/overlay/ExtendedGui;rightHeight:I"
+            target = "Lnet/minecraft/client/gui/Gui;rightHeight:I"
         )
     )
     private void nt_neoforge_old_hud$modifyAirHeightOffsets(CallbackInfo callback)

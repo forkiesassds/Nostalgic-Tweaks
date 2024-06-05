@@ -24,7 +24,9 @@ public interface ModPacket
      */
     static <T extends ModPacket> void register(Class<T> classType, Function<FriendlyByteBuf, T> decoder)
     {
-        NostalgicTweaks.NETWORK.register(classType, ModPacket::encode, decoder, ModPacket::handle);
+        //TODO: rewrite this, as NetworkChannel is deprecated since 1.20.5 alongside it no longer working on NeoForge due to it
+        //      registering both C2S and S2C sides with the same class, which NeoForge doesn't like.
+//        NostalgicTweaks.NETWORK.register(classType, ModPacket::encode, decoder, ModPacket::handle);
     }
 
     /**

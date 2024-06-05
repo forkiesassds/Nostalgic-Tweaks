@@ -22,7 +22,7 @@ public abstract class PacketUtil
     {
         if (NostalgicTweaks.NETWORK.canPlayerReceive(player, packet.getClass()))
         {
-            NostalgicTweaks.NETWORK.sendToPlayer(player, packet);
+//            NostalgicTweaks.NETWORK.sendToPlayer(player, packet);
             NostalgicTweaks.LOGGER.debug("(S2C) Sent (%s) to (%s)", packet, player);
         }
         else

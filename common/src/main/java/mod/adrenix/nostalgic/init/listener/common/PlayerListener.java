@@ -33,7 +33,7 @@ public abstract class PlayerListener
         String version = beta.isEmpty() ? tiny : tiny + "-" + beta;
         String protocol = NostalgicTweaks.getProtocol();
 
-        NostalgicTweaks.NETWORK.sendToPlayer(player, new ClientboundHandshake(loader, version, protocol));
+//        NostalgicTweaks.NETWORK.sendToPlayer(player, new ClientboundHandshake(loader, version, protocol));
 
         setCreativeHotbar(player);
     }

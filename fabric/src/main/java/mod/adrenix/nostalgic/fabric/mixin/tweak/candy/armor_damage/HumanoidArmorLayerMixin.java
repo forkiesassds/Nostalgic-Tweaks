@@ -26,11 +26,6 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, A extends 
 
     @Unique private T nt$entity;
 
-    /* Shadows */
-
-    @Shadow
-    protected abstract ResourceLocation getArmorLocation(ArmorItem armorItem, boolean layer2, @Nullable String suffix);
-
     /* Injections */
 
     /**
@@ -67,9 +62,9 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, A extends 
             target = "Lnet/minecraft/client/renderer/MultiBufferSource;getBuffer(Lnet/minecraft/client/renderer/RenderType;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
         )
     )
-    private VertexConsumer nt_fabric_armor_damage$setRenderTypeConsumer(VertexConsumer original, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ArmorItem armorItem, A model, boolean withGlint, float red, float green, float blue, @Nullable String armorSuffix)
+    private VertexConsumer nt_fabric_armor_damage$setRenderTypeConsumer(VertexConsumer original, PoseStack poseStack, MultiBufferSource buffer, int packedLight, A armorItem, float red, float green, float blue, ResourceLocation texture)
     {
-        return ArmorMixinHelper.getDamagedConsumer(this.nt$entity, original, bufferSource, this.getArmorLocation(armorItem, withGlint, armorSuffix));
+        return ArmorMixinHelper.getDamagedConsumer(this.nt$entity, original, buffer, texture);
     }
 
     /**
