@@ -74,7 +74,8 @@ public abstract class FogRendererMixin
         method = "setupColor",
         at = @At(
             value = "INVOKE",
-            target = "Lorg/joml/Vector3f;dot(Lorg/joml/Vector3fc;)F"
+            target = "Lorg/joml/Vector3f;dot(Lorg/joml/Vector3fc;)F",
+            remap = false
         )
     )
     private static Vector3fc nt_world_fog$onSetupFogColorDirection(Vector3fc vector)
