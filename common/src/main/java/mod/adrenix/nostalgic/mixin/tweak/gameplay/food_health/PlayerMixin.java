@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import mod.adrenix.nostalgic.tweak.config.GameplayTweak;
 import mod.adrenix.nostalgic.util.common.data.NullableResult;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -38,10 +39,10 @@ public abstract class PlayerMixin extends LivingEntity
     )
     private void nt_food_health$onPlayerEat(Level level, ItemStack itemStack, CallbackInfoReturnable<ItemStack> callback)
     {
-        if (GameplayTweak.DISABLE_HUNGER.get() && itemStack.isEdible())
+        if (GameplayTweak.DISABLE_HUNGER.get() && itemStack.has(DataComponents.FOOD))
         {
-            FoodProperties food = itemStack.getItem().getFoodProperties();
-            int healAmount = NullableResult.getOrElse(food, 0, FoodProperties::getNutrition);
+            FoodProperties food = itemStack.get(DataComponents.FOOD);
+            int healAmount = NullableResult.getOrElse(food, 0, FoodProperties::nutrition);
 
             if (GameplayTweak.CUSTOM_FOOD_HEALTH.get().containsItem(itemStack))
                 healAmount = GameplayTweak.CUSTOM_FOOD_HEALTH.get().valueFrom(itemStack);

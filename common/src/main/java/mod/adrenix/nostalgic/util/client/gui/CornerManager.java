@@ -94,7 +94,7 @@ public class CornerManager
                 if (effects.stream().anyMatch(MobEffectInstance::showIcon))
                     y += 24;
 
-                if (effects.stream().map(MobEffectInstance::getEffect).anyMatch(mobEffect -> !mobEffect.isBeneficial()))
+                if (effects.stream().map(MobEffectInstance::getEffect).anyMatch(mobEffect -> !mobEffect.value().isBeneficial()))
                     y += 26;
             }
         }

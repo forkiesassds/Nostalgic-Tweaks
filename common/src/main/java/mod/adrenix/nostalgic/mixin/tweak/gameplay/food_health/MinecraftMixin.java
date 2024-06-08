@@ -5,6 +5,7 @@ import mod.adrenix.nostalgic.tweak.config.GameplayTweak;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,6 +44,6 @@ public abstract class MinecraftMixin
         if (this.player == null)
             return true;
 
-        return !GameplayTweak.INSTANT_EAT.get() || !this.player.getItemInHand(hand).isEdible();
+        return !GameplayTweak.INSTANT_EAT.get() || !this.player.getItemInHand(hand).has(DataComponents.FOOD);
     }
 }
