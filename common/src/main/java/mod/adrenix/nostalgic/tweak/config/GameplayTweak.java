@@ -135,15 +135,19 @@ public interface GameplayTweak
     TweakFlag DISABLE_BED_BOUNCE = TweakFlag.server(true, GameplayGroup.MECHANICS_BLOCK_BED).newForUpdate().build();
     TweakFlag ALWAYS_OPEN_CHEST = TweakFlag.server(true, GameplayGroup.MECHANICS_BLOCK_CHEST).newForUpdate().build();
 
+    // Item Mechanics
+
+    TweakItemMap<Integer> CUSTOM_ITEM_STACKING = TweakItemMap.server(new ItemMap<>(64), GameplayGroup.MECHANICS_ITEMS).newForUpdate().ignoreNetworkCheck().slider(Lang.Slider.STACK, 1, 64).build();
+
     // Food Health
 
+    TweakFlag DISABLE_HUNGER = TweakFlag.server(false, GameplayGroup.HUNGER).newForUpdate().build();
     TweakFlag INSTANT_EAT = TweakFlag.server(false, GameplayGroup.HUNGER_FOOD).newForUpdate().build();
-    TweakFlag DISABLE_HUNGER = TweakFlag.server(false, GameplayGroup.HUNGER_FOOD).newForUpdate().build();
+    TweakFlag PREVENT_HUNGER_EFFECT = TweakFlag.server(false, GameplayGroup.HUNGER_FOOD).newForUpdate().build();
     TweakItemMap<Integer> CUSTOM_FOOD_HEALTH = TweakItemMap.server(DefaultListing.foodHealth(), GameplayGroup.HUNGER_FOOD).newForUpdate().icon(Icons.HEART).slider(0, 20, SliderType.HEARTS).alert(TweakAlert.FOOD_HEALTH_CONFLICT).load().build();
 
     // Food Stacking
 
-    TweakFlag OLD_FOOD_STACKING = TweakFlag.server(false, GameplayGroup.HUNGER_FOOD).newForUpdate().build();
-    TweakItemMap<Integer> CUSTOM_FOOD_STACKING = TweakItemMap.server(DefaultListing.foodStacks(), GameplayGroup.HUNGER_FOOD).newForUpdate().slider(Lang.Slider.STACK, 1, 64).alert(TweakAlert.FOOD_STACKING_CONFLICT).load().build();
-    TweakItemMap<Integer> CUSTOM_ITEM_STACKING = TweakItemMap.server(new ItemMap<>(64), GameplayGroup.MECHANICS_ITEMS).newForUpdate().slider(Lang.Slider.STACK, 1, 64).build();
+    TweakFlag OLD_FOOD_STACKING = TweakFlag.server(false, GameplayGroup.HUNGER_FOOD).newForUpdate().ignoreNetworkCheck().build();
+    TweakItemMap<Integer> CUSTOM_FOOD_STACKING = TweakItemMap.server(DefaultListing.foodStacks(), GameplayGroup.HUNGER_FOOD).newForUpdate().ignoreNetworkCheck().slider(Lang.Slider.STACK, 1, 64).alert(TweakAlert.FOOD_STACKING_CONFLICT).load().build();
 }
