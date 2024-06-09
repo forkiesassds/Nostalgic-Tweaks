@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
+//TODO: rewrite this to work with data components
 @Mixin(SwordItem.class)
 public abstract class SwordItemMixin extends TieredItem
 {
@@ -31,7 +32,7 @@ public abstract class SwordItemMixin extends TieredItem
 
     /* Unique & Shadows */
 
-    @Shadow @Final @Mutable private Multimap<Attribute, AttributeModifier> defaultModifiers;
+//    @Shadow @Final @Mutable private Multimap<Attribute, AttributeModifier> defaultModifiers;
     @Unique private Multimap<Attribute, AttributeModifier> nt$defaultModifiers;
     @Unique private boolean nt$isModifierAllowed;
 
@@ -40,7 +41,7 @@ public abstract class SwordItemMixin extends TieredItem
     /**
      * Initializes an old damage modifier map to later modify a sword's damage attribute modifier.
      */
-    @Inject(
+    /*@Inject(
         method = "<init>",
         at = @At("RETURN")
     )
@@ -58,12 +59,12 @@ public abstract class SwordItemMixin extends TieredItem
 
         this.nt$defaultModifiers = builder;
         this.nt$isModifierAllowed = DamageMixinHelper.isApplicable(this);
-    }
+    }*/
 
     /**
      * Changes the sword's default attribute modifier map, so it can use old damage values.
      */
-    @ModifyReturnValue(
+    /*@ModifyReturnValue(
         method = "getDefaultAttributeModifiers",
         at = @At("RETURN")
     )
@@ -73,5 +74,5 @@ public abstract class SwordItemMixin extends TieredItem
             return this.nt$defaultModifiers;
 
         return defaultModifiers;
-    }
+    }*/
 }
