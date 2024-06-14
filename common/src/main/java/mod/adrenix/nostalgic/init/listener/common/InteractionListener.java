@@ -3,6 +3,7 @@ package mod.adrenix.nostalgic.init.listener.common;
 import dev.architectury.event.CompoundEventResult;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.InteractionEvent;
+import mod.adrenix.nostalgic.mixin.util.gameplay.combat.SwordBlockMixinHelper;
 import mod.adrenix.nostalgic.tweak.config.GameplayTweak;
 import mod.adrenix.nostalgic.util.common.world.PlayerUtil;
 import net.minecraft.core.BlockPos;
@@ -52,6 +53,13 @@ public abstract class InteractionListener
             int timeCharged = 72000 - (int) (((float) GameplayTweak.ARROW_SPEED.get() / 100.0F) * 20.0F);
 
             bow.releaseUsing(itemStackInHand, player.level(), player, timeCharged);
+
+            return CompoundEventResult.interruptTrue(itemStackInHand);
+        }
+
+        if (SwordBlockMixinHelper.canBlock(player))
+        {
+            player.startUsingItem(hand);
 
             return CompoundEventResult.interruptTrue(itemStackInHand);
         }
@@ -114,13 +122,24 @@ public abstract class InteractionListener
      */
     private static EventResult onLeftClickBlock(Player player, InteractionHand hand, BlockPos blockPos, Direction face)
     {
-        if (player.swinging)
-            return EventResult.pass();
-
         Level level = player.getCommandSenderWorld();
         BlockHitResult blockHitResult = new BlockHitResult(Vec3.atCenterOf(blockPos), face, blockPos, false);
         BlockState blockState = level.getBlockState(blockPos);
         Block block = blockState.getBlock();
+
+        if (GameplayTweak.PUNCH_TNT_IGNITION.get() && !player.isCrouching())
+        {
+            if (block instanceof TntBlock)
+            {
+                TntBlock.explode(level, blockPos);
+                level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+
+                return EventResult.interruptTrue();
+            }
+        }
+
+        if (player.swinging)
+            return EventResult.pass();
 
         if (GameplayTweak.LEFT_CLICK_DOOR.get() && PlayerUtil.isSurvival(player))
         {

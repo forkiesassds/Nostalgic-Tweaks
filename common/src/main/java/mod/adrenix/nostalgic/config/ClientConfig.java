@@ -676,6 +676,13 @@ public class ClientConfig implements ConfigMeta
         public boolean oldStyleStrayDrops = GameplayTweak.OLD_STYLE_STRAY_DROPS.register("oldStyleStrayDrops");
         public boolean oldStyleHuskDrops = GameplayTweak.OLD_STYLE_HUSK_DROPS.register("oldStyleHuskDrops");
 
+        // Combat Blocking
+
+        public boolean blockWithSwordOnShield = GameplayTweak.BLOCK_WITH_SWORD_ON_SHIELD.register("blockWithSwordOnShield");
+        public boolean oldSwordBlocking = GameplayTweak.OLD_SWORD_BLOCKING.register("oldSwordBlocking");
+        public boolean attackWhileSwordBlocking = GameplayTweak.ATTACK_WHILE_SWORD_BLOCKING.register("attackWhileSwordBlocking");
+        public int swordBlockDamageReduction = GameplayTweak.SWORD_BLOCK_DAMAGE_REDUCTION.register("swordBlockDamageReduction");
+
         // Combat
 
         public boolean oldDamageValues = GameplayTweak.OLD_DAMAGE_VALUES.register("oldDamageValues");
@@ -702,6 +709,7 @@ public class ClientConfig implements ConfigMeta
 
         // Player Mechanics
 
+        public boolean oldNightmares = GameplayTweak.OLD_NIGHTMARES.register("oldNightmares");
         public boolean disableSprint = GameplayTweak.DISABLE_SPRINT.register("disableSprint");
         public boolean leftClickDoor = GameplayTweak.LEFT_CLICK_DOOR.register("leftClickDoor");
         public boolean leftClickLever = GameplayTweak.LEFT_CLICK_LEVER.register("leftClickLever");
@@ -728,6 +736,7 @@ public class ClientConfig implements ConfigMeta
 
         // Block Mechanics
 
+        public boolean punchTntIgnition = GameplayTweak.PUNCH_TNT_IGNITION.register("punchTntIgnition");
         public boolean disableBedBounce = GameplayTweak.DISABLE_BED_BOUNCE.register("disableBedBounce");
         public boolean alwaysOpenChest = GameplayTweak.ALWAYS_OPEN_CHEST.register("alwaysOpenChest");
 

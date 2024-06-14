@@ -80,6 +80,13 @@ public interface GameplayTweak
     TweakFlag OLD_STYLE_STRAY_DROPS = TweakFlag.server(false, GameplayGroup.MOB_DROPS_MODERN).newForUpdate().build();
     TweakFlag OLD_STYLE_HUSK_DROPS = TweakFlag.server(false, GameplayGroup.MOB_DROPS_MODERN).newForUpdate().build();
 
+    // Combat Blocking
+
+    TweakFlag BLOCK_WITH_SWORD_ON_SHIELD = TweakFlag.client(true, GameplayGroup.COMBAT_BLOCKING).newForUpdate().build();
+    TweakFlag OLD_SWORD_BLOCKING = TweakFlag.server(true, GameplayGroup.COMBAT_BLOCKING).newForUpdate().build();
+    TweakFlag ATTACK_WHILE_SWORD_BLOCKING = TweakFlag.server(true, GameplayGroup.COMBAT_BLOCKING).newForUpdate().build();
+    TweakNumber<Integer> SWORD_BLOCK_DAMAGE_REDUCTION = TweakNumber.server(50, GameplayGroup.COMBAT_BLOCKING).newForUpdate().slider(Lang.Slider.PERCENTAGE, 0, 100, "%").build();
+
     // Combat
 
     TweakFlag OLD_DAMAGE_VALUES = TweakFlag.server(false, GameplayGroup.COMBAT).newForUpdate().build();
@@ -106,6 +113,7 @@ public interface GameplayTweak
 
     // Player Mechanics
 
+    TweakFlag OLD_NIGHTMARES = TweakFlag.server(true, GameplayGroup.MECHANICS_PLAYER).newForUpdate().build();
     TweakFlag DISABLE_SPRINT = TweakFlag.dynamic(false, GameplayGroup.MECHANICS_PLAYER).newForUpdate().build();
     TweakFlag LEFT_CLICK_DOOR = TweakFlag.server(false, GameplayGroup.MECHANICS_PLAYER).newForUpdate().build();
     TweakFlag LEFT_CLICK_LEVER = TweakFlag.server(false, GameplayGroup.MECHANICS_PLAYER).newForUpdate().build();
@@ -132,6 +140,7 @@ public interface GameplayTweak
 
     // Block Mechanics
 
+    TweakFlag PUNCH_TNT_IGNITION = TweakFlag.server(false, GameplayGroup.MECHANICS_BLOCK_TNT).newForUpdate().build();
     TweakFlag DISABLE_BED_BOUNCE = TweakFlag.server(true, GameplayGroup.MECHANICS_BLOCK_BED).newForUpdate().build();
     TweakFlag ALWAYS_OPEN_CHEST = TweakFlag.server(true, GameplayGroup.MECHANICS_BLOCK_CHEST).newForUpdate().build();
 
