@@ -3,6 +3,7 @@ package mod.adrenix.nostalgic.mixin.tweak.gameplay.combat_player;
 import mod.adrenix.nostalgic.mixin.util.gameplay.combat.SwordBlockMixinHelper;
 import mod.adrenix.nostalgic.tweak.config.GameplayTweak;
 import mod.adrenix.nostalgic.util.common.ClassUtil;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,7 +37,8 @@ public abstract class LivingEntityMixin
             if (hurtAmount >= 3.0F)
             {
                 player.getUseItem()
-                    .hurtAndBreak(1, player, consumerPlayer -> consumerPlayer.broadcastBreakEvent(player.getUsedItemHand()));
+                    .hurtAndBreak(1, player.getRandom(), player instanceof ServerPlayer serverPlayer ? serverPlayer : null,
+                            () -> player.broadcastBreakEvent(LivingEntity.getSlotForHand(player.getUsedItemHand())));
 
                 if (player.getUseItem().isEmpty())
                     player.stopUsingItem();
