@@ -73,6 +73,12 @@ public interface CandyTweak
     TweakFlag HIDE_EXPERIENCE_BAR = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_EXP_BAR).newForUpdate().orIf(GameplayTweak.DISABLE_ORB_SPAWN::get).build();
     TweakFlag HIDE_HUNGER_BAR = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_HUNGER_BAR).newForUpdate().orIf(GameplayTweak.DISABLE_HUNGER::get).build();
 
+    // Offhand Slot
+
+    TweakFlag ADVENTURE_CRAFT_OFFHAND = TweakFlag.client(false, CandyGroup.INTERFACE_HUD_OFFHAND).newForUpdate().build();
+    TweakNumber<Integer> LEFT_OFFHAND_OFFSET = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_OFFHAND).newForUpdate().slider(Lang.Slider.OFFSET, -14, 7).build();
+    TweakNumber<Integer> RIGHT_OFFHAND_OFFSET = TweakNumber.client(0, CandyGroup.INTERFACE_HUD_OFFHAND).newForUpdate().slider(Lang.Slider.OFFSET, -7, 14).build();
+
     // Game Version Overlay
 
     TweakFlag OLD_VERSION_OVERLAY = TweakFlag.client(true, CandyGroup.INTERFACE_HUD_VERSION).build();
@@ -323,7 +329,7 @@ public interface CandyTweak
 
     // Light Engine
 
-    TweakFlag ROUND_ROBIN_RELIGHT = TweakFlag.client(true, CandyGroup.LIGHTING_WORLD_ENGINE).newForUpdate().reloadChunks().modIssues(TweakIssue.SODIUM, TweakIssue.OPTIFINE).conflictMods(ModTracker.STARLIGHT).build();
+    TweakFlag ROUND_ROBIN_RELIGHT = TweakFlag.client(true, CandyGroup.LIGHTING_WORLD_ENGINE).newForUpdate().reloadChunks().modIssues(TweakIssue.SODIUM, TweakIssue.OPTIFINE, TweakIssue.POLYTONE).conflictMods(ModTracker.STARLIGHT).build();
     TweakFlag OLD_SMOOTH_LIGHTING = TweakFlag.client(true, CandyGroup.LIGHTING_WORLD_ENGINE).reloadChunks().build();
     TweakFlag OLD_NETHER_LIGHTING = TweakFlag.client(true, CandyGroup.LIGHTING_WORLD_ENGINE).reloadChunks().build();
     TweakFlag OLD_CLASSIC_ENGINE = TweakFlag.server(false, CandyGroup.LIGHTING_WORLD_ENGINE).newForUpdate().reloadChunks().warningTag().build();
@@ -332,7 +338,7 @@ public interface CandyTweak
 
     TweakFlag SMOOTH_LIGHT_TRANSITION = TweakFlag.client(true, CandyGroup.LIGHTING_WORLD_TEXTURE).newForUpdate().build();
     TweakFlag DISABLE_BRIGHTNESS = TweakFlag.client(true, CandyGroup.LIGHTING_WORLD_TEXTURE).newForUpdate().alert(TweakAlert.BRIGHTNESS_CONFLICT).build();
-    TweakFlag OLD_LIGHT_COLOR = TweakFlag.client(true, CandyGroup.LIGHTING_WORLD_TEXTURE).newForUpdate().build();
+    TweakFlag OLD_LIGHT_COLOR = TweakFlag.client(true, CandyGroup.LIGHTING_WORLD_TEXTURE).newForUpdate().modIssues(TweakIssue.POLYTONE).build();
 
     // Shader Support
 
@@ -366,6 +372,10 @@ public interface CandyTweak
     TweakFlag DISABLE_FALLING_PARTICLES = TweakFlag.client(true, CandyGroup.PARTICLE_PLAYER).newForUpdate().build();
     TweakFlag DISABLE_SPRINTING_PARTICLES = TweakFlag.client(true, CandyGroup.PARTICLE_PLAYER).newForUpdate().build();
     TweakFlag HIDE_FIRST_PERSON_MAGIC_PARTICLES = TweakFlag.client(false, CandyGroup.PARTICLE_PLAYER).newForUpdate().build();
+
+    // Boat Particles
+
+    TweakFlag OLD_BOAT_MOVEMENT_PARTICLES = TweakFlag.client(true, CandyGroup.PARTICLE_BOAT).newForUpdate().build();
 
     // Attack Particles
 

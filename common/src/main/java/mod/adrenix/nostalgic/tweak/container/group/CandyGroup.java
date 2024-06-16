@@ -26,6 +26,7 @@ public interface CandyGroup
 
     Container INTERFACE = Container.group(Category.EYE_CANDY, "interface").color(0xFFFFFF).icon(Icons.BUTTON).build();
     Container INTERFACE_HUD = Container.group(INTERFACE, "interface_hud").color(0x0094FF).icon(Icons.HUD).build();
+    Container INTERFACE_HUD_OFFHAND = Container.group(INTERFACE_HUD, "interface_hud_offhand").color(0xFFBC9B).icon(Icons.ARM_SWAY).build();
     Container INTERFACE_HUD_VERSION = Container.group(INTERFACE_HUD, "interface_hud_version").color(0xB7603E).icon(Items.WRITABLE_BOOK).build();
     Container INTERFACE_HUD_EXP_BAR = Container.group(INTERFACE_HUD, "interface_hud_exp_bar").color(0x86C457).icon(Icons.XP_BAR).build();
     Container INTERFACE_HUD_EXP_BAR_ALT_PROGRESS = Container.group(INTERFACE_HUD_EXP_BAR, "interface_hud_exp_bar_alt_progress").color(0x8FB7A3).icon(Icons.XP_HALF_BAR).build();
@@ -88,6 +89,7 @@ public interface CandyGroup
     Container PARTICLE_EXPERIENCE = Container.group(PARTICLE, "particle_experience").color(0xF5FF8F).icon(Items.EXPERIENCE_BOTTLE).build();
     Container PARTICLE_ATTACK = Container.group(PARTICLE, "particle_attack").color(0xE0E0E0).icon(Items.IRON_SWORD).build();
     Container PARTICLE_PLAYER = Container.group(PARTICLE, "particle_player").color(0xB6896C).icon(Items.PLAYER_HEAD).build();
+    Container PARTICLE_BOAT = Container.group(PARTICLE, "particle_boat").color(0x896727).icon(Items.OAK_BOAT).build();
     Container PARTICLE_BLOCK = Container.group(PARTICLE, "particle_block").color(0x98C767).icon(Blocks.GRASS_BLOCK).build();
     Container PARTICLE_EXPLOSION = Container.group(PARTICLE, "particle_explosion").color(0xE63D14).icon(Blocks.TNT).build();
 

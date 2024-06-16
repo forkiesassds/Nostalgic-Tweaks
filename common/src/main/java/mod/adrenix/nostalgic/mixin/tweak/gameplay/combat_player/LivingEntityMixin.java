@@ -1,5 +1,6 @@
 package mod.adrenix.nostalgic.mixin.tweak.gameplay.combat_player;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import mod.adrenix.nostalgic.mixin.util.gameplay.combat.SwordBlockMixinHelper;
 import mod.adrenix.nostalgic.tweak.config.GameplayTweak;
 import mod.adrenix.nostalgic.util.common.ClassUtil;
@@ -48,5 +49,23 @@ public abstract class LivingEntityMixin
         }
 
         return hurtAmount;
+    }
+
+    /**
+     * Changes the use duration to prevent instant cancellation of a sword block.
+     */
+    @ModifyExpressionValue(
+        method = "startUsingItem",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/item/ItemStack;getUseDuration()I"
+        )
+    )
+    private int nt_combat_player$modifyGetUseDuration(int useDuration)
+    {
+        return ClassUtil.cast(this, Player.class)
+            .filter(SwordBlockMixinHelper::canBlock)
+            .map(player -> 72000)
+            .orElse(useDuration);
     }
 }

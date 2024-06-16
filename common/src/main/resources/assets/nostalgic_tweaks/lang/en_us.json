@@ -260,6 +260,9 @@
   "gui.nostalgic_tweaks.tag.warning": "Warning",
   "gui.nostalgic_tweaks.tag.sync": "Synced",
   "gui.nostalgic_tweaks.tag.sync.info": "This binding is§d synced§r with the vanilla controls.",
+  "gui.nostalgic_tweaks.tag.no_sso": "No SSO",
+  "gui.nostalgic_tweaks.tag.no_sso.header": "Server Side Only Unavailable",
+  "gui.nostalgic_tweaks.tag.no_sso.info": "This server tweak will not§c work§r as intended in§e server-side-only§r mode for players§c without§r the mod installed.",
 
   "gui.nostalgic_tweaks.text.toggle": "Toggle",
   "gui.nostalgic_tweaks.text.wait": "Wait",
@@ -410,6 +413,7 @@
 
   "gui.nostalgic_tweaks.issue.sodium": "This tweak will§c not§r work when§a Sodium§r is installed.",
   "gui.nostalgic_tweaks.issue.optifine": "This tweak will§c not§r work when§6 Optifine§r is installed.",
+  "gui.nostalgic_tweaks.issue.polytone": "This tweak will§c not§r work when§e Polytone§r is installed.",
 
   "gui.nostalgic_tweaks.enum.generic.disabled": "§cDisabled",
   "gui.nostalgic_tweaks.enum.generic.classic": "§aClassic",
@@ -515,6 +519,7 @@
   "gui.nostalgic_tweaks.container.animation.arm_sway": "Arm Sway",
   "gui.nostalgic_tweaks.container.animation.arm_swing": "Arm Swing",
   "gui.nostalgic_tweaks.container.animation.mob": "Mob Animations",
+  "gui.nostalgic_tweaks.container.animation.boat": "Boat Animations",
   "gui.nostalgic_tweaks.container.animation.player": "Player Animations",
   "gui.nostalgic_tweaks.container.animation.item": "Item Animations",
 
@@ -532,6 +537,7 @@
   "gui.nostalgic_tweaks.container.eyeCandy.interface": "Interface Candy",
   "gui.nostalgic_tweaks.container.eyeCandy.interface_chat": "Chat Screen",
   "gui.nostalgic_tweaks.container.eyeCandy.interface_hud": "Heads-up Display",
+  "gui.nostalgic_tweaks.container.eyeCandy.interface_hud_offhand": "Offhand Slot",
   "gui.nostalgic_tweaks.container.eyeCandy.interface_hud_version": "Game Version Overlay",
   "gui.nostalgic_tweaks.container.eyeCandy.interface_hud_exp_bar": "Experience Bar",
   "gui.nostalgic_tweaks.container.eyeCandy.interface_hud_exp_bar_alt_level": "Alternative Level Text",
@@ -576,6 +582,7 @@
   "gui.nostalgic_tweaks.container.eyeCandy.lighting_world_texture": "Light Texture",
   "gui.nostalgic_tweaks.container.eyeCandy.lighting_world_shader": "Shaders",
   "gui.nostalgic_tweaks.container.eyeCandy.particle": "Particle Candy",
+  "gui.nostalgic_tweaks.container.eyeCandy.particle_boat": "Boat Particles",
   "gui.nostalgic_tweaks.container.eyeCandy.particle_block": "Block Particles",
   "gui.nostalgic_tweaks.container.eyeCandy.particle_disabled": "Disabled Particles",
   "gui.nostalgic_tweaks.container.eyeCandy.particle_experience": "Experience Particles",
@@ -616,6 +623,7 @@
   "gui.nostalgic_tweaks.container.gameplay.mechanics": "Game Mechanics",
   "gui.nostalgic_tweaks.container.gameplay.mechanics_fire": "Fire",
   "gui.nostalgic_tweaks.container.gameplay.mechanics_cart": "Cart",
+  "gui.nostalgic_tweaks.container.gameplay.mechanics_boat": "Boat",
   "gui.nostalgic_tweaks.container.gameplay.mechanics_block": "Block",
   "gui.nostalgic_tweaks.container.gameplay.mechanics_block_bed": "Bed",
   "gui.nostalgic_tweaks.container.gameplay.mechanics_block_tnt": "TNT",
@@ -860,6 +868,13 @@
   "gui.nostalgic_tweaks.config.eyeCandy.oldOverlayOffsetY.info": "Shift the vertical position (y-axis) of the text.",
   "gui.nostalgic_tweaks.config.eyeCandy.oldOverlayCorner": "Old Version Corner",
   "gui.nostalgic_tweaks.config.eyeCandy.oldOverlayCorner.info": "Change the corner of the old version overlay text.",
+
+  "gui.nostalgic_tweaks.config.eyeCandy.adventureCraftOffhand": "Adventure Craft Offhand Style",
+  "gui.nostalgic_tweaks.config.eyeCandy.adventureCraftOffhand.info": "Use an Adventure Craft styled offhand slot texture.",
+  "gui.nostalgic_tweaks.config.eyeCandy.leftOffhandOffset": "Left Offhand Slot Offset",
+  "gui.nostalgic_tweaks.config.eyeCandy.leftOffhandOffset.info": "Change how far to the left or right the left-hand-side offhand slot should be offset from its normal position.",
+  "gui.nostalgic_tweaks.config.eyeCandy.rightOffhandOffset": "Right Offhand Slot Offset",
+  "gui.nostalgic_tweaks.config.eyeCandy.rightOffhandOffset.info": "Change how far to the left or right the right-hand-side offhand slot should be offset from its normal position.",
 
   "gui.nostalgic_tweaks.config.eyeCandy.showExpLevelText": "Show Text",
   "gui.nostalgic_tweaks.config.eyeCandy.showExpLevelText.info": "Show the provided alternative experience level text.",
@@ -1205,6 +1220,8 @@
   "gui.nostalgic_tweaks.config.eyeCandy.supporterTags": "Show Supporter Name Tags",
   "gui.nostalgic_tweaks.config.eyeCandy.supporterTags.info": "Display custom visual effects on name tags for player's who have supported this mod.",
 
+  "gui.nostalgic_tweaks.config.eyeCandy.oldBoatMovementParticles": "Old Boat Movement Particles",
+  "gui.nostalgic_tweaks.config.eyeCandy.oldBoatMovementParticles.info": "Bring back the old splash particles that appear under boats when a boat moves fast enough.",
   "gui.nostalgic_tweaks.config.eyeCandy.disabledParticles": "Disabled Particles",
   "gui.nostalgic_tweaks.config.eyeCandy.disabledParticles.info": "Define a custom list of particles to§c disable§r from appearing within the world. The entries used in this list are particle resource locations. For example,§b minecraft:cherry_leaves§r is a§a valid§r particle resource location.",
   "gui.nostalgic_tweaks.config.eyeCandy.oldExplosionParticles": "Old Explosion Particles",
@@ -1277,6 +1294,7 @@
   "gui.nostalgic_tweaks.config.eyeCandy.roundRobinRelight": "Round Robin Chunk Relighting",
   "gui.nostalgic_tweaks.config.eyeCandy.roundRobinRelight.info": "When skylight changes due to the time of day, this will cause§6 round robin chunk updates§r. This will have a slight§c impact§r on performance when relighting occurs.",
   "gui.nostalgic_tweaks.config.eyeCandy.roundRobinRelight.conflict": "This tweak will not work when§e Starlight§r is installed.",
+  "gui.nostalgic_tweaks.config.eyeCandy.roundRobinRelight.issue.polytone": "Incorrect lighting patterns may result if using a resource pack that modifies the light texture map with§b Polytone§r installed, such as§e Golden Days§r.",
   "gui.nostalgic_tweaks.config.eyeCandy.roundRobinRelight.issue.optifine": "This tweak may§4 break§r some shaders. §6Decrease§r the block light slider in the shader subcategory if the world is too§e bright§r. §cDisable§r this tweak if you encounter further visual issues.",
   "gui.nostalgic_tweaks.config.eyeCandy.roundRobinRelight.issue.sodium": "This tweak may§4 break§r some shaders. §6Decrease§r the block light slider in the shader subcategory if the world is too§e bright§r. §cDisable§r this tweak if you encounter further visual issues.",
   "gui.nostalgic_tweaks.config.eyeCandy.oldSmoothLighting": "Old Smooth Lighting",
@@ -1292,6 +1310,7 @@
   "gui.nostalgic_tweaks.config.eyeCandy.disableBrightness.info": "§cDisable§r the vanilla§e brightness§r settings from§6 impacting§r the lightmap texture.",
   "gui.nostalgic_tweaks.config.eyeCandy.oldLightColor": "Old Light Color",
   "gui.nostalgic_tweaks.config.eyeCandy.oldLightColor.info": "Bring back the old light colors from alpha/beta. If this tweak is§c disabled§r and the §7@decode{tweak=eyeCandy.roundRobinRelight}§r tweak is§a enabled§r then night light colors will be§6 inaccurate§r.",
+  "gui.nostalgic_tweaks.config.eyeCandy.oldLightColor.issue.polytone": "Incorrect lighting may result if using a resource pack that modifies the light texture map with§b Polytone§r installed, such as§e Golden Days§r.",
   "gui.nostalgic_tweaks.config.eyeCandy.maxBlockLight": "Max Block Light",
   "gui.nostalgic_tweaks.config.eyeCandy.maxBlockLight.info": "A §6shader§r control that determines how much§e block light§r is applied to the world. §cDecrease§r this number if the§b @decode{tweak=eyeCandy.roundRobinRelight}§r tweak is§a enabled§r and the world is too§e bright§r.",
   "gui.nostalgic_tweaks.config.eyeCandy.maxBlockLight.search": "Shader, Bright",
@@ -1425,6 +1444,7 @@
   "gui.nostalgic_tweaks.config.gameplay.oldLadderGap": "Old Ladder Gaps",
   "gui.nostalgic_tweaks.config.gameplay.oldLadderGap.info": "Bring back the old bug that allowed players to continually climb when there is a single space between two ladders.",
   "gui.nostalgic_tweaks.config.gameplay.oldLadderGap.search": "Spacing",
+  "gui.nostalgic_tweaks.config.gameplay.oldLadderGap.no_sso": "Players without the mod installed will not be able to climb ladders with gaps between them.",
   "gui.nostalgic_tweaks.config.gameplay.oldSquidMilking": "Old Squid Milking",
   "gui.nostalgic_tweaks.config.gameplay.oldSquidMilking.info": "Bring back the old bug that allows players to milk squids.",
 
@@ -1515,7 +1535,8 @@
   "gui.nostalgic_tweaks.config.gameplay.blockWithSwordOnShield": "Block with Sword When Shielding",
   "gui.nostalgic_tweaks.config.gameplay.blockWithSwordOnShield.info": "If a shield is in the off-hand and a sword is in the main hand, then the shield will be hidden and the sword block animation will play when shielding.",
   "gui.nostalgic_tweaks.config.gameplay.oldSwordBlocking": "Old Sword Blocking",
-  "gui.nostalgic_tweaks.config.gameplay.oldSwordBlocking.info": "Bring back the old sword blocking combat mechanics and animation. The sword will lose durability when it successfully blocks damage.",
+  "gui.nostalgic_tweaks.config.gameplay.oldSwordBlocking.info": "Bring back the old sword blocking combat mechanics and animation. The sword will lose durability when it successfully blocks damage. This tweak will§c not§r work if there is an item in the offhand.",
+  "gui.nostalgic_tweaks.config.gameplay.oldSwordBlocking.no_sso": "Players without the mod will not see sword blocking animations.",
   "gui.nostalgic_tweaks.config.gameplay.attackWhileSwordBlocking": "Attack While Sword Blocking",
   "gui.nostalgic_tweaks.config.gameplay.attackWhileSwordBlocking.info": "Allow attacking and block hitting while a player is sword blocking.",
   "gui.nostalgic_tweaks.config.gameplay.swordBlockDamageReduction": "Sword Block Damage Reduction",
@@ -1550,6 +1571,13 @@
 
   "gui.nostalgic_tweaks.config.gameplay.cartBoosting": "Cart Boosting",
   "gui.nostalgic_tweaks.config.gameplay.cartBoosting.info": "Bring back the old cart boosting mechanics. To perform this old mechanic, place§e two parallel rail tracks§r so that minecarts can§6 touch each other§r. When the minecarts§a connect§r, this old mechanic will cause the minecarts to start moving together and boosting each other at a§b high rate of speed§r.",
+
+  "gui.nostalgic_tweaks.config.gameplay.oldBoatWaterLift": "Old Boat Water Lift",
+  "gui.nostalgic_tweaks.config.gameplay.oldBoatWaterLift.info": "Bring back the old water lift bug where a boat will continue to float upwards as long as there is water above the boat. This mechanic can be used to create boat elevators.",
+  "gui.nostalgic_tweaks.config.gameplay.oldBoatWaterLift.search": "Elevator",
+  "gui.nostalgic_tweaks.config.gameplay.oldBoatDrops": "Old Boat Drops",
+  "gui.nostalgic_tweaks.config.gameplay.oldBoatDrops.info": "Bring back the old item drops for boats. This will§c not§r drop a boat item, but will instead drop wood planks and sticks.",
+
   "gui.nostalgic_tweaks.config.gameplay.punchTntIgnition": "Punch TNT Ignition",
   "gui.nostalgic_tweaks.config.gameplay.punchTntIgnition.info": "Ignite a TNT block by punching it. If the player is sneaking when punching, then the block will break instead of igniting.",
   "gui.nostalgic_tweaks.config.gameplay.punchTntIgnition.search": "Dynamite",
@@ -1563,9 +1591,11 @@
   "gui.nostalgic_tweaks.config.gameplay.disableSprint": "Prevent Sprinting",
   "gui.nostalgic_tweaks.config.gameplay.disableSprint.info": "Disables the ability for the player to sprint. This tweak is only applied in§6 survival§r mode.",
   "gui.nostalgic_tweaks.config.gameplay.disableSprint.search": "Running",
+  "gui.nostalgic_tweaks.config.gameplay.disableSprint.no_sso": "Sprinting§c cannot§r be controlled by this tweak for players§c without§r the mod installed.",
   "gui.nostalgic_tweaks.config.gameplay.disableSwim": "Prevent Swimming",
   "gui.nostalgic_tweaks.config.gameplay.disableSwim.info": "Disables the ability for the player to \"sprint swim\" under water. This tweak is only applied in§6 survival§r mode.",
   "gui.nostalgic_tweaks.config.gameplay.disableSwim.search": "Sprinting, Running",
+  "gui.nostalgic_tweaks.config.gameplay.disableSwim.no_sso": "Swimming§c cannot§r be controlled by this tweak for players§c without§r the mod installed.",
   "gui.nostalgic_tweaks.config.gameplay.instantAir": "Instant Air Refill",
   "gui.nostalgic_tweaks.config.gameplay.instantAir.info": "Immediately refill the player's air bubbles once the player is above water.",
   "gui.nostalgic_tweaks.config.gameplay.instantAir.search": "Bubble, Water",
@@ -1643,6 +1673,9 @@
   "gui.nostalgic_tweaks.config.animation.oldSkeletonArms.info": "Disable the neutral skeleton arm positions and the animation that occurs when the skeleton becomes aggressive.",
   "gui.nostalgic_tweaks.config.animation.oldGhastCharging": "Old Ghast Charging",
   "gui.nostalgic_tweaks.config.animation.oldGhastCharging.info": "Bring back the old 'squishy' ghast charging animation.",
+
+  "gui.nostalgic_tweaks.config.animation.hideBoatRowing": "Hide Boat Paddles",
+  "gui.nostalgic_tweaks.config.animation.hideBoatRowing.info": "Prevent boat paddles from rendering when rowing a boat. This will keep the player's hands visible and prevent paddle sounds from playing.",
 
   "gui.nostalgic_tweaks.config.animation.oldClassicWalkBobbing": "Old Classic Walk Bobbing",
   "gui.nostalgic_tweaks.config.animation.oldClassicWalkBobbing.info": "Bring back the old classic walking animation where the player bobs up and down when the player walks or runs.",

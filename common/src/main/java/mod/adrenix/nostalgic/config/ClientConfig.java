@@ -232,6 +232,12 @@ public class ClientConfig implements ConfigMeta
         public boolean hideExperienceBar = CandyTweak.HIDE_EXPERIENCE_BAR.register("hideExperienceBar");
         public boolean hideHungerBar = CandyTweak.HIDE_HUNGER_BAR.register("hideHungerBar");
 
+        // Offhand Slot
+
+        public boolean adventureCraftOffhand = CandyTweak.ADVENTURE_CRAFT_OFFHAND.register("adventureCraftOffhand");
+        public int leftOffhandOffset = CandyTweak.LEFT_OFFHAND_OFFSET.register("leftOffhandOffset");
+        public int rightOffhandOffset = CandyTweak.RIGHT_OFFHAND_OFFSET.register("rightOffhandOffset");
+
         // Alternative Experience Text
 
         public boolean showExpLevelText = CandyTweak.SHOW_EXP_LEVEL_TEXT.register("showExpLevelText");
@@ -526,6 +532,10 @@ public class ClientConfig implements ConfigMeta
         public boolean disableSprintingParticles = CandyTweak.DISABLE_SPRINTING_PARTICLES.register("disableSprintingParticles");
         public boolean hideFirstPersonMagicParticles = CandyTweak.HIDE_FIRST_PERSON_MAGIC_PARTICLES.register("hideFirstPersonMagicParticles");
 
+        // Boat Particles
+
+        public boolean oldBoatMovementParticles = CandyTweak.OLD_BOAT_MOVEMENT_PARTICLES.register("oldBoatMovementParticles");
+
         // Attack Particles
 
         public boolean oldSweepParticles = CandyTweak.OLD_SWEEP_PARTICLES.register("oldSweepParticles");
@@ -734,6 +744,11 @@ public class ClientConfig implements ConfigMeta
 
         public boolean cartBoosting = GameplayTweak.CART_BOOSTING.register("cartBoosting");
 
+        // Boat Mechanics
+
+        public boolean oldBoatWaterLift = GameplayTweak.OLD_BOAT_WATER_LIFT.register("oldBoatWaterLift");
+        public boolean oldBoatDrops = GameplayTweak.OLD_BOAT_DROPS.register("oldBoatDrops");
+
         // Block Mechanics
 
         public boolean punchTntIgnition = GameplayTweak.PUNCH_TNT_IGNITION.register("punchTntIgnition");
@@ -778,6 +793,10 @@ public class ClientConfig implements ConfigMeta
         public boolean oldZombieArms = AnimationTweak.OLD_ZOMBIE_ARMS.register("oldZombieArms");
         public boolean oldSkeletonArms = AnimationTweak.OLD_SKELETON_ARMS.register("oldSkeletonArms");
         public boolean oldGhastCharging = AnimationTweak.OLD_GHAST_CHARGING.register("oldGhastCharging");
+
+        // Boat
+
+        public boolean hideBoatRowing = AnimationTweak.HIDE_BOAT_ROWING.register("hideBoatRowing");
 
         // Player
 
