@@ -151,9 +151,12 @@ public abstract class WaterFogRenderer
 
             AttributeInstance attributeInstance = entity.getAttribute(Attributes.OXYGEN_BONUS);
             float respiration;
-            if (attributeInstance != null) {
+            if (attributeInstance != null)
+            {
                 respiration = (float) attributeInstance.getValue();
-            } else {
+            }
+            else
+            {
                 respiration = 0.0F;
             }
 
@@ -186,9 +189,12 @@ public abstract class WaterFogRenderer
             int brightness = Minecraft.getInstance().level.getBrightness(LightLayer.SKY, camera.getBlockPosition());
             AttributeInstance attributeInstance = ((LivingEntity) camera.getEntity()).getAttribute(Attributes.OXYGEN_BONUS);
             float respiration;
-            if (attributeInstance != null) {
+            if (attributeInstance != null)
+            {
                 respiration = (float) attributeInstance.getValue();
-            } else {
+            }
+            else
+            {
                 respiration = 0.0F;
             }
 
