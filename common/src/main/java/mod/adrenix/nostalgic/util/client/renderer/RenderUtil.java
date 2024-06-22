@@ -318,7 +318,7 @@ public abstract class RenderUtil
         /**
          * Add a texture to the texture queue array for batch rendering.
          */
-        static void create(Matrix4f matrix, ResourceLocation location, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight)
+        static void create(Matrix4f matrix, TextureLocation location, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight)
         {
             float[] color = RenderSystem.getShaderColor();
             float[] rgba = new float[] { color[0], color[1], color[2], color[3] };
@@ -603,7 +603,7 @@ public abstract class RenderUtil
     /**
      * Ends batched fill queue.
      */
-    private static void endBatchingFills(Tesselator tesselator)
+    private static void endBatchingFills()
     {
         if (FILL_VERTICES.isEmpty())
             return;
@@ -611,7 +611,7 @@ public abstract class RenderUtil
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        BufferBuilder builder = MOD_TESSELATOR.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         while (!FILL_VERTICES.isEmpty())
             FILL_VERTICES.pollLast().accept(builder);
@@ -624,7 +624,7 @@ public abstract class RenderUtil
     /**
      * Ends batched line queue.
      */
-    private static void endBatchingLines(Tesselator tesselator)
+    private static void endBatchingLines()
     {
         if (LINE_QUEUE.isEmpty())
             return;
@@ -636,7 +636,7 @@ public abstract class RenderUtil
         LINE_QUEUE.stream().map(LineBuffer::width).distinct().forEach(width -> {
             RenderSystem.lineWidth(width);
 
-            BufferBuilder builder = tesselator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+            BufferBuilder builder = MOD_TESSELATOR.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
 
             LINE_QUEUE.stream().filter(line -> line.width == width).forEach(line -> {
                 float nx = MathUtil.sign(line.x2 - line.x1);
@@ -660,7 +660,7 @@ public abstract class RenderUtil
     /**
      * Ends batched texture queue.
      */
-    private static void endBatchingTextures(Tesselator tesselator)
+    private static void endBatchingTextures()
     {
         if (TEXTURE_LAYERS.isEmpty())
             return;
@@ -670,61 +670,37 @@ public abstract class RenderUtil
 
         TEXTURE_LAYERS.stream().sorted(Comparator.comparingInt(TextureLayer::getIndex)).forEach(layer -> {
             layer.textureMap.forEach((location, queue) -> {
-                RenderSystem.setShaderTexture(0, location);
+                RenderSystem.setShaderTexture(0, location.getLocation());
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-                BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                BufferBuilder builder = MOD_TESSELATOR.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
-//                if (location instanceof TextureLocation sheet)
-//                    queue.forEach(buffer -> blitTexture(sheet, builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
-//                else
-                    queue.forEach(buffer -> blit256(builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
-
+                queue.forEach(buffer -> blitTexture(location, builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
                 draw(builder);
             });
 
             layer.textureLightMap.forEach((location, queue) -> {
-                RenderSystem.setShaderTexture(0, location);
+                RenderSystem.setShaderTexture(0, location.getLocation());
+                queue.stream().collect(Collectors.groupingBy(TextureBuffer::hashColor)).forEach((argb, buffers) -> {
+                    BufferBuilder builder = MOD_TESSELATOR.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
-//                if (location instanceof TextureLocation sheet)
-//                {
-//                    queue.stream().collect(Collectors.groupingBy(TextureBuffer::hashColor)).forEach((argb, buffers) -> {
-//                        BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-//
-//                        float r = buffers.getFirst().rgba[0];
-//                        float g = buffers.getFirst().rgba[1];
-//                        float b = buffers.getFirst().rgba[2];
-//                        float a = buffers.getFirst().rgba[3];
-//
-//                        RenderSystem.setShaderColor(r, g, b, a);
-//
-//                        buffers.forEach(buffer -> blitTexture(sheet, builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
-//                        draw(builder);
-//                    });
-//                }
-//                else
-//                {
-                    queue.stream().collect(Collectors.groupingBy(TextureBuffer::hashColor)).forEach((argb, buffers) -> {
-                        BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                    float r = buffers.getFirst().rgba[0];
+                    float g = buffers.getFirst().rgba[1];
+                    float b = buffers.getFirst().rgba[2];
+                    float a = buffers.getFirst().rgba[3];
 
-                        float r = buffers.getFirst().rgba[0];
-                        float g = buffers.getFirst().rgba[1];
-                        float b = buffers.getFirst().rgba[2];
-                        float a = buffers.getFirst().rgba[3];
+                    RenderSystem.setShaderColor(r, g, b, a);
 
-                        RenderSystem.setShaderColor(r, g, b, a);
-
-                        buffers.forEach(buffer -> blit256(builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
-                        draw(builder);
-                    });
-//                }
+                    buffers.forEach(buffer -> blitTexture(location, builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
+                    draw(builder);
+                });
             });
 
             layer.spriteMap.forEach((sprite, queue) -> {
                 RenderSystem.setShaderTexture(0, sprite);
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-                BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                BufferBuilder builder = MOD_TESSELATOR.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
                 queue.forEach(buffer -> innerBlit(builder, buffer));
 
@@ -735,7 +711,7 @@ public abstract class RenderUtil
                 RenderSystem.setShaderTexture(0, sprite);
 
                 queue.stream().collect(Collectors.groupingBy(SpriteBuffer::hashColor)).forEach((argb, buffers) -> {
-                    BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                    BufferBuilder builder = MOD_TESSELATOR.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
                     float r = buffers.getFirst().rgba[0];
                     float g = buffers.getFirst().rgba[1];
@@ -830,9 +806,9 @@ public abstract class RenderUtil
         }
 
         RenderSystem.enableDepthTest();
-        endBatchingFills(MOD_TESSELATOR);
-        endBatchingLines(MOD_TESSELATOR);
-        endBatchingTextures(MOD_TESSELATOR);
+        endBatchingFills();
+        endBatchingLines();
+        endBatchingTextures();
         endBatchingItemsQueue();
         endBatchingBlocksQueue();
 
@@ -1338,7 +1314,7 @@ public abstract class RenderUtil
     {
         if (isBatching)
         {
-            TextureBuffer.create(getMatrix(graphics.pose()), texture.getLocation(), x, y, uOffset, vOffset, uWidth, vHeight);
+            TextureBuffer.create(getMatrix(graphics.pose()), texture, x, y, uOffset, vOffset, uWidth, vHeight);
             return;
         }
 
@@ -1489,7 +1465,7 @@ public abstract class RenderUtil
 
         if (isBatching)
         {
-            TextureBuffer.create(getMatrix(graphics.pose()), location.getLocation(), 0, 0, 0, 0, width, height);
+            TextureBuffer.create(getMatrix(graphics.pose()), location, 0, 0, 0, 0, width, height);
             graphics.pose().popPose();
 
             return;
@@ -1596,7 +1572,7 @@ public abstract class RenderUtil
     /**
      * Render a texture from a texture sheet (256x256) using floating x/y positions.
      *
-     * @param location A {@link ResourceLocation} that points to the texture sheet.
+     * @param location A {@link TextureLocation} that points to the texture sheet.
      * @param graphics A {@link GuiGraphics} instance.
      * @param x        The x-coordinate on the screen to place the texture.
      * @param y        The y-coordinate on the screen to place the texture.
@@ -1606,7 +1582,7 @@ public abstract class RenderUtil
      * @param vHeight  The height of the texture on the texture sheet.
      */
     @PublicAPI
-    public static void blit256(ResourceLocation location, GuiGraphics graphics, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight)
+    public static void blit256(TextureLocation location, GuiGraphics graphics, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight)
     {
         Matrix4f matrix = getMatrix(graphics.pose());
 
@@ -1625,7 +1601,7 @@ public abstract class RenderUtil
     /**
      * Render a texture from a texture sheet (256x256) using integer x/y positions.
      *
-     * @param location A {@link ResourceLocation} that points to the texture sheet.
+     * @param location A {@link TextureLocation} that points to the texture sheet.
      * @param graphics A {@link GuiGraphics} instance.
      * @param x        The x-coordinate on the screen to place the texture.
      * @param y        The y-coordinate on the screen to place the texture.
@@ -1635,7 +1611,7 @@ public abstract class RenderUtil
      * @param vHeight  The height of the texture on the texture sheet.
      */
     @PublicAPI
-    public static void blit256(ResourceLocation location, GuiGraphics graphics, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
+    public static void blit256(TextureLocation location, GuiGraphics graphics, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)
     {
         blit256(location, graphics, (float) x, (float) y, uOffset, vOffset, uWidth, vHeight);
     }

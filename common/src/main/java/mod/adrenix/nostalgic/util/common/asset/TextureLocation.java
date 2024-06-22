@@ -82,6 +82,16 @@ public class TextureLocation
     }
 
     /**
+     * Create a new image texture location.
+     *
+     * @param resourceLocation The {@link ResourceLocation} instance.
+     */
+    public TextureLocation(ResourceLocation resourceLocation)
+    {
+        this(resourceLocation, 256);
+    }
+
+    /**
      * Create a new square texture location.
      *
      * @param path A path in the mod's textures directory.
