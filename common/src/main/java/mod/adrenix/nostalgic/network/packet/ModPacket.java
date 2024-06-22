@@ -37,7 +37,7 @@ public interface ModPacket extends CustomPacketPayload
     static <T extends ModPacket> CustomPacketPayload.Type<T> createType(Class<? extends ModPacket> classType)
     {
         String identifier = classType.getSimpleName().toLowerCase(Locale.ROOT);
-        ResourceLocation location = new ResourceLocation(NostalgicTweaks.MOD_ID, identifier);
+        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, identifier);
 
         return new CustomPacketPayload.Type<>(location);
     }

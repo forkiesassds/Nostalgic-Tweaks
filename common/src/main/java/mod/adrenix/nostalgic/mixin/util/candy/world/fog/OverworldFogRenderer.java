@@ -321,7 +321,7 @@ public abstract class OverworldFogRenderer
 
         calculateLightInfluence(FOG_COLOR);
 
-        float partialTick = minecraft.getFrameTime();
+        float partialTick = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
         float timeOfDay = level.getTimeOfDay(partialTick);
         float boundedTime = Mth.clamp(Mth.cos(timeOfDay * ((float) Math.PI * 2)) * 2.0F + 0.5F, 0.0F, 1.0F);
 

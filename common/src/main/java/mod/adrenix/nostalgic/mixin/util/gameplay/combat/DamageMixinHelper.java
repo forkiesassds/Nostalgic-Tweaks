@@ -74,9 +74,9 @@ public abstract class DamageMixinHelper
                 else
                 {
                     if (tieredItem instanceof DiggerItem diggerItem)
-                        builder.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_UUID, "Tool modifier", getAttackDamage(diggerItem), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+                        builder.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, getAttackDamage(diggerItem), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
                     else if (tieredItem instanceof SwordItem swordItem)
-                        builder.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", getAttackDamage(swordItem), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+                        builder.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, getAttackDamage(swordItem), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
                     else
                         builder.add(entry.attribute(), entry.modifier(), entry.slot());
                 }

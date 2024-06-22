@@ -109,8 +109,7 @@ class NostalgicLogoRenderer
 
         for (int pass = 0; pass < 3; pass++)
         {
-            BufferBuilder builder = Tesselator.getInstance().getBuilder();
-            builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+            BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
 
             poseStack.pushPose();
 
@@ -181,7 +180,12 @@ class NostalgicLogoRenderer
                 }
             }
 
-            Tesselator.getInstance().end();
+            MeshData meshData = builder.build();
+            if (meshData != null)
+            {
+                BufferUploader.drawWithShader(meshData);
+            }
+
             poseStack.popPose();
         }
 

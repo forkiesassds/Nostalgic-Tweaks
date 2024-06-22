@@ -4,9 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.*;
 import mod.adrenix.nostalgic.client.AfterConfigSave;
 import mod.adrenix.nostalgic.mixin.util.candy.world.SkyMixinHelper;
 import mod.adrenix.nostalgic.mixin.util.candy.world.fog.VoidFogRenderer;
@@ -43,7 +41,7 @@ public abstract class LevelRendererMixin
     protected abstract void createStars();
 
     @Shadow
-    private static BufferBuilder.RenderedBuffer buildSkyDisc(BufferBuilder builder, float y)
+    private static MeshData buildSkyDisc(Tesselator builder, float y)
     {
         return null;
     }

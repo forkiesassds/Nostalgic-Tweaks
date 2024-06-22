@@ -15,7 +15,7 @@ public abstract class ModAsset
      */
     public static ResourceLocation get(String path)
     {
-        return new ResourceLocation(NostalgicTweaks.MOD_ID + ":" + path);
+        return ResourceLocation.parse(NostalgicTweaks.MOD_ID + ":" + path);
     }
 
     /**
@@ -54,7 +54,7 @@ public abstract class ModAsset
      */
     public static ResourceLocation sprite(String path)
     {
-        return new ResourceLocation(NostalgicTweaks.MOD_ID + "/" + path);
+        return ResourceLocation.withDefaultNamespace(NostalgicTweaks.MOD_ID + "/" + path);
     }
 
     /**

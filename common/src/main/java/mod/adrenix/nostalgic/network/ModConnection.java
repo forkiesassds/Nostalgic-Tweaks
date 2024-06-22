@@ -18,7 +18,7 @@ public class ModConnection
      * Defines the protocol identifier used by each mod loader's network configuration manager. Protocol checks are
      * always made if the mod is installed by the client.
      */
-    public static final ResourceLocation PROTOCOL_ID = new ResourceLocation(NostalgicTweaks.MOD_ID, "protocol");
+    public static final ResourceLocation PROTOCOL_ID = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "protocol");
 
     /**
      * @return The default {@link ModConnection} when there is no connection available.

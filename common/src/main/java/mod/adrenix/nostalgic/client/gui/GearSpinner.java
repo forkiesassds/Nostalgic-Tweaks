@@ -32,7 +32,7 @@ public class GearSpinner
         if (GEAR_IMAGES.isEmpty())
         {
             for (int i = 0; i < 16; i++)
-                GEAR_IMAGES.put(i, new ResourceLocation(GEAR_FOLDER + String.format("%s.png", i)));
+                GEAR_IMAGES.put(i, ResourceLocation.parse(GEAR_FOLDER + String.format("%s.png", i)));
         }
     }
 

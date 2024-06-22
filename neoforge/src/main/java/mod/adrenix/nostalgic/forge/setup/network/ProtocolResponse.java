@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record ProtocolResponse(String version) implements CustomPacketPayload
 {
-    public static final ResourceLocation IDENTIFIER = new ResourceLocation(NostalgicTweaks.MOD_ID, "protocol_response");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "protocol_response");
     public static final CustomPacketPayload.Type<ProtocolResponse> TYPE = new CustomPacketPayload.Type<>(IDENTIFIER);
     public static final StreamCodec<FriendlyByteBuf, ProtocolResponse> CODEC = CustomPacketPayload.codec(ProtocolResponse::encode, ProtocolResponse::new);
 

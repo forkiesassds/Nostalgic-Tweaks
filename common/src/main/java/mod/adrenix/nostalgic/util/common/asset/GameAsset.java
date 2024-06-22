@@ -15,7 +15,7 @@ public abstract class GameAsset
     @PublicAPI
     public static ResourceLocation texture(String path)
     {
-        return new ResourceLocation("textures/" + path);
+        return ResourceLocation.withDefaultNamespace("textures/" + path);
     }
 
     /**
@@ -30,6 +30,6 @@ public abstract class GameAsset
     @PublicAPI
     public static ResourceLocation sprite(String path)
     {
-        return new ResourceLocation(path);
+        return ResourceLocation.withDefaultNamespace(path);
     }
 }

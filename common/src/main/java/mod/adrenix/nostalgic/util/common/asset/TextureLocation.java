@@ -3,7 +3,7 @@ package mod.adrenix.nostalgic.util.common.asset;
 import mod.adrenix.nostalgic.NostalgicTweaks;
 import net.minecraft.resources.ResourceLocation;
 
-public class TextureLocation extends ResourceLocation
+public class TextureLocation
 {
     /* Locations */
 
@@ -34,7 +34,7 @@ public class TextureLocation extends ResourceLocation
     public static final String MISSING_1_6_1_12 = String.format("assets/%s/textures/missing/1_6-1_12.png", NostalgicTweaks.MOD_ID);
 
     /* Fields */
-
+    private final ResourceLocation location;
     private final int width;
     private final int height;
 
@@ -49,7 +49,7 @@ public class TextureLocation extends ResourceLocation
      */
     public TextureLocation(ResourceLocation resourceLocation, int width, int height)
     {
-        super(resourceLocation.getNamespace(), resourceLocation.getPath());
+        this.location = ResourceLocation.fromNamespaceAndPath(resourceLocation.getNamespace(), resourceLocation.getPath());
 
         this.width = width;
         this.height = height;
@@ -64,7 +64,7 @@ public class TextureLocation extends ResourceLocation
      */
     public TextureLocation(String path, int width, int height)
     {
-        super(NostalgicTweaks.MOD_ID + ":textures/" + path);
+        this.location = ResourceLocation.parse(NostalgicTweaks.MOD_ID + ":textures/" + path);
 
         this.width = width;
         this.height = height;
@@ -107,5 +107,44 @@ public class TextureLocation extends ResourceLocation
     public float getAverageSize()
     {
         return (this.width + this.height) / 2.0F;
+    }
+
+    public String getPath()
+    {
+        return this.location.getPath();
+    }
+
+    public String getNamespace()
+    {
+        return this.location.getNamespace();
+    }
+
+    public ResourceLocation getLocation()
+    {
+        return this.location;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.location.toString();
+    }
+
+    @Override
+    public boolean equals(Object object)
+    {
+        if (this == object)
+        {
+            return true;
+        }
+        else if (!(object instanceof TextureLocation textureLocation))
+        {
+            return false;
+        }
+        else
+        {
+            return this.getNamespace().equals(textureLocation.getNamespace()) && this.getPath().equals(textureLocation.getPath()) &&
+                this.width == textureLocation.width && this.height == textureLocation.height;
+        }
     }
 }

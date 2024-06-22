@@ -36,6 +36,6 @@ public abstract class AppleSkinHandler
     private static void disableTooltip(TooltipOverlayEvent event)
     {
         if (GameplayTweak.DISABLE_HUNGER.get())
-            event.setCanceled(true);
+            event.isCanceled = true;
     }
 }

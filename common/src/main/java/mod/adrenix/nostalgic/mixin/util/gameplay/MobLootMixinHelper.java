@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.LootingEnchantFunction;
+import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SmeltItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
@@ -76,7 +76,7 @@ public abstract class MobLootMixinHelper
                 .setRolls(ConstantValue.exactly(1.0F))
                 .add(LootItem.lootTableItem(item)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, max)))
-                    .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+//                    .apply(EnchantedCountIncreaseFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))) //TODO: looting
                     .apply(SmeltItemFunction.smelted()
                         .when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
                             .flags(EntityFlagsPredicate.Builder.flags().setOnFire(true)))))));
@@ -86,7 +86,7 @@ public abstract class MobLootMixinHelper
             .setRolls(ConstantValue.exactly(1.0F))
             .add(LootItem.lootTableItem(item)
                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, max)))
-                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))));
+                /*.apply(EnchantedCountIncreaseFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))*/)); //TODO: looting
     }
 
     /**

@@ -103,7 +103,7 @@ public enum Panorama implements PreparableReloadListener
         String root = NostalgicTweaks.MOD_ID + ":textures/panorama/";
         String branch = this.toString().toLowerCase(Locale.ROOT);
 
-        this.cubeMap = new CubeMap(new ResourceLocation(root + branch + "/panorama"));
+        this.cubeMap = new CubeMap(ResourceLocation.parse(root + branch + "/panorama"));
         this.panorama = new PanoramaRenderer(this.cubeMap);
     }
 

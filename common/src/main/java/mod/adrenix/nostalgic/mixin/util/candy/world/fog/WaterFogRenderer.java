@@ -10,6 +10,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.material.FogType;
@@ -146,7 +148,14 @@ public abstract class WaterFogRenderer
             if (MobEffectUtil.hasWaterBreathing(entity))
                 density = OverworldFogRenderer.getFarPlaneDistance(CandyTweak.OLD_WORLD_FOG.get()) * 0.3F;
 
-            float respiration = EnchantmentHelper.getRespiration(entity);
+
+            AttributeInstance attributeInstance = entity.getAttribute(Attributes.OXYGEN_BONUS);
+            float respiration;
+            if (attributeInstance != null) {
+                respiration = (float) attributeInstance.getValue();
+            } else {
+                respiration = 0.0F;
+            }
 
             if (respiration > 0)
                 density = Math.max(density, density * respiration * 3.0F);
@@ -175,7 +184,15 @@ public abstract class WaterFogRenderer
         if (CandyTweak.OLD_WATER_FOG_COLOR.get() && !GameUtil.MOB_EFFECT_ACTIVE.get())
         {
             int brightness = Minecraft.getInstance().level.getBrightness(LightLayer.SKY, camera.getBlockPosition());
-            float respiration = (float) EnchantmentHelper.getRespiration((LivingEntity) camera.getEntity()) * 0.2F;
+            AttributeInstance attributeInstance = ((LivingEntity) camera.getEntity()).getAttribute(Attributes.OXYGEN_BONUS);
+            float respiration;
+            if (attributeInstance != null) {
+                respiration = (float) attributeInstance.getValue();
+            } else {
+                respiration = 0.0F;
+            }
+
+            respiration *= 0.2F;
 
             red.accept(getRed(brightness, respiration));
             green.accept(getGreen(brightness, respiration));

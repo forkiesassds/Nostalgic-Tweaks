@@ -64,8 +64,8 @@ public abstract class RenderUtil
     private static final ArrayDeque<ItemBuffer> ITEM_MODEL_QUEUE = new ArrayDeque<>();
     private static final ArrayDeque<ItemBuffer> BLOCK_MODEL_QUEUE = new ArrayDeque<>();
     private static final ArrayDeque<Consumer<BufferBuilder>> FILL_VERTICES = new ArrayDeque<>();
-    private static final MultiBufferSource.BufferSource FONT_BATCH = MultiBufferSource.immediate(new BufferBuilder(1536));
-    private static final MultiBufferSource.BufferSource FONT_IMMEDIATE = MultiBufferSource.immediate(new BufferBuilder(1536));
+    private static final MultiBufferSource.BufferSource FONT_BATCH = MultiBufferSource.immediate(new ByteBufferBuilder(1536));
+    private static final MultiBufferSource.BufferSource FONT_IMMEDIATE = MultiBufferSource.immediate(new ByteBufferBuilder(1536));
 
     /**
      * Offset the z-position of the matrix that renders fill calls. Useful if it is known that all fills are background
@@ -385,22 +385,19 @@ public abstract class RenderUtil
     }
 
     /**
-     * Get the tesselator builder being used by this utility. This does not start the buffer for any draw calls. That
+     * Get the tesselator used by this utility. This does not start any buffer for any draw calls. That
      * must be handled separately.
      *
-     * @return A {@link BufferBuilder} instance.
+     * @return A {@link Tesselator} instance.
      */
     @PublicAPI
-    public static BufferBuilder getTesselatorBuilder()
+    public static Tesselator getTesselator()
     {
-        return MOD_TESSELATOR.getBuilder();
+        return MOD_TESSELATOR;
     }
 
     /**
-     * Get and begin a new buffer builder for fill-quad vertices. This will also set up the render system.
-     *
-     * @return A new {@link BufferBuilder} instance with {@link BufferBuilder#begin(VertexFormat.Mode, VertexFormat)}
-     * already called.
+     * This sets up the render system for fill-quad vertices.
      */
     @PublicAPI
     public static BufferBuilder getAndBeginFill()
@@ -409,10 +406,7 @@ public abstract class RenderUtil
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        BufferBuilder builder = getTesselatorBuilder();
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-
-        return builder;
+        return MOD_TESSELATOR.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
     }
 
     /**
@@ -423,8 +417,7 @@ public abstract class RenderUtil
     @PublicAPI
     public static void endFill(BufferBuilder builder)
     {
-        if (builder.building())
-            draw(builder);
+        draw(builder);
 
         RenderSystem.disableBlend();
     }
@@ -433,7 +426,7 @@ public abstract class RenderUtil
      * Get and begin a new buffer builder for line vertices. This will also set up the render system.
      *
      * @param width The width of the lines.
-     * @return A new {@link BufferBuilder} instance with {@link BufferBuilder#begin(VertexFormat.Mode, VertexFormat)}
+     * @return A new {@link BufferBuilder} instance with {@link Tesselator#begin(VertexFormat.Mode, VertexFormat)}
      * already called.
      */
     @PublicAPI
@@ -444,10 +437,7 @@ public abstract class RenderUtil
         RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
         RenderSystem.lineWidth(width);
 
-        BufferBuilder builder = getTesselatorBuilder();
-        builder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-
-        return builder;
+        return MOD_TESSELATOR.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
     }
 
     /**
@@ -468,7 +458,7 @@ public abstract class RenderUtil
      * Get and begin a new buffer builder for texture vertices. This will also set up the render system.
      *
      * @param location A {@link ResourceLocation} instance.
-     * @return A new {@link BufferBuilder} instance with {@link BufferBuilder#begin(VertexFormat.Mode, VertexFormat)}
+     * @return A new {@link BufferBuilder} instance with {@link Tesselator#begin(VertexFormat.Mode, VertexFormat)}
      * already called.
      */
     @PublicAPI
@@ -479,10 +469,7 @@ public abstract class RenderUtil
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
 
-        BufferBuilder builder = getTesselatorBuilder();
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-
-        return builder;
+        return MOD_TESSELATOR.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
     }
 
     /**
@@ -490,7 +477,7 @@ public abstract class RenderUtil
      * texture location that will be used when building vertices.
      *
      * @param location A {@link TextureLocation} instance.
-     * @return A new {@link BufferBuilder} instance with {@link BufferBuilder#begin(VertexFormat.Mode, VertexFormat)}
+     * @return A new {@link BufferBuilder} instance with {@link Tesselator#begin(VertexFormat.Mode, VertexFormat)}
      * already called.
      */
     @PublicAPI
@@ -498,7 +485,7 @@ public abstract class RenderUtil
     {
         texture = location;
 
-        return getAndBeginTexture((ResourceLocation) location);
+        return getAndBeginTexture(location.getLocation());
     }
 
     /**
@@ -595,7 +582,7 @@ public abstract class RenderUtil
      */
     private static void draw(BufferBuilder builder)
     {
-        BufferBuilder.RenderedBuffer rendered = builder.endOrDiscardIfEmpty();
+        MeshData rendered = builder.build();
 
         if (rendered == null)
             return;
@@ -616,7 +603,7 @@ public abstract class RenderUtil
     /**
      * Ends batched fill queue.
      */
-    private static void endBatchingFills(BufferBuilder builder)
+    private static void endBatchingFills(Tesselator tesselator)
     {
         if (FILL_VERTICES.isEmpty())
             return;
@@ -624,7 +611,7 @@ public abstract class RenderUtil
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         while (!FILL_VERTICES.isEmpty())
             FILL_VERTICES.pollLast().accept(builder);
@@ -637,7 +624,7 @@ public abstract class RenderUtil
     /**
      * Ends batched line queue.
      */
-    private static void endBatchingLines(BufferBuilder builder)
+    private static void endBatchingLines(Tesselator tesselator)
     {
         if (LINE_QUEUE.isEmpty())
             return;
@@ -649,16 +636,15 @@ public abstract class RenderUtil
         LINE_QUEUE.stream().map(LineBuffer::width).distinct().forEach(width -> {
             RenderSystem.lineWidth(width);
 
-            if (!builder.building())
-                builder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+            BufferBuilder builder = tesselator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
 
             LINE_QUEUE.stream().filter(line -> line.width == width).forEach(line -> {
                 float nx = MathUtil.sign(line.x2 - line.x1);
                 float ny = MathUtil.sign(line.y2 - line.y1);
 
                 // @formatter:off
-                builder.vertex(line.matrix, line.x1, line.y1, 0.0F).color(line.colorFrom).normal(nx, ny, 0.0F).endVertex();
-                builder.vertex(line.matrix, line.x2, line.y2, 0.0F).color(line.colorTo).normal(nx, ny, 0.0F).endVertex();
+                builder.addVertex(line.matrix, line.x1, line.y1, 0.0F).setColor(line.colorFrom).setNormal(nx, ny, 0.0F);
+                builder.addVertex(line.matrix, line.x2, line.y2, 0.0F).setColor(line.colorTo).setNormal(nx, ny, 0.0F);
                 // @formatter:on
             });
 
@@ -674,7 +660,7 @@ public abstract class RenderUtil
     /**
      * Ends batched texture queue.
      */
-    private static void endBatchingTextures(BufferBuilder builder)
+    private static void endBatchingTextures(Tesselator tesselator)
     {
         if (TEXTURE_LAYERS.isEmpty())
             return;
@@ -687,13 +673,12 @@ public abstract class RenderUtil
                 RenderSystem.setShaderTexture(0, location);
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-                if (!builder.building())
-                    builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
-                if (location instanceof TextureLocation sheet)
-                    queue.forEach(buffer -> blitTexture(sheet, builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
-                else
-                    queue.forEach(buffer -> blit256(buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
+//                if (location instanceof TextureLocation sheet)
+//                    queue.forEach(buffer -> blitTexture(sheet, builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
+//                else
+                    queue.forEach(buffer -> blit256(builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
 
                 draw(builder);
             });
@@ -701,11 +686,26 @@ public abstract class RenderUtil
             layer.textureLightMap.forEach((location, queue) -> {
                 RenderSystem.setShaderTexture(0, location);
 
-                if (location instanceof TextureLocation sheet)
-                {
+//                if (location instanceof TextureLocation sheet)
+//                {
+//                    queue.stream().collect(Collectors.groupingBy(TextureBuffer::hashColor)).forEach((argb, buffers) -> {
+//                        BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+//
+//                        float r = buffers.getFirst().rgba[0];
+//                        float g = buffers.getFirst().rgba[1];
+//                        float b = buffers.getFirst().rgba[2];
+//                        float a = buffers.getFirst().rgba[3];
+//
+//                        RenderSystem.setShaderColor(r, g, b, a);
+//
+//                        buffers.forEach(buffer -> blitTexture(sheet, builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
+//                        draw(builder);
+//                    });
+//                }
+//                else
+//                {
                     queue.stream().collect(Collectors.groupingBy(TextureBuffer::hashColor)).forEach((argb, buffers) -> {
-                        if (!builder.building())
-                            builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                        BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
                         float r = buffers.getFirst().rgba[0];
                         float g = buffers.getFirst().rgba[1];
@@ -714,35 +714,17 @@ public abstract class RenderUtil
 
                         RenderSystem.setShaderColor(r, g, b, a);
 
-                        buffers.forEach(buffer -> blitTexture(sheet, builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
+                        buffers.forEach(buffer -> blit256(builder, buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
                         draw(builder);
                     });
-                }
-                else
-                {
-                    queue.stream().collect(Collectors.groupingBy(TextureBuffer::hashColor)).forEach((argb, buffers) -> {
-                        if (!builder.building())
-                            builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-
-                        float r = buffers.getFirst().rgba[0];
-                        float g = buffers.getFirst().rgba[1];
-                        float b = buffers.getFirst().rgba[2];
-                        float a = buffers.getFirst().rgba[3];
-
-                        RenderSystem.setShaderColor(r, g, b, a);
-
-                        buffers.forEach(buffer -> blit256(buffer.matrix, buffer.x, buffer.y, buffer.uOffset, buffer.vOffset, buffer.uWidth, buffer.vHeight, buffer.rgba));
-                        draw(builder);
-                    });
-                }
+//                }
             });
 
             layer.spriteMap.forEach((sprite, queue) -> {
                 RenderSystem.setShaderTexture(0, sprite);
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-                if (!builder.building())
-                    builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
                 queue.forEach(buffer -> innerBlit(builder, buffer));
 
@@ -753,8 +735,7 @@ public abstract class RenderUtil
                 RenderSystem.setShaderTexture(0, sprite);
 
                 queue.stream().collect(Collectors.groupingBy(SpriteBuffer::hashColor)).forEach((argb, buffers) -> {
-                    if (!builder.building())
-                        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                    BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
                     float r = buffers.getFirst().rgba[0];
                     float g = buffers.getFirst().rgba[1];
@@ -848,12 +829,10 @@ public abstract class RenderUtil
             return;
         }
 
-        BufferBuilder builder = getTesselatorBuilder();
-
         RenderSystem.enableDepthTest();
-        endBatchingFills(builder);
-        endBatchingLines(builder);
-        endBatchingTextures(builder);
+        endBatchingFills(MOD_TESSELATOR);
+        endBatchingLines(MOD_TESSELATOR);
+        endBatchingTextures(MOD_TESSELATOR);
         endBatchingItemsQueue();
         endBatchingBlocksQueue();
 
@@ -896,66 +875,66 @@ public abstract class RenderUtil
     /**
      * Creates a filled rectangle at the given positions with the given color.
      *
-     * @param consumer The {@link VertexConsumer} to build vertices with.
-     * @param matrix   The {@link Matrix4f} instance.
-     * @param x0       The left x-coordinate of the rectangle.
-     * @param y0       The top y-coordinate of the rectangle.
-     * @param x1       The right x-coordinate of the rectangle.
-     * @param y1       The bottom y-coordinate of the rectangle.
-     * @param argb     The ARGB color of the rectangle.
+     * @param consumer   The {@link BufferBuilder} to build vertices with.
+     * @param matrix     The {@link Matrix4f} instance.
+     * @param x0         The left x-coordinate of the rectangle.
+     * @param y0         The top y-coordinate of the rectangle.
+     * @param x1         The right x-coordinate of the rectangle.
+     * @param y1         The bottom y-coordinate of the rectangle.
+     * @param argb       The ARGB color of the rectangle.
      */
     @PublicAPI
-    public static void fill(VertexConsumer consumer, Matrix4f matrix, float x0, float y0, float x1, float y1, int argb)
+    public static void fill(BufferBuilder consumer, Matrix4f matrix, float x0, float y0, float x1, float y1, int argb)
     {
         float z = 0.0F;
 
-        consumer.vertex(matrix, x0, y1, z).color(argb).endVertex();
-        consumer.vertex(matrix, x1, y1, z).color(argb).endVertex();
-        consumer.vertex(matrix, x1, y0, z).color(argb).endVertex();
-        consumer.vertex(matrix, x0, y0, z).color(argb).endVertex();
+        consumer.addVertex(matrix, x0, y1, z).setColor(argb);
+        consumer.addVertex(matrix, x1, y1, z).setColor(argb);
+        consumer.addVertex(matrix, x1, y0, z).setColor(argb);
+        consumer.addVertex(matrix, x0, y0, z).setColor(argb);
     }
 
     /**
-     * Overload method for {@link RenderUtil#fill(VertexConsumer, Matrix4f, float, float, float, float, int)}. This
+     * Overload method for {@link RenderUtil#fill(BufferBuilder, Matrix4f, float, float, float, float, int)}. This
      * method does not require a 4D matrix.
      *
-     * @param consumer The {@link VertexConsumer} to build vertices with.
-     * @param x0       The left x-coordinate of the rectangle.
-     * @param y0       The top y-coordinate of the rectangle.
-     * @param x1       The right x-coordinate of the rectangle.
-     * @param y1       The bottom y-coordinate of the rectangle.
-     * @param argb     The ARGB color of the rectangle.
+     * @param consumer   The {@link BufferBuilder} to build vertices with.
+     * @param x0         The left x-coordinate of the rectangle.
+     * @param y0         The top y-coordinate of the rectangle.
+     * @param x1         The right x-coordinate of the rectangle.
+     * @param y1         The bottom y-coordinate of the rectangle.
+     * @param argb       The ARGB color of the rectangle.
      */
     @PublicAPI
-    public static void fill(VertexConsumer consumer, float x0, float y0, float x1, float y1, int argb)
+    public static void fill(BufferBuilder consumer, float x0, float y0, float x1, float y1, int argb)
     {
         float z = 0.0F;
 
-        consumer.vertex(x0, y1, z).color(argb).endVertex();
-        consumer.vertex(x1, y1, z).color(argb).endVertex();
-        consumer.vertex(x1, y0, z).color(argb).endVertex();
-        consumer.vertex(x0, y0, z).color(argb).endVertex();
+        consumer.addVertex(x0, y1, z).setColor(argb);
+        consumer.addVertex(x1, y1, z).setColor(argb);
+        consumer.addVertex(x1, y0, z).setColor(argb);
+        consumer.addVertex(x0, y0, z).setColor(argb);
     }
 
     /**
      * Creates a filled rectangle at the given positions with the given color.
      *
-     * @param consumer The {@link VertexConsumer} to build vertices with.
-     * @param graphics A {@link GuiGraphics} instance.
-     * @param x0       The left x-coordinate of the rectangle.
-     * @param y0       The top y-coordinate of the rectangle.
-     * @param x1       The right x-coordinate of the rectangle.
-     * @param y1       The bottom y-coordinate of the rectangle.
-     * @param argb     The ARGB color of the rectangle.
+     * @param consumer   The {@link BufferBuilder} to build vertices with.
+     * @param graphics   A {@link GuiGraphics} instance.
+     * @param x0         The left x-coordinate of the rectangle.
+     * @param y0         The top y-coordinate of the rectangle.
+     * @param x1         The right x-coordinate of the rectangle.
+     * @param y1         The bottom y-coordinate of the rectangle.
+     * @param argb       The ARGB color of the rectangle.
      */
     @PublicAPI
-    public static void fill(VertexConsumer consumer, GuiGraphics graphics, float x0, float y0, float x1, float y1, int argb)
+    public static void fill(BufferBuilder consumer, GuiGraphics graphics, float x0, float y0, float x1, float y1, int argb)
     {
         fill(consumer, graphics.pose().last().pose(), x0, y0, x1, y1, argb);
     }
 
     /**
-     * Overload method for {@link RenderUtil#fill(VertexConsumer, Matrix4f, float, float, float, float, int)}. This
+     * Overload method for {@link RenderUtil#fill(BufferBuilder, Matrix4f, float, float, float, float, int)}. This
      * method does not require a buffer builder or a 4D matrix, but instead uses {@link GuiGraphics}.
      *
      * @param graphics A {@link GuiGraphics} instance.
@@ -1009,17 +988,17 @@ public abstract class RenderUtil
         Consumer<BufferBuilder> vertices = (builder) -> {
             if (isVertical)
             {
-                builder.vertex(matrix, x0, y1, z).color(colorTo).endVertex();
-                builder.vertex(matrix, x1, y1, z).color(colorTo).endVertex();
-                builder.vertex(matrix, x1, y0, z).color(colorFrom).endVertex();
-                builder.vertex(matrix, x0, y0, z).color(colorFrom).endVertex();
+                builder.addVertex(matrix, x0, y1, z).setColor(colorTo);
+                builder.addVertex(matrix, x1, y1, z).setColor(colorTo);
+                builder.addVertex(matrix, x1, y0, z).setColor(colorFrom);
+                builder.addVertex(matrix, x0, y0, z).setColor(colorFrom);
             }
             else
             {
-                builder.vertex(matrix, x0, y1, z).color(colorFrom).endVertex();
-                builder.vertex(matrix, x1, y1, z).color(colorTo).endVertex();
-                builder.vertex(matrix, x1, y0, z).color(colorTo).endVertex();
-                builder.vertex(matrix, x0, y0, z).color(colorFrom).endVertex();
+                builder.addVertex(matrix, x0, y1, z).setColor(colorFrom);
+                builder.addVertex(matrix, x1, y1, z).setColor(colorTo);
+                builder.addVertex(matrix, x1, y0, z).setColor(colorTo);
+                builder.addVertex(matrix, x0, y0, z).setColor(colorFrom);
             }
         };
 
@@ -1148,8 +1127,8 @@ public abstract class RenderUtil
         else
         {
             BufferBuilder builder = getAndBeginLine(width);
-            builder.vertex(matrix, x0, y0, z).color(colorFrom).normal(1.0F, 1.0F, 1.0F).endVertex();
-            builder.vertex(matrix, x1, y1, z).color(colorTo).normal(1.0F, 1.0F, 1.0F).endVertex();
+            builder.addVertex(matrix, x0, y0, z).setColor(colorFrom).setNormal(1.0F, 1.0F, 1.0F);
+            builder.addVertex(matrix, x1, y1, z).setColor(colorTo).setNormal(1.0F, 1.0F, 1.0F);
 
             endLine(builder);
         }
@@ -1323,11 +1302,10 @@ public abstract class RenderUtil
     public static void circle(GuiGraphics graphics, float centerX, float centerY, float radius, int argb)
     {
         Matrix4f matrix = graphics.pose().last().pose();
-        BufferBuilder builder = Tesselator.getInstance().getBuilder();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+        BufferBuilder builder  = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
 
         for (float f = 0.0F; f < 360.0F; f += 4.5F)
         {
@@ -1335,7 +1313,7 @@ public abstract class RenderUtil
             float x = (float) (centerX + (Math.sin(rads) * radius));
             float y = (float) (centerY + (Math.cos(rads) * radius));
 
-            builder.vertex(matrix, x, y, 0.0F).color(argb).endVertex();
+            builder.addVertex(matrix, x, y, 0.0F).setColor(argb);
         }
 
         draw(builder);
@@ -1360,7 +1338,7 @@ public abstract class RenderUtil
     {
         if (isBatching)
         {
-            TextureBuffer.create(getMatrix(graphics.pose()), texture, x, y, uOffset, vOffset, uWidth, vHeight);
+            TextureBuffer.create(getMatrix(graphics.pose()), texture.getLocation(), x, y, uOffset, vOffset, uWidth, vHeight);
             return;
         }
 
@@ -1425,10 +1403,10 @@ public abstract class RenderUtil
         float maxV = (vOffset + vHeight) / (float) texture.getHeight();
         int color = new Color(rgba[0], rgba[1], rgba[2], rgba[3]).get();
 
-        consumer.vertex(matrix, x, y2, 0.0F).uv(minU, maxV).color(color).endVertex();
-        consumer.vertex(matrix, x2, y2, 0.0F).uv(maxU, maxV).color(color).endVertex();
-        consumer.vertex(matrix, x2, y, 0.0F).uv(maxU, minV).color(color).endVertex();
-        consumer.vertex(matrix, x, y, 0.0F).uv(minU, minV).color(color).endVertex();
+        consumer.addVertex(matrix, x, y2, 0.0F).setUv(minU, maxV).setColor(color);
+        consumer.addVertex(matrix, x2, y2, 0.0F).setUv(maxU, maxV).setColor(color);
+        consumer.addVertex(matrix, x2, y, 0.0F).setUv(maxU, minV).setColor(color);
+        consumer.addVertex(matrix, x, y, 0.0F).setUv(minU, minV).setColor(color);
     }
 
     /**
@@ -1453,15 +1431,14 @@ public abstract class RenderUtil
     /**
      * Build vertices that relative to the screen point (0, 0) using the given matrix, width, and height for a texture.
      */
-    private static void blitTexture(Matrix4f matrix, int width, int height, float[] rgba)
+    private static void blitTexture(Matrix4f matrix, VertexConsumer consumer, int width, int height, float[] rgba)
     {
-        BufferBuilder builder = getTesselatorBuilder();
         int color = new Color(rgba[0], rgba[1], rgba[2], rgba[3]).get();
 
-        builder.vertex(matrix, 0, height, 0).uv(0.0F, 1.0F).color(color).endVertex();
-        builder.vertex(matrix, width, height, 0).uv(1.0F, 1.0F).color(color).endVertex();
-        builder.vertex(matrix, width, 0, 0).uv(1.0F, 0.0F).color(color).endVertex();
-        builder.vertex(matrix, 0, 0, 0).uv(0.0F, 0.0F).color(color).endVertex();
+        consumer.addVertex(matrix, 0, height, 0).setUv(0.0F, 1.0F).setColor(color);
+        consumer.addVertex(matrix, width, height, 0).setUv(1.0F, 1.0F).setColor(color);
+        consumer.addVertex(matrix, width, 0, 0).setUv(1.0F, 0.0F).setColor(color);
+        consumer.addVertex(matrix, 0, 0, 0).setUv(0.0F, 0.0F).setColor(color);
     }
 
     /**
@@ -1472,9 +1449,9 @@ public abstract class RenderUtil
      * @param location A {@link TextureLocation} instance.
      * @param matrix   A {@link Matrix4f} instance.
      */
-    private static void blitTexture(TextureLocation location, Matrix4f matrix)
+    private static void blitTexture(TextureLocation location, VertexConsumer consumer, Matrix4f matrix)
     {
-        blitTexture(matrix, location.getWidth(), location.getHeight(), RenderSystem.getShaderColor());
+        blitTexture(matrix, consumer, location.getWidth(), location.getHeight(), RenderSystem.getShaderColor());
     }
 
     /**
@@ -1512,7 +1489,7 @@ public abstract class RenderUtil
 
         if (isBatching)
         {
-            TextureBuffer.create(getMatrix(graphics.pose()), location, 0, 0, 0, 0, width, height);
+            TextureBuffer.create(getMatrix(graphics.pose()), location.getLocation(), 0, 0, 0, 0, width, height);
             graphics.pose().popPose();
 
             return;
@@ -1520,7 +1497,7 @@ public abstract class RenderUtil
 
         BufferBuilder builder = getAndBeginTexture(location);
 
-        blitTexture(location, graphics.pose().last().pose());
+        blitTexture(location, builder, graphics.pose().last().pose());
         endTexture(builder);
 
         graphics.pose().popPose();
@@ -1553,10 +1530,10 @@ public abstract class RenderUtil
         float maxV = (vOffset + vHeight) / (float) textureHeight;
         int color = new Color(rgba[0], rgba[1], rgba[2], rgba[3]).get();
 
-        consumer.vertex(matrix, x, y2, 0.0F).uv(minU, maxV).color(color).endVertex();
-        consumer.vertex(matrix, x2, y2, 0.0F).uv(maxU, maxV).color(color).endVertex();
-        consumer.vertex(matrix, x2, y, 0.0F).uv(maxU, minV).color(color).endVertex();
-        consumer.vertex(matrix, x, y, 0.0F).uv(minU, minV).color(color).endVertex();
+        consumer.addVertex(matrix, x, y2, 0.0F).setUv(minU, maxV).setColor(color);
+        consumer.addVertex(matrix, x2, y2, 0.0F).setUv(maxU, maxV).setColor(color);
+        consumer.addVertex(matrix, x2, y, 0.0F).setUv(maxU, minV).setColor(color);
+        consumer.addVertex(matrix, x, y, 0.0F).setUv(minU, minV).setColor(color);
     }
 
     /**
@@ -1572,10 +1549,10 @@ public abstract class RenderUtil
         float maxV = (vOffset + vHeight) / 256.0F;
         int color = new Color(rgba[0], rgba[1], rgba[2], rgba[3]).get();
 
-        consumer.vertex(matrix, x, y2, 0.0F).uv(minU, maxV).color(color).endVertex();
-        consumer.vertex(matrix, x2, y2, 0.0F).uv(maxU, maxV).color(color).endVertex();
-        consumer.vertex(matrix, x2, y, 0.0F).uv(maxU, minV).color(color).endVertex();
-        consumer.vertex(matrix, x, y, 0.0F).uv(minU, minV).color(color).endVertex();
+        consumer.addVertex(matrix, x, y2, 0.0F).setUv(minU, maxV).setColor(color);
+        consumer.addVertex(matrix, x2, y2, 0.0F).setUv(maxU, maxV).setColor(color);
+        consumer.addVertex(matrix, x2, y, 0.0F).setUv(maxU, minV).setColor(color);
+        consumer.addVertex(matrix, x, y, 0.0F).setUv(minU, minV).setColor(color);
     }
 
     /**
@@ -1617,14 +1594,6 @@ public abstract class RenderUtil
     }
 
     /**
-     * Build a quad of vertices for a texture.
-     */
-    private static void blit256(Matrix4f matrix, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight, float[] rgba)
-    {
-        blit256(getTesselatorBuilder(), matrix, x, y, uOffset, vOffset, uWidth, vHeight, rgba);
-    }
-
-    /**
      * Render a texture from a texture sheet (256x256) using floating x/y positions.
      *
      * @param location A {@link ResourceLocation} that points to the texture sheet.
@@ -1649,7 +1618,7 @@ public abstract class RenderUtil
 
         BufferBuilder builder = getAndBeginTexture(location);
 
-        blit256(matrix, x, y, uOffset, vOffset, uWidth, vHeight, RenderSystem.getShaderColor());
+        blit256(builder, matrix, x, y, uOffset, vOffset, uWidth, vHeight, RenderSystem.getShaderColor());
         endTexture(builder);
     }
 
@@ -1793,16 +1762,15 @@ public abstract class RenderUtil
         float[] rgba = RenderSystem.getShaderColor();
         int color = new Color(rgba[0], rgba[1], rgba[2], rgba[3]).get();
 
-        BufferBuilder builder = getTesselatorBuilder();
         Matrix4f matrix = poseStack.last().pose();
 
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        builder.vertex(matrix, x1, y1, 0.0F).uv(minU, minV).color(color).endVertex();
-        builder.vertex(matrix, x1, y2, 0.0F).uv(minU, maxV).color(color).endVertex();
-        builder.vertex(matrix, x2, y2, 0.0F).uv(maxU, maxV).color(color).endVertex();
-        builder.vertex(matrix, x2, y1, 0.0F).uv(maxU, minV).color(color).endVertex();
+        BufferBuilder builder = MOD_TESSELATOR.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        builder.addVertex(matrix, x1, y1, 0.0F).setUv(minU, minV).setColor(color);
+        builder.addVertex(matrix, x1, y2, 0.0F).setUv(minU, maxV).setColor(color);
+        builder.addVertex(matrix, x2, y2, 0.0F).setUv(maxU, maxV).setColor(color);
+        builder.addVertex(matrix, x2, y1, 0.0F).setUv(maxU, minV).setColor(color);
 
-        BufferUploader.drawWithShader(builder.end());
+        BufferUploader.drawWithShader(builder.build());
     }
 
     /**
@@ -1815,10 +1783,10 @@ public abstract class RenderUtil
     {
         int color = new Color(buffer.rgba[0], buffer.rgba[1], buffer.rgba[2], buffer.rgba[3]).get();
 
-        builder.vertex(buffer.matrix, buffer.x1, buffer.y1, 0.0F).uv(buffer.minU, buffer.minV).color(color).endVertex();
-        builder.vertex(buffer.matrix, buffer.x1, buffer.y2, 0.0F).uv(buffer.minU, buffer.maxV).color(color).endVertex();
-        builder.vertex(buffer.matrix, buffer.x2, buffer.y2, 0.0F).uv(buffer.maxU, buffer.maxV).color(color).endVertex();
-        builder.vertex(buffer.matrix, buffer.x2, buffer.y1, 0.0F).uv(buffer.maxU, buffer.minV).color(color).endVertex();
+        builder.addVertex(buffer.matrix, buffer.x1, buffer.y1, 0.0F).setUv(buffer.minU, buffer.minV).setColor(color);
+        builder.addVertex(buffer.matrix, buffer.x1, buffer.y2, 0.0F).setUv(buffer.minU, buffer.maxV).setColor(color);
+        builder.addVertex(buffer.matrix, buffer.x2, buffer.y2, 0.0F).setUv(buffer.maxU, buffer.maxV).setColor(color);
+        builder.addVertex(buffer.matrix, buffer.x2, buffer.y1, 0.0F).setUv(buffer.maxU, buffer.minV).setColor(color);
     }
 
     /**

@@ -240,7 +240,7 @@ public abstract class LightingMixinHelper
      */
     public static int getSkyLightFromWeather(Level level)
     {
-        float partialTick = Minecraft.getInstance().getFrameTime();
+        float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
         float rain = level.getRainLevel(partialTick);
         float thunder = level.getThunderLevel(partialTick);
 

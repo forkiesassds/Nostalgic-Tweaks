@@ -1,17 +1,17 @@
 package mod.adrenix.nostalgic.forge.mixin.embeddium.candy.world_lighting;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import me.jellysquid.mods.sodium.client.model.color.ColorProvider;
-import me.jellysquid.mods.sodium.client.model.light.LightPipeline;
-import me.jellysquid.mods.sodium.client.model.light.data.QuadLightData;
-import me.jellysquid.mods.sodium.client.model.quad.ModelQuadView;
-import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.FluidRenderer;
-import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import mod.adrenix.nostalgic.mixin.util.candy.lighting.LightingMixinHelper;
 import mod.adrenix.nostalgic.tweak.config.CandyTweak;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.material.FluidState;
+import org.embeddedt.embeddium.impl.model.color.ColorProvider;
+import org.embeddedt.embeddium.impl.model.light.LightPipeline;
+import org.embeddedt.embeddium.impl.model.light.data.QuadLightData;
+import org.embeddedt.embeddium.impl.model.quad.ModelQuadView;
+import org.embeddedt.embeddium.impl.render.chunk.compile.pipeline.FluidRenderer;
+import org.embeddedt.embeddium.impl.world.WorldSlice;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -50,12 +50,12 @@ public abstract class FluidRendererMixin
         method = "updateQuad",
         at = @At("RETURN")
     )
-    private void nt_embeddium_world_lighting$modifyWaterLight(ModelQuadView quad, WorldSlice world, BlockPos blockPos, LightPipeline lighter, Direction direction, float brightness, ColorProvider<FluidState> colorProvider, FluidState fluidState, CallbackInfo callback)
+    private void nt_embeddium_world_lighting$modifyWaterLight(ModelQuadView quad, WorldSlice world, BlockPos pos, LightPipeline lighter, Direction dir, float brightness, ColorProvider<FluidState> colorProvider, FluidState fluidState, CallbackInfo ci)
     {
         if (!CandyTweak.OLD_WATER_LIGHTING.get())
             return;
 
-        int light = LightingMixinHelper.getWaterLight(world, blockPos);
+        int light = LightingMixinHelper.getWaterLight(world, pos);
 
         for (int i = 0; i < 4; i++)
             this.quadLightData.lm[i] = light;

@@ -10,9 +10,9 @@ import mod.adrenix.nostalgic.util.common.function.BooleanSupplier;
 import mod.adrenix.nostalgic.util.common.lang.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.LanguageSelectScreen;
-import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.gui.screens.options.LanguageSelectScreen;
+import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.resources.ResourceLocation;
@@ -321,7 +321,7 @@ class TitleWidgets implements WidgetManager
         {
             ButtonWidget.create()
                 .leftOf(options, WIDGET_MARGIN)
-                .icon(TextureIcon.fromSprite(new ResourceLocation("icon/language"), 15))
+                .icon(TextureIcon.fromSprite(ResourceLocation.withDefaultNamespace("icon/language"), 15))
                 .iconCenterOffset(-1)
                 .onPress(this::gotoLanguage)
                 .build(this.titleScreen::addWidget);

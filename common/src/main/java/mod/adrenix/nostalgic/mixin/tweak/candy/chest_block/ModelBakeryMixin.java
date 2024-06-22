@@ -17,7 +17,7 @@ public abstract class ModelBakeryMixin
      * Dynamically changes the block state location for the vanilla chests.
      */
     @ModifyArg(
-        method = "loadModel",
+        method = "loadBlockModel",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/resources/FileToIdConverter;idToFile(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/resources/ResourceLocation;"
@@ -44,9 +44,9 @@ public abstract class ModelBakeryMixin
             return resourceLocation;
 
         if (CalendarUtil.isChristmasTime() && path.equals("chest"))
-            return new ResourceLocation(namespace, "christmas_chest");
+            return ResourceLocation.fromNamespaceAndPath(namespace, "christmas_chest");
 
-        return new ResourceLocation(namespace, path);
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
 
     /**
@@ -81,20 +81,20 @@ public abstract class ModelBakeryMixin
         };
 
         if (isOldChest && !isOldEnderChest && path.equals("item/ender_chest"))
-            return new ResourceLocation(NostalgicTweaks.MOD_ID, "item/vanilla_ender_chest");
+            return ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "item/vanilla_ender_chest");
 
         if (isOldChest && !isOldTrappedChest && path.equals("item/trapped_chest"))
-            return new ResourceLocation(NostalgicTweaks.MOD_ID, "item/vanilla_trapped_chest");
+            return ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "item/vanilla_trapped_chest");
 
         if (isOldChest && CalendarUtil.isChristmasTime())
         {
             if (path.equals("block/chest"))
-                return new ResourceLocation(namespace, "block/christmas_chest");
+                return ResourceLocation.fromNamespaceAndPath(namespace, "block/christmas_chest");
 
             if (path.equals("item/chest"))
-                return new ResourceLocation(namespace, "item/christmas_chest");
+                return ResourceLocation.fromNamespaceAndPath(namespace, "item/christmas_chest");
         }
 
-        return new ResourceLocation(namespace, path);
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
 }

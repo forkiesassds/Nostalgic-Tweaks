@@ -3,6 +3,7 @@ package mod.adrenix.nostalgic.mixin.tweak.candy.progress_screen;
 import mod.adrenix.nostalgic.client.gui.screen.vanilla.progress.NostalgicProgressScreen;
 import mod.adrenix.nostalgic.tweak.config.CandyTweak;
 import mod.adrenix.nostalgic.util.client.gui.GuiUtil;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ReceivingLevelScreen;
@@ -28,7 +29,7 @@ public abstract class MinecraftMixin
     public abstract RenderBuffers renderBuffers();
 
     @Shadow
-    public abstract float getDeltaFrameTime();
+    public abstract DeltaTracker getTimer();
 
     /* Injections */
 
@@ -55,7 +56,7 @@ public abstract class MinecraftMixin
                 int mouseY = GuiUtil.getMouseY();
 
                 progressScreen.tick();
-                progressScreen.render(graphics, mouseX, mouseY, this.getDeltaFrameTime());
+                progressScreen.render(graphics, mouseX, mouseY, this.getTimer().getRealtimeDeltaTicks());
             }
         }
     }

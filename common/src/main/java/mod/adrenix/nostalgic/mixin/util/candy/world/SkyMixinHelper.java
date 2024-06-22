@@ -1,9 +1,7 @@
 package mod.adrenix.nostalgic.mixin.util.candy.world;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.*;
 import mod.adrenix.nostalgic.mixin.util.candy.world.fog.VoidFogRenderer;
 import mod.adrenix.nostalgic.tweak.config.CandyTweak;
 import mod.adrenix.nostalgic.tweak.enums.SkyColor;
@@ -59,13 +57,12 @@ public abstract class SkyMixinHelper
     /**
      * Create a new blue void buffer.
      *
-     * @param skyDiscBuilder A {@link BiFunction} that accepts a {@link BufferBuilder} and height and returns a
-     *                       {@link BufferBuilder.RenderedBuffer} instance.
+     * @param skyDiscBuilder A {@link BiFunction} that accepts a {@link Tesselator} and height and returns a
+     *                       {@link MeshData} instance.
      */
-    public static void createBlueVoid(BiFunction<BufferBuilder, Float, BufferBuilder.RenderedBuffer> skyDiscBuilder)
+    public static void createBlueVoid(BiFunction<Tesselator, Float, MeshData> skyDiscBuilder)
     {
         Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder builder = tesselator.getBuilder();
 
         float height = switch (CandyTweak.OLD_BLUE_VOID.get())
         {
@@ -73,7 +70,7 @@ public abstract class SkyMixinHelper
             case BETA, MODERN -> -48.0F;
         };
 
-        BufferBuilder.RenderedBuffer renderedBuffer = skyDiscBuilder.apply(builder, height);
+        MeshData renderedBuffer = skyDiscBuilder.apply(tesselator, height);
 
         if (renderedBuffer != null)
         {
@@ -101,7 +98,7 @@ public abstract class SkyMixinHelper
         if (level == null)
             return new float[] { 0.0F, 0.0F, 0.0F };
 
-        float partialTicks = minecraft.getFrameTime();
+        float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
         float timeOfDay = level.getTimeOfDay(partialTicks);
         float boundedTime = Mth.clamp(Mth.cos(timeOfDay * ((float) Math.PI * 2)) * 2.0F + 0.5F, 0.0F, 1.0F);
 

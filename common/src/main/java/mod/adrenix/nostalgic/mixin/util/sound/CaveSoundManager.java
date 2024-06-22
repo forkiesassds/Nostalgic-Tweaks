@@ -77,7 +77,7 @@ public class CaveSoundManager
                 double y = this.player.getEyeY() + dy / normal * offset;
                 double z = this.player.getZ() + dz / normal * offset;
 
-                ResourceLocation soundLocation = new ResourceLocation(NostalgicTweaks.MOD_ID, "cave");
+                ResourceLocation soundLocation = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "cave");
                 SimpleSoundInstance soundInstance = new SimpleSoundInstance(soundLocation, SoundSource.AMBIENT, 0.7F, 0.8F + this.randomSource.nextFloat() * 0.2F, this.randomSource, false, 0, SoundInstance.Attenuation.LINEAR, x, y, z, false);
 
                 this.soundManager.play(soundInstance);

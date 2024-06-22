@@ -27,6 +27,7 @@ import mod.adrenix.nostalgic.util.common.ClassUtil;
 import mod.adrenix.nostalgic.util.common.lang.Lang;
 import mod.adrenix.nostalgic.util.common.text.TextUtil;
 import mod.adrenix.nostalgic.util.common.world.PlayerUtil;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.*;
@@ -159,10 +160,10 @@ public abstract class GuiListener
      * @param graphics    The {@link GuiGraphics} instance.
      * @param mouseX      The x-coordinate of the mouse.
      * @param mouseY      The y-coordinate of the mouse.
-     * @param partialTick The normalized progress between two ticks [0.0F, 1.0F].
+     * @param delta       The normalized progress between two ticks [0.0F, 1.0F].
      * @return The {@link EventResult}.
      */
-    private static EventResult setMousePosition(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    private static EventResult setMousePosition(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, DeltaTracker delta)
     {
         MouseManager.setPosition(mouseX, mouseY);
 
@@ -176,9 +177,9 @@ public abstract class GuiListener
      * @param graphics    The {@link GuiGraphics} instance.
      * @param mouseX      The x-coordinate of the mouse.
      * @param mouseY      The y-coordinate of the mouse.
-     * @param partialTick The normalized progress between two ticks [0.0F, 1.0F].
+     * @param delta       The normalized progress between two ticks [0.0F, 1.0F].
      */
-    private static void renderModGraphics(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    private static void renderModGraphics(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, DeltaTracker delta)
     {
         Tooltip.render(screen, graphics);
         ModToast.update(screen);
@@ -215,9 +216,9 @@ public abstract class GuiListener
      * Renders text overlay to the HUD if such tweaks are enabled to do so.
      *
      * @param graphics    The {@link GuiGraphics} instance.
-     * @param partialTick The normalized progress between two ticks [0.0F, 1.0F].
+     * @param delta       The normalized progress between two ticks [0.0F, 1.0F].
      */
-    private static void renderTextOverlay(GuiGraphics graphics, float partialTick)
+    private static void renderTextOverlay(GuiGraphics graphics, DeltaTracker delta)
     {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;

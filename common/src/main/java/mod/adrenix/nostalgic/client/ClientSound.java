@@ -15,13 +15,13 @@ public abstract class ClientSound
 
     /* Sounds */
 
-    private static final ResourceLocation BLANK_LOCATION = new ResourceLocation(NostalgicTweaks.MOD_ID, "blank");
-    private static final ResourceLocation PLAYER_HURT_LOCATION = new ResourceLocation(NostalgicTweaks.MOD_ID, "entity.player.hurt");
-    private static final ResourceLocation MUSIC_ALPHA_LOCATION = new ResourceLocation(NostalgicTweaks.MOD_ID, "music.gameplay.alpha");
-    private static final ResourceLocation MUSIC_MENU_BETA_LOCATION = new ResourceLocation(NostalgicTweaks.MOD_ID, "music.menu.beta");
-    private static final ResourceLocation MUSIC_MENU_BLENDED_LOCATION = new ResourceLocation(NostalgicTweaks.MOD_ID, "music.menu.blended");
-    private static final ResourceLocation MUSIC_CREATIVE_BETA_LOCATION = new ResourceLocation(NostalgicTweaks.MOD_ID, "music.creative.beta");
-    private static final ResourceLocation MUSIC_CREATIVE_BLENDED_LOCATION = new ResourceLocation(NostalgicTweaks.MOD_ID, "music.creative.blended");
+    private static final ResourceLocation BLANK_LOCATION = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "blank");
+    private static final ResourceLocation PLAYER_HURT_LOCATION = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "entity.player.hurt");
+    private static final ResourceLocation MUSIC_ALPHA_LOCATION = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "music.gameplay.alpha");
+    private static final ResourceLocation MUSIC_MENU_BETA_LOCATION = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "music.menu.beta");
+    private static final ResourceLocation MUSIC_MENU_BLENDED_LOCATION = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "music.menu.blended");
+    private static final ResourceLocation MUSIC_CREATIVE_BETA_LOCATION = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "music.creative.beta");
+    private static final ResourceLocation MUSIC_CREATIVE_BLENDED_LOCATION = ResourceLocation.fromNamespaceAndPath(NostalgicTweaks.MOD_ID, "music.creative.blended");
 
     public static final RegistrySupplier<SoundEvent> BLANK = DEFERRED_REGISTER.register(BLANK_LOCATION, () -> SoundEvent.createVariableRangeEvent(BLANK_LOCATION));
     public static final RegistrySupplier<SoundEvent> PLAYER_HURT = DEFERRED_REGISTER.register(PLAYER_HURT_LOCATION, () -> SoundEvent.createVariableRangeEvent(PLAYER_HURT_LOCATION));

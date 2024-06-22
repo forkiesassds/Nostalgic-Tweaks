@@ -61,7 +61,7 @@ public abstract class ClientWorldHelper
         if (level == null)
             return new float[] { 0.0F, 0.0F, 0.0F };
 
-        float partialTick = minecraft.getFrameTime();
+        float partialTick = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
         float timeOfDay = level.getTimeOfDay(partialTick);
         float boundedTime = Mth.clamp(Mth.cos(timeOfDay * ((float) Math.PI * 2)) * 2.0F + 0.5F, 0.0F, 1.0F);
 

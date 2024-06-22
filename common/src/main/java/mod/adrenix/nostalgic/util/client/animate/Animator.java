@@ -122,7 +122,7 @@ public class Animator implements Animation
     @Override
     public double getValue()
     {
-        return Mth.lerp(Minecraft.getInstance().getFrameTime(), this.lastValue, this.currentValue);
+        return Mth.lerp(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true), this.lastValue, this.currentValue);
     }
 
     private boolean isReverseFinished()

@@ -232,7 +232,7 @@ public abstract class VoidFogRenderer
     public static void setCelestialTransparency()
     {
         ClientLevel level = Minecraft.getInstance().level;
-        float partialTick = Minecraft.getInstance().getFrameTime();
+        float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
 
         if (level == null)
             return;
@@ -263,7 +263,7 @@ public abstract class VoidFogRenderer
     {
         LocalPlayer player = Minecraft.getInstance().player;
         ClientLevel level = Minecraft.getInstance().level;
-        float partialTick = Minecraft.getInstance().getFrameTime();
+        float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
 
         if (player == null || level == null)
             return true;
@@ -509,7 +509,7 @@ public abstract class VoidFogRenderer
         float encroach = getDistanceDelta(entity);
 
         if (entity instanceof LivingEntity living && living.hasEffect(MobEffects.NIGHT_VISION))
-            distance *= 4 * GameRenderer.getNightVisionScale(living, Minecraft.getInstance().getFrameTime());
+            distance *= 4 * GameRenderer.getNightVisionScale(living, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true));
 
         float celestialTarget = !isDisabled && darkness < 0.5F && ClientWorldHelper.getSkyLight(entity) == 0 ? 0.0F : 1.0F;
         float cloudsTarget = !isDisabled && darkness < 0.5F && ClientWorldHelper.getSkyLight(entity) == 0 ? 0.0F : 1.0F;
