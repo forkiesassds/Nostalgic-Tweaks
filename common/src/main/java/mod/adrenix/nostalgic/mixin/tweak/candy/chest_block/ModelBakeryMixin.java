@@ -14,42 +14,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public abstract class ModelBakeryMixin
 {
     /**
-     * Dynamically changes the block state location for the vanilla chests.
-     */
-    @ModifyArg(
-        method = "loadBlockModel",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/resources/FileToIdConverter;idToFile(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/resources/ResourceLocation;"
-        )
-    )
-    private ResourceLocation nt_chest_block$modifyBlockStateLocation(ResourceLocation resourceLocation)
-    {
-        String minecraft = "minecraft";
-        String namespace = resourceLocation.getNamespace();
-        String path = resourceLocation.getPath();
-
-        if (!namespace.equals(minecraft))
-            return resourceLocation;
-
-        namespace = switch (path)
-        {
-            case "chest" -> CandyTweak.OLD_CHEST.get() ? NostalgicTweaks.MOD_ID : minecraft;
-            case "ender_chest" -> CandyTweak.OLD_ENDER_CHEST.get() ? NostalgicTweaks.MOD_ID : minecraft;
-            case "trapped_chest" -> CandyTweak.OLD_TRAPPED_CHEST.get() ? NostalgicTweaks.MOD_ID : minecraft;
-            default -> namespace;
-        };
-
-        if (namespace.equals(minecraft))
-            return resourceLocation;
-
-        if (CalendarUtil.isChristmasTime() && path.equals("chest"))
-            return ResourceLocation.fromNamespaceAndPath(namespace, "christmas_chest");
-
-        return ResourceLocation.fromNamespaceAndPath(namespace, path);
-    }
-
-    /**
      * Dynamically changes the block model location for the vanilla chests.
      */
     @ModifyVariable(
