@@ -6,6 +6,8 @@ import mod.adrenix.nostalgic.tweak.factory.TweakFlag;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.EntityFlagsPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Sheep;
@@ -62,13 +64,14 @@ public abstract class MobLootMixinHelper
     /**
      * Add an item to a loot table builder.
      *
-     * @param builder  The {@link LootTable.Builder} instance.
-     * @param item     The {@link ItemLike} instance to add.
-     * @param max      The maximum number of items that can drop from a roll.
-     * @param canSmelt Whether the item should smelt if the entity died while on fire.
+     * @param provider  The {@link HolderLookup.Provider} instance.
+     * @param builder   The {@link LootTable.Builder} instance.
+     * @param item      The {@link ItemLike} instance to add.
+     * @param max       The maximum number of items that can drop from a roll.
+     * @param canSmelt  Whether the item should smelt if the entity died while on fire.
      * @return The given {@link LootTable.Builder} instance with the new item entry.
      */
-    private static LootTable.Builder addToTable(LootTable.Builder builder, ItemLike item, int max, boolean canSmelt)
+    private static LootTable.Builder addToTable(HolderLookup.Provider provider, LootTable.Builder builder, ItemLike item, int max, boolean canSmelt)
     {
         if (canSmelt)
         {
@@ -76,7 +79,7 @@ public abstract class MobLootMixinHelper
                 .setRolls(ConstantValue.exactly(1.0F))
                 .add(LootItem.lootTableItem(item)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, max)))
-//                    .apply(EnchantedCountIncreaseFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))) //TODO: looting
+                    .apply(EnchantedCountIncreaseFunction.lootingMultiplier(provider, UniformGenerator.between(0.0F, 1.0F)))
                     .apply(SmeltItemFunction.smelted()
                         .when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
                             .flags(EntityFlagsPredicate.Builder.flags().setOnFire(true)))))));
@@ -86,7 +89,7 @@ public abstract class MobLootMixinHelper
             .setRolls(ConstantValue.exactly(1.0F))
             .add(LootItem.lootTableItem(item)
                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, max)))
-                /*.apply(EnchantedCountIncreaseFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))*/)); //TODO: looting
+                .apply(EnchantedCountIncreaseFunction.lootingMultiplier(provider, UniformGenerator.between(0.0F, 1.0F)))));
     }
 
     /**
@@ -96,50 +99,54 @@ public abstract class MobLootMixinHelper
      * @param max  The maximum number of items that can drop.
      * @return An old {@link LootTable} instance.
      */
-    private static LootTable makeTable(ItemLike item, int max)
+    private static LootTable makeTable(HolderLookup.Provider provider, ItemLike item, int max)
     {
-        return addToTable(LootTable.lootTable(), item, max, false).build();
+        return addToTable(provider, LootTable.lootTable(), item, max, false).build();
     }
 
     /**
      * @return A custom old {@link LootTable} instance for pork chops.
      */
-    private static LootTable makePorkTable()
+    private static LootTable makePorkTable(HolderLookup.Provider provider)
     {
-        return addToTable(LootTable.lootTable(), Items.PORKCHOP, 2, true).build();
+        return addToTable(provider, LootTable.lootTable(), Items.PORKCHOP, 2, true).build();
     }
 
     /**
      * @return A custom old {@link LootTable} instance for skeletons.
      */
-    private static LootTable makeSkeletonTable()
+    private static LootTable makeSkeletonTable(HolderLookup.Provider provider)
     {
         LootTable.Builder builder = LootTable.lootTable();
 
-        addToTable(builder, Items.ARROW, 2, false);
-        addToTable(builder, Items.BONE, 2, false);
+        addToTable(provider, builder, Items.ARROW, 2, false);
+        addToTable(provider, builder, Items.BONE, 2, false);
 
         return builder.build();
     }
 
     /* Item Tables */
 
-    private static final Function<ItemLike, LootTable> WOOL_TABLE = Util.memoize(item -> makeTable(item, 1));
-    private static final LootTable COOKED_PORK_CHOP_TABLE = makeTable(Items.COOKED_PORKCHOP, 2);
-    private static final LootTable FEATHER_TABLE = makeTable(Items.FEATHER, 2);
-    private static final LootTable STRING_TABLE = makeTable(Items.STRING, 2);
-    private static final LootTable LEATHER_TABLE = makeTable(Items.LEATHER, 2);
-    private static final LootTable RABBIT_HIDE_TABLE = makeTable(Items.RABBIT_HIDE, 1);
-    private static final LootTable PORK_CHOP_TABLE = makePorkTable();
-    private static final LootTable ARROW_BONE_TABLE = makeSkeletonTable();
+    private static Function<ItemLike, LootTable> WOOL_TABLE;
 
     /* Helpers */
 
     /**
      * Initialize the old entity loot tables.
      */
-    public static void init()
+    public static void init(ServerLevel level)
     {
+        HolderLookup.Provider provider = level.registryAccess();
+
+        WOOL_TABLE = Util.memoize(item -> makeTable(provider, item, 1));
+        LootTable COOKED_PORK_CHOP_TABLE = makeTable(provider, Items.COOKED_PORKCHOP, 2);
+        LootTable FEATHER_TABLE = makeTable(provider, Items.FEATHER, 2);
+        LootTable STRING_TABLE = makeTable(provider, Items.STRING, 2);
+        LootTable LEATHER_TABLE = makeTable(provider, Items.LEATHER, 2);
+        LootTable RABBIT_HIDE_TABLE = makeTable(provider, Items.RABBIT_HIDE, 1);
+        LootTable PORK_CHOP_TABLE = makePorkTable(provider);
+        LootTable ARROW_BONE_TABLE = makeSkeletonTable(provider);
+
         new EntityLoot(EntityType.ZOMBIFIED_PIGLIN, GameplayTweak.OLD_ZOMBIE_PIGMEN_DROPS, COOKED_PORK_CHOP_TABLE);
         new EntityLoot(EntityType.ZOMBIE, GameplayTweak.OLD_ZOMBIE_DROPS, FEATHER_TABLE);
         new EntityLoot(EntityType.ZOMBIE_VILLAGER, GameplayTweak.OLD_STYLE_ZOMBIE_VILLAGER_DROPS, FEATHER_TABLE);
