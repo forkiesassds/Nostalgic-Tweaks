@@ -189,6 +189,8 @@ public class ClientConfig implements ConfigMeta
         // Hitbox Outline
 
         public ItemSet oldBlockOutlines = CandyTweak.OLD_BLOCK_OUTLINES.register("oldBlockOutlines");
+        public ItemSet fullBlockOutlineVoxels = CandyTweak.FULL_BLOCK_OUTLINE_VOXELS.register("fullBlockOutlineVoxels");
+        public boolean applyBlockOutlineVoxels = CandyTweak.APPLY_BLOCK_OUTLINE_VOXELS.register("applyBlockOutlineVoxels");
         public String blockOutlineColor = CandyTweak.BLOCK_OUTLINE_COLOR.register("blockOutlineColor");
         public float blockOutlineThickness = CandyTweak.BLOCK_OUTLINE_THICKNESS.register("blockOutlineThickness");
 
@@ -749,6 +751,7 @@ public class ClientConfig implements ConfigMeta
 
         // Boat Mechanics
 
+        public boolean disableBoatBusyHands = GameplayTweak.DISABLE_BOAT_BUSY_HANDS.register("disableBoatBusyHands");
         public boolean oldBoatWaterLift = GameplayTweak.OLD_BOAT_WATER_LIFT.register("oldBoatWaterLift");
         public boolean oldBoatDrops = GameplayTweak.OLD_BOAT_DROPS.register("oldBoatDrops");
 
