@@ -13,6 +13,7 @@ import mod.adrenix.nostalgic.client.gui.widget.separator.SeparatorWidget;
 import mod.adrenix.nostalgic.client.gui.widget.text.TextWidget;
 import mod.adrenix.nostalgic.tweak.container.Category;
 import mod.adrenix.nostalgic.tweak.factory.Tweak;
+import mod.adrenix.nostalgic.tweak.factory.TweakBinding;
 import mod.adrenix.nostalgic.tweak.factory.TweakMeta;
 import mod.adrenix.nostalgic.tweak.factory.TweakPool;
 import mod.adrenix.nostalgic.util.client.gui.GuiUtil;
@@ -126,6 +127,7 @@ public class GroupToggleAll extends ManageGroup
         FlagHolder isEnabled = FlagHolder.off();
 
         ButtonWidget enable = ButtonTemplate.checkbox(Lang.Manage.TOGGLE_ALL_ENABLE, isEnabled::get)
+            .skipFocusOnClick()
             .tooltip(Lang.Button.ENABLE_ALL, 35, 500L, TimeUnit.MILLISECONDS)
             .infoTooltip(Lang.Manage.TOGGLE_ALL_ENABLE_INFO, 35)
             .extendWidthToEnd(apply, apply.getInsidePaddingX())
@@ -136,6 +138,7 @@ public class GroupToggleAll extends ManageGroup
         FlagHolder isDisabled = FlagHolder.off();
 
         ButtonWidget disable = ButtonTemplate.checkbox(Lang.Manage.TOGGLE_ALL_DISABLE, isDisabled::get)
+            .skipFocusOnClick()
             .tooltip(Lang.Button.DISABLE_ALL, 35, 500L, TimeUnit.MILLISECONDS)
             .infoTooltip(Lang.Manage.TOGGLE_ALL_DISABLE_INFO, 35)
             .extendWidthToEnd(apply, apply.getInsidePaddingX())
@@ -156,6 +159,7 @@ public class GroupToggleAll extends ManageGroup
         FlagHolder isLocal = FlagHolder.on();
 
         ButtonWidget local = ButtonTemplate.checkbox(Lang.Manage.TOGGLE_ALL_LOCAL, isLocal::get)
+            .skipFocusOnClick()
             .tooltip(Lang.Button.LOCAL, 35, 500L, TimeUnit.MILLISECONDS)
             .infoTooltip(Lang.Manage.TOGGLE_ALL_LOCAL_INFO, 35)
             .extendWidthToEnd(apply, apply.getInsidePaddingX())
@@ -166,6 +170,7 @@ public class GroupToggleAll extends ManageGroup
         FlagHolder isNetwork = FlagHolder.off();
 
         ButtonWidget network = ButtonTemplate.checkbox(Lang.Manage.TOGGLE_ALL_NETWORK, isNetwork::get)
+            .skipFocusOnClick()
             .tooltip(Lang.Button.NETWORK, 35, 500L, TimeUnit.MILLISECONDS)
             .disabledTooltip(Lang.Tooltip.NOT_CONNECTED_OR_OPERATOR, 35, 500L, TimeUnit.MILLISECONDS)
             .infoTooltip(Lang.Manage.TOGGLE_ALL_NETWORK_INFO, 35)
@@ -186,6 +191,7 @@ public class GroupToggleAll extends ManageGroup
             .build(apply::addWidget);
 
         ButtonWidget override = ButtonTemplate.checkbox(Lang.Manage.TOGGLE_ALL_OVERRIDE, isOverride::get)
+            .skipFocusOnClick()
             .tooltip(Lang.Button.OVERRIDE, 35, 500L, TimeUnit.MILLISECONDS)
             .infoTooltip(Lang.Manage.TOGGLE_ALL_OVERRIDE_INFO, 35)
             .extendWidthToEnd(apply, apply.getInsidePaddingX())
@@ -218,6 +224,7 @@ public class GroupToggleAll extends ManageGroup
                 .toList();
 
             Stream<Tweak<Object>> tweaks = TweakPool.filter(predicates)
+                .filter(tweak -> ClassUtil.isNotInstanceOf(tweak, TweakBinding.class))
                 .filter(tweak -> tweak.getCategory() != Category.ROOT)
                 .filter(tweak -> tweak.getCategory() != Category.MOD)
                 .filter(Tweak::isNotIgnored)

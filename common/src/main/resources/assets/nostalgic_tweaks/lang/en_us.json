@@ -153,6 +153,7 @@
   "gui.nostalgic_tweaks.button.filter": "Filter",
   "gui.nostalgic_tweaks.button.export": "Export",
   "gui.nostalgic_tweaks.button.import": "Import",
+  "gui.nostalgic_tweaks.button.modern": "Modern",
   "gui.nostalgic_tweaks.button.local": "Local",
   "gui.nostalgic_tweaks.button.quick": "Quick",
   "gui.nostalgic_tweaks.button.reset": "Reset",
@@ -232,8 +233,8 @@
   "gui.nostalgic_tweaks.listing.item_rule.no_edibles": "No Edibles",
   "gui.nostalgic_tweaks.listing.item_rule.no_edibles.info": "Filter out any items that are edible.",
 
-  "gui.nostalgic_tweaks.row.tweak.enabled": "Enabled",
-  "gui.nostalgic_tweaks.row.tweak.disabled": "Disabled",
+  "gui.nostalgic_tweaks.row.tweak.enabled": "Yes",
+  "gui.nostalgic_tweaks.row.tweak.disabled": "No",
   "gui.nostalgic_tweaks.row.tweak.description": "Description",
   "gui.nostalgic_tweaks.row.tweak.cache": "Click to change the §e%s§r side tweak value.",
   "gui.nostalgic_tweaks.row.tweak.cache_client": "This tweak §6only§r has a§b client§r side value.",
@@ -243,6 +244,8 @@
   "gui.nostalgic_tweaks.row.tweak.reset": "Click to reset this tweak back to its§e original§r value.",
   "gui.nostalgic_tweaks.row.tweak.reset_off": "This tweak is already using its§e default§r value.",
   "gui.nostalgic_tweaks.row.tweak.status": "Click to open an informative screen about the current status of this tweak.",
+  "gui.nostalgic_tweaks.row.tweak.modern": "Click to change this tweak to its modern value.",
+  "gui.nostalgic_tweaks.row.tweak.modern_off": "This tweak is already using its§c modern§r value.",
   "gui.nostalgic_tweaks.row.tweak.no_impl": "This tweak does§c not§r have a§e controller implementation§r. This is a §4bug§r and should be reported.",
 
   "gui.nostalgic_tweaks.tag.new": "New",
@@ -643,7 +646,7 @@
   "gui.nostalgic_tweaks.container.swing.item": "Item Speeds",
   "gui.nostalgic_tweaks.container.swing.potion": "Potion Speeds",
 
-  "gui.nostalgic_tweaks.config.modEnabled": "Mod State",
+  "gui.nostalgic_tweaks.config.modEnabled": "Mod Enabled",
   "gui.nostalgic_tweaks.config.modEnabled.info": "Change the§a global§r state of the mod. This will impact§e all§r tweaks. When§c disabled§r, the game will run as if the mod was§4 never§r installed.",
 
   "gui.nostalgic_tweaks.config.mod.defaultScreen": "Default Screen",
